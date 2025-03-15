@@ -93,9 +93,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "mesdev_db",
-        "USER": "mesdev",
-        "PASSWORD": "mesdev",
+        "NAME": "cyna_db",
+        "USER": "cyna",
+        "PASSWORD": "cyna",
         "HOST": "127.0.0.1",
         "PORT": "3306",
     }
