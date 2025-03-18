@@ -2,6 +2,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from users.src.services.UserService import UserService
 from utils.checkInfos import CheckInfos
 from ninja.errors import HttpError
+from users.src.services.AuthService import AuthService
 
 
 class AuthControl:
@@ -35,10 +36,10 @@ class AuthControl:
     def login(data):
         user = UserService.get_by_email(data.email)
         if user and UserService.check_password(user.id, data.password):
-            refresh = RefreshToken.for_user(user)
+            tokens = AuthService.tokens_for_user(user)
             return {
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
+                "access": tokens["access"],
+                "refresh": tokens["refresh"],
                 "user": user.to_json(),
             }
         raise HttpError(401, "email or password invalid")
@@ -46,19 +47,16 @@ class AuthControl:
     @staticmethod
     def refresh(data):
         try:
-            token = data.token
-            refresh = RefreshToken(token)
-            print("token ok")
-            user_id = refresh.payload["user_id"]
-            user = UserService.get(user_id)
+            refresh = RefreshToken(data.token)
+            user = AuthService.get_user_with_refresh_token(refresh)
 
             if not user:
                 raise HttpError(404, "User not found")
 
-            new_refresh = RefreshToken.for_user(user)
+            new_tokens = AuthService.tokens_for_user(user)
             return {
-                "access": str(new_refresh.access_token),
-                "refresh": str(new_refresh),
+                "access": new_tokens["access"],
+                "refresh": new_tokens["refresh"],
             }
 
         except Exception as e:
@@ -66,11 +64,10 @@ class AuthControl:
             raise HttpError(401, "Invalid or expired refresh token")
 
     @staticmethod
-    def me(token):
+    def me(request):
         try:
-            token = AccessToken(token)
-            user_id = token.payload["user_id"]
-            user = UserService.get(user_id)
+            token = AuthService.get_token(request)
+            user = AuthService.get_user_with_access_token(token)
 
             if not user:
                 raise HttpError(404, "User not found")
