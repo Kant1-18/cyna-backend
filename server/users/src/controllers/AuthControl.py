@@ -47,8 +47,7 @@ class AuthControl:
     @staticmethod
     def refresh(data):
         try:
-            refresh = RefreshToken(data.token)
-            user = AuthService.get_user_with_refresh_token(refresh)
+            user = AuthService.get_user_with_refresh_token(data.token)
 
             if not user:
                 raise HttpError(404, "User not found")

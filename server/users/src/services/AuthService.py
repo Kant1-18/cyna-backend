@@ -22,6 +22,7 @@ class AuthService:
         try:
             refresh = RefreshToken(token)
             user_id = refresh.payload["user_id"]
+            print(user_id)
             return UserService.get(user_id)
         except Exception as e:
             return None
