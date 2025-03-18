@@ -9,6 +9,7 @@ class RegisterSchema(Schema):
     firstName: str
     lastName: str
     email: str
+    role: int
     password: str
     confirmPassword: str
 

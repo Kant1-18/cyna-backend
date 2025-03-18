@@ -25,7 +25,7 @@ class AuthControl:
         if UserService.get_by_email(data.email):
             raise HttpError(409, "email already exists")
 
-        user = UserService.add(data.firstName, data.lastName, data.email, data.password)
+        user = UserService.add(data.firstName, data.lastName, data.email, data.role, data.password)
         if not user:
             raise HttpError(500, "An error occurred while creating the user")
 

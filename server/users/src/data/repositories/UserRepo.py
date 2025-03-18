@@ -7,16 +7,16 @@ from utils.hashpass import gen_salt, encrypt, check_pass
 class UserRepo:
 
     @staticmethod
-    def add(firstName: str, lastName: str, email: str, password: str) -> Optional[User]:
+    def add(first_name: str, last_name: str, email: str, role: int, password: str) -> Optional[User]:
         salt = gen_salt()
-        hashedPass = encrypt(password, salt)
+        hashed_pass = encrypt(password, salt)
         try:
             user = User.objects.create(
-                firstName=firstName, lastName=lastName, email=email, username=email
+                first_name=first_name, last_name=last_name, email=email, username=email, role=role
             )
             if user:
                 cred = UserCredential.objects.create(
-                    user=user, salt=salt, password=hashedPass
+                    user=user, salt=salt, password=hashed_pass
                 )
                 if cred:
                     return user
@@ -50,12 +50,12 @@ class UserRepo:
         return None
 
     @staticmethod
-    def update(id: int, firstName: str, lastName: str, email: str) -> Optional[User]:
+    def update(id: int, first_name: str, last_name: str, email: str, role: int) -> Optional[User]:
         try:
             user = User.objects.get(id=id)
             if user:
-                user.firstName = firstName
-                user.lastName = lastName
+                user.first_name = first_name
+                user.last_name = last_name
                 user.email = email
                 user.save()
                 return user

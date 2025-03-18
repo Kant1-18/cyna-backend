@@ -31,7 +31,7 @@ class UsersControl:
             raise HttpError(400, "Invalid lastName")
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
-        user = UserService.update(data.id, data.firstName, data.lastName, data.email)
+        user = UserService.update(data.id, data.firstName, data.lastName, data.email, data.role)
         return user.to_json() if user else HttpError(500, "An error occurred")
 
     @staticmethod

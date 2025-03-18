@@ -14,14 +14,13 @@ class UserSchema(ModelSchema):
 
 
 class UpdateSchema(Schema):
-    id: int
     firstName: str
     lastName: str
     email: str
+    role: int
 
 
 class UpdatePasswordSchema(Schema):
-    id: int
     previousPassword: str
     newPassword: str
     confirmNewPassword: str
