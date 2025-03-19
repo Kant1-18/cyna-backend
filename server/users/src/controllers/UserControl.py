@@ -31,6 +31,8 @@ class UsersControl:
             raise HttpError(400, "Invalid lastName")
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
+        if not CheckInfos.is_valid_role(data.role):
+            raise HttpError(400, "Invalid role")
         user = UserService.update(
             data.id, data.firstName, data.lastName, data.email, data.role
         )
