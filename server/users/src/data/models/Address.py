@@ -10,9 +10,9 @@ class Address(models.Model):
     complement = models.CharField(max_length=100, blank=True, null=True)
     zip_code = models.CharField(max_length=10, blank=False, null=False)
     city = models.CharField(max_length=100, blank=False, null=False)
-    region = models.CharField(max_length=2, blank=False, null=False)
-    country = models.CharField(max_length=2, blank=False, null=False)
-    
+    region = models.CharField(max_length=100, blank=False, null=False)
+    country = models.CharField(max_length=100, blank=False, null=False)
+
     def to_json(self):
         return {
             "id": self.id,
@@ -24,5 +24,5 @@ class Address(models.Model):
             "zip_code": self.zip_code,
             "city": self.city,
             "region": self.region,
-            "country": self.country
+            "country": self.country,
         }

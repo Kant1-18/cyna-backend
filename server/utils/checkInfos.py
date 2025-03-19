@@ -3,12 +3,12 @@ import re
 # User Roles
 USER_ROLES = [0, 1]
 
-#Types
+# Types
 ADDRESS_TYPES = [0, 1]
 PRODUCT_TYPES = [0, 1]
 SUBSCRIPTION_TYPES = [0, 1]
 
-#Status
+# Status
 PRODUCT_STATUS = [0, 1]
 ORDER_STATUS = [0, 1, 2, 3, 4]
 PAYMENT_STATUS = [0, 1, 2, 3, 4]

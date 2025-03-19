@@ -2,13 +2,32 @@ from users.src.data.models.User import User
 from users.src.data.models.Address import Address
 from typing import Optional, List
 
+
 class AddressRepo:
 
     @staticmethod
-    def add(user: User, type: int, street: str, number: str, complement: str, zip_code: str, city: str, region: str, country: str) -> Optional[Address]:
+    def add(
+        user: User,
+        type: int,
+        street: str,
+        number: str,
+        complement: str,
+        zip_code: str,
+        city: str,
+        region: str,
+        country: str,
+    ) -> Optional[Address]:
         try:
             address = Address.objects.create(
-                user=user, type=type, street=street, number=number, complement=complement, zip_code=zip_code, city=city, region=region, country=country
+                user=user,
+                type=type,
+                street=street,
+                number=number,
+                complement=complement,
+                zip_code=zip_code,
+                city=city,
+                region=region,
+                country=country,
             )
             if address:
                 return address
@@ -27,7 +46,7 @@ class AddressRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_all_by_user(user: User) -> Optional[List[Address]]:
         try:
@@ -40,7 +59,17 @@ class AddressRepo:
         return None
 
     @staticmethod
-    def update(id: int, type: int, street: str, number: str, complement: str, zip_code: str, city: str, region: str, country: str) -> Optional[Address]:
+    def update(
+        id: int,
+        type: int,
+        street: str,
+        number: str,
+        complement: str,
+        zip_code: str,
+        city: str,
+        region: str,
+        country: str,
+    ) -> Optional[Address]:
         try:
             address = Address.objects.get(id=id)
             if address:
