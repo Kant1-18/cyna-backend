@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from users.src.data.models.User import User
 from users.src.data.models.UserCredential import UserCredential
 from utils.hashpass import gen_salt, encrypt, check_pass
