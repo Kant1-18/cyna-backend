@@ -6,7 +6,9 @@ from typing import Optional, List
 class UserService:
 
     @staticmethod
-    def add(first_name: str, last_name: str, email: str, role: int, password: str) -> Optional[User]:
+    def add(
+        first_name: str, last_name: str, email: str, role: int, password: str
+    ) -> Optional[User]:
         return UserRepo.add(first_name, last_name, email, role, password)
 
     @staticmethod
@@ -18,7 +20,9 @@ class UserService:
         return UserRepo.get_by_email(email)
 
     @staticmethod
-    def update(id: int, first_name: str, last_name: str, email: str, role: int) -> Optional[User]:
+    def update(
+        id: int, first_name: str, last_name: str, email: str, role: int
+    ) -> Optional[User]:
         return UserRepo.update(id, first_name, last_name, email, role)
 
     @staticmethod

@@ -26,7 +26,9 @@ class AuthControl:
         if UserService.get_by_email(data.email):
             raise HttpError(409, "email already exists")
 
-        user = UserService.add(data.firstName, data.lastName, data.email, data.role, data.password)
+        user = UserService.add(
+            data.firstName, data.lastName, data.email, data.role, data.password
+        )
         if not user:
             raise HttpError(500, "An error occurred while creating the user")
 
@@ -47,7 +49,7 @@ class AuthControl:
     @staticmethod
     def refresh(data):
         try:
-            user = AuthService.get_user_with_refresh_token(data.token)
+            user = AuthService.get_user_by_refresh_token(data.token)
 
             if not user:
                 raise HttpError(404, "User not found")
@@ -66,7 +68,7 @@ class AuthControl:
     def me(request):
         try:
             token = AuthService.get_token(request)
-            user = AuthService.get_user_with_access_token(token)
+            user = AuthService.get_user_by_access_token(token)
 
             if not user:
                 raise HttpError(404, "User not found")

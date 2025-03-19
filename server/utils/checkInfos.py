@@ -1,5 +1,19 @@
 import re
 
+# User Roles
+USER_ROLES = [0, 1]
+
+# Types
+ADDRESS_TYPES = [0, 1]
+PRODUCT_TYPES = [0, 1]
+SUBSCRIPTION_TYPES = [0, 1]
+
+# Status
+PRODUCT_STATUS = [0, 1]
+ORDER_STATUS = [0, 1, 2, 3, 4]
+PAYMENT_STATUS = [0, 1, 2, 3, 4]
+TICKET_STATUS = [0, 1, 2]
+
 
 class CheckInfos:
 
@@ -40,3 +54,7 @@ class CheckInfos:
             return False
 
         return True
+
+    @staticmethod
+    def is_type_address(type: int) -> bool:
+        return int(type) in ADDRESS_TYPES
