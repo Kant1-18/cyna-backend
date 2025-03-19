@@ -1,11 +1,12 @@
 from django.db import models
+from shop.src.data.models.Category import Category
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.IntegerField(null=False)
     status = models.IntegerField(default=0, blank=False, null=False)
-    category = models.ForeignKey("Category", on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL)
     image = models.TextField()
     discount = models.IntegerField(default=0, blank=False, null=False)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
