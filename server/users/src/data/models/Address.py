@@ -15,6 +15,7 @@ class Address(models.Model):
     
     def to_json(self):
         return {
+            "id": self.id,
             "userId": self.user.id,
             "type": self.type,
             "street": self.street,
