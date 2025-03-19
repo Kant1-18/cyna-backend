@@ -1,8 +1,9 @@
 from typing import Optional, List
 from shop.src.data.models.Category import Category
 
+
 class CategoryRepo:
-    
+
     @staticmethod
     def add(name: str) -> Category:
         try:
@@ -11,9 +12,9 @@ class CategoryRepo:
                 return category
         except Exception as e:
             print(e)
-            
+
         return None
-    
+
     @staticmethod
     def get(id: int) -> Optional[Category]:
         try:
@@ -24,7 +25,7 @@ class CategoryRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_by_name(name: str) -> Optional[Category]:
         try:
@@ -35,7 +36,7 @@ class CategoryRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_all() -> Optional[List[Category]]:
         try:
@@ -46,7 +47,7 @@ class CategoryRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def update(id: int, name: str) -> Optional[Category]:
         try:
@@ -59,7 +60,7 @@ class CategoryRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def delete(id: int) -> bool:
         try:

@@ -1,6 +1,7 @@
 from django.db import models
 from shop.src.data.models.Category import Category
 
+
 class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -11,7 +12,7 @@ class Product(models.Model):
     discount = models.IntegerField(default=0, blank=False, null=False)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     top_order = models.IntegerField(default=0, blank=False, null=False)
-    
+
     def to_json(self):
         return {
             "id": self.id,
@@ -24,5 +25,5 @@ class Product(models.Model):
             "discount": self.discount,
             "discount_order": self.discount_order,
             "top_order": self.top_order,
-            "discountPrice": self.price - (self.price * self.discount / 100)
+            "discountPrice": self.price - (self.price * self.discount / 100),
         }

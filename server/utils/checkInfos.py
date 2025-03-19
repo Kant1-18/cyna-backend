@@ -54,7 +54,7 @@ class CheckInfos:
             return False
 
         return True
-    
+
     @staticmethod
     def is_users_role(role: int) -> bool:
         return int(role) in USER_ROLES
@@ -66,7 +66,7 @@ class CheckInfos:
     @staticmethod
     def is_type_product(type: int) -> bool:
         return int(type) in PRODUCT_TYPES
-    
+
     @staticmethod
     def is_type_subscription(type: int) -> bool:
         return int(type) in SUBSCRIPTION_TYPES
@@ -82,7 +82,7 @@ class CheckInfos:
     @staticmethod
     def is_status_payment(status: int) -> bool:
         return int(status) in PAYMENT_STATUS
-    
+
     @staticmethod
     def is_status_ticket(status: int) -> bool:
         return int(status) in TICKET_STATUS

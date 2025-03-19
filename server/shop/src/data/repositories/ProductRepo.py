@@ -2,10 +2,21 @@ from typing import Optional, List
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.models.Product import Product
 
+
 class ProductRepo:
-    
+
     @staticmethod
-    def add(name: str, descripton: str, price: int, status: int, category_id: int, image: str, discount: int, discount_order: int, top_order: int):
+    def add(
+        name: str,
+        descripton: str,
+        price: int,
+        status: int,
+        category_id: int,
+        image: str,
+        discount: int,
+        discount_order: int,
+        top_order: int,
+    ):
         try:
             category = CategoryRepo.get(category_id)
             if category:
@@ -18,7 +29,7 @@ class ProductRepo:
                     image=image,
                     discount=discount,
                     discount_order=discount_order,
-                    top_order=top_order
+                    top_order=top_order,
                 )
                 if product:
                     return product
@@ -26,7 +37,7 @@ class ProductRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get(id: int) -> Optional[Product]:
         try:
@@ -37,7 +48,7 @@ class ProductRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_all() -> Optional[List[Product]]:
         try:
@@ -48,7 +59,7 @@ class ProductRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_all_by_category(category_id: int) -> Optional[List[Product]]:
         try:
@@ -61,9 +72,20 @@ class ProductRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
-    def update(id: int, name: str, descripton: str, price: int, status: int, category_id: int, image: str, discount: int, discount_order: int, top_order: int):
+    def update(
+        id: int,
+        name: str,
+        descripton: str,
+        price: int,
+        status: int,
+        category_id: int,
+        image: str,
+        discount: int,
+        discount_order: int,
+        top_order: int,
+    ):
         try:
             category = CategoryRepo.get(category_id)
             if category:
@@ -84,7 +106,7 @@ class ProductRepo:
             print(e)
 
         return None
-    
+
     @staticmethod
     def delete(id: int) -> bool:
         try:
