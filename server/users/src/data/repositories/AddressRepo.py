@@ -94,7 +94,8 @@ class AddressRepo:
             address = Address.objects.get(id=id)
             if address:
                 address.delete()
+                return True
         except Exception as e:
             print(e)
 
-        return True if not Address.objects.filter(id=id).exists() else False
+        return False

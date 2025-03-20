@@ -113,7 +113,8 @@ class ProductRepo:
             product = Product.objects.get(id=id)
             if product:
                 product.delete()
+                return True
         except Exception as e:
             print(e)
 
-        return True if not Product.objects.filter(id=id).exists() else False
+        return False

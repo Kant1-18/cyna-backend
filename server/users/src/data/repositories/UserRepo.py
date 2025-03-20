@@ -92,10 +92,11 @@ class UserRepo:
             user = User.objects.get(id=id)
             if user:
                 user.delete()
+                return True
         except Exception as e:
             print(e)
 
-        return True if not User.objects.filter(id=id).exists() else False
+        return False
 
     @staticmethod
     def check_password(id: int, password: str) -> bool:
