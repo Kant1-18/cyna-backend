@@ -1,7 +1,7 @@
 from typing import Optional
 from users.src.data.models.User import User
 from users.src.data.models.UserCredential import UserCredential
-from utils.hashpass import gen_salt, encrypt, check_pass
+from utils.HashPass import gen_salt, encrypt, check_pass
 
 
 class UserRepo:

@@ -1,6 +1,5 @@
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from users.src.services.UserService import UserService
-from utils.checkInfos import CheckInfos
+from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 

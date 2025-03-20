@@ -1,7 +1,7 @@
 from typing import Optional, List
 from users.src.services.UserService import UserService
 from users.src.data.models.User import User
-from utils.checkInfos import CheckInfos
+from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 
 

@@ -67,7 +67,8 @@ class CategoryRepo:
             category = Category.objects.get(id=id)
             if category:
                 category.delete()
+                return True
         except Exception as e:
             print(e)
 
-        return True if not Category.objects.filter(id=id).exists() else False
+        return False

@@ -2,7 +2,7 @@ from users.src.data.models.User import User
 from users.src.data.models.Address import Address
 from users.src.services.AddressService import AddressService
 from typing import Optional, List
-from utils.checkInfos import CheckInfos
+from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 

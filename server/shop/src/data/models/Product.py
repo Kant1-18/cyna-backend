@@ -7,7 +7,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.IntegerField(null=False)
     status = models.IntegerField(default=0, blank=False, null=False)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     image = models.TextField()
     discount = models.IntegerField(default=0, blank=False, null=False)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
