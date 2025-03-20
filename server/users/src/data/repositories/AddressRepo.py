@@ -1,6 +1,5 @@
 from users.src.data.models.User import User
 from users.src.data.models.Address import Address
-from typing import Optional, List
 
 
 class AddressRepo:
@@ -16,7 +15,7 @@ class AddressRepo:
         city: str,
         region: str,
         country: str,
-    ) -> Optional[Address]:
+    ) -> (Address | None):
         try:
             address = Address.objects.create(
                 user=user,
@@ -37,7 +36,7 @@ class AddressRepo:
         return None
 
     @staticmethod
-    def get(id: int) -> Optional[Address]:
+    def get(id: int) -> (Address | None):
         try:
             address = Address.objects.get(id=id)
             if address:
@@ -48,7 +47,7 @@ class AddressRepo:
         return None
 
     @staticmethod
-    def get_all_by_user(user: User) -> Optional[List[Address]]:
+    def get_all_by_user(user: User) -> (list[Address] | None):
         try:
             addresses = Address.objects.filter(user=user)
             if addresses:
@@ -69,7 +68,7 @@ class AddressRepo:
         city: str,
         region: str,
         country: str,
-    ) -> Optional[Address]:
+    ) -> (Address | None):
         try:
             address = Address.objects.get(id=id)
             if address:

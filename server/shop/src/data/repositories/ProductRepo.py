@@ -1,4 +1,3 @@
-from typing import Optional, List
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.models.Product import Product
 
@@ -16,7 +15,7 @@ class ProductRepo:
         discount: int,
         discount_order: int,
         top_order: int,
-    ):
+    ) -> (Product | None):
         try:
             category = CategoryRepo.get(category_id)
             if category:
@@ -39,7 +38,7 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def get(id: int) -> Optional[Product]:
+    def get(id: int) -> (Product | None):
         try:
             product = Product.objects.get(id=id)
             if product:
@@ -50,7 +49,7 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def get_all() -> Optional[List[Product]]:
+    def get_all() -> (list[Product] | None):
         try:
             products = Product.objects.all()
             if products:
@@ -61,7 +60,7 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def get_all_by_category(category_id: int) -> Optional[List[Product]]:
+    def get_all_by_category(category_id: int) -> (list[Product] | None):
         try:
             category = CategoryRepo.get(category_id)
             if category:
@@ -85,7 +84,7 @@ class ProductRepo:
         discount: int,
         discount_order: int,
         top_order: int,
-    ):
+    ) -> (Product | None):
         try:
             category = CategoryRepo.get(category_id)
             if category:
