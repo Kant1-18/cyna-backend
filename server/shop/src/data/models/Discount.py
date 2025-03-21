@@ -8,7 +8,7 @@ class Discount(models.Model):
     discount_price = models.IntegerField(default=0, blank=False, null=False)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=False)
-    
+
     def to_json(self):
         return {
             "id": self.id,
