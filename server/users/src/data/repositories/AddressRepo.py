@@ -15,7 +15,7 @@ class AddressRepo:
         city: str,
         region: str,
         country: str,
-    ) -> (Address | None):
+    ) -> Address | None:
         try:
             address = Address.objects.create(
                 user=user,
@@ -36,7 +36,7 @@ class AddressRepo:
         return None
 
     @staticmethod
-    def get(id: int) -> (Address | None):
+    def get(id: int) -> Address | None:
         try:
             address = Address.objects.get(id=id)
             if address:
@@ -47,7 +47,7 @@ class AddressRepo:
         return None
 
     @staticmethod
-    def get_all_by_user(user: User) -> (list[Address] | None):
+    def get_all_by_user(user: User) -> list[Address] | None:
         try:
             addresses = Address.objects.filter(user=user)
             if addresses:
@@ -68,7 +68,7 @@ class AddressRepo:
         city: str,
         region: str,
         country: str,
-    ) -> (Address | None):
+    ) -> Address | None:
         try:
             address = Address.objects.get(id=id)
             if address:

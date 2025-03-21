@@ -37,6 +37,20 @@ class CheckInfos:
             return False
 
     @staticmethod
+    def is_valid_price(number: int) -> bool:
+        if number > 0 and len(str(number)) >= 4:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_percentage(percentage: int) -> bool:
+        if percentage >= 0 and percentage <= 100:
+            return True
+        else:
+            return False
+
+    @staticmethod
     def is_valid_password(password: str) -> bool:
         if len(password) < 8:
             return False

@@ -15,7 +15,7 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def get(id: int) -> (Category | None):
+    def get(id: int) -> Category | None:
         try:
             category = Category.objects.get(id=id)
             if category:
@@ -26,7 +26,7 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def get_by_name(name: str) -> (Category | None):
+    def get_by_name(name: str) -> Category | None:
         try:
             category = Category.objects.get(name=name)
             if category:
@@ -37,7 +37,7 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def get_all() -> (list[Category] | None):
+    def get_all() -> list[Category] | None:
         try:
             categories = Category.objects.all()
             if categories:
@@ -48,7 +48,7 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def update(id: int, name: str) -> (Category | None):
+    def update(id: int, name: str) -> Category | None:
         try:
             category = Category.objects.get(id=id)
             if category:
@@ -71,3 +71,7 @@ class CategoryRepo:
             print(e)
 
         return False
+
+    @staticmethod
+    def is_category_exist(id: int) -> bool:
+        return Category.objects.filter(id=id).exists()

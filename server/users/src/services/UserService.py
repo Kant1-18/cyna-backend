@@ -7,25 +7,25 @@ class UserService:
     @staticmethod
     def add(
         first_name: str, last_name: str, email: str, role: int, password: str
-    ) -> (User | None):
+    ) -> User | None:
         return UserRepo.add(first_name, last_name, email, role, password)
 
     @staticmethod
-    def get(id: int) -> (User | None):
+    def get(id: int) -> User | None:
         return UserRepo.get(id)
 
     @staticmethod
-    def get_by_email(email: str) -> (User | None):
+    def get_by_email(email: str) -> User | None:
         return UserRepo.get_by_email(email)
 
     @staticmethod
     def update(
         id: int, first_name: str, last_name: str, email: str, role: int
-    ) -> (User | None):
+    ) -> User | None:
         return UserRepo.update(id, first_name, last_name, email, role)
 
     @staticmethod
-    def update_password(id: int, password: str) -> (User | None):
+    def update_password(id: int, password: str) -> User | None:
         return UserRepo.update_password(id, password)
 
     @staticmethod

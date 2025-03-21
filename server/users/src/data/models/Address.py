@@ -21,7 +21,7 @@ class Address(models.Model):
             "street": self.street,
             "number": self.number,
             "complement": self.complement,
-            "zip_code": self.zip_code,
+            "zipCode": self.zip_code,
             "city": self.city,
             "region": self.region,
             "country": self.country,

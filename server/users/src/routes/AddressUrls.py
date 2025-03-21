@@ -37,22 +37,22 @@ class UpdateSchema(Schema):
 
 
 @router.post("/add", auth=JWTAuth())
-def add(request, data: AddSchema) -> (Address | HttpError):
+def add(request, data: AddSchema) -> Address | HttpError:
     return AddressControl.add(request, data)
 
 
 @router.get("/get/{id}", auth=JWTAuth())
-def get(request, id: int) -> (Address | HttpError):
+def get(request, id: int) -> Address | HttpError:
     return AddressControl.get(id)
 
 
 @router.get("/getAll", auth=JWTAuth())
-def get_all_by_user(request) -> (list[Address] | HttpError):
+def get_all_by_user(request) -> list[Address] | HttpError:
     return AddressControl.get_all_by_user(request)
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> (Address | HttpError):
+def update(request, data: UpdateSchema) -> Address | HttpError:
     return AddressControl.update(data)
 
 

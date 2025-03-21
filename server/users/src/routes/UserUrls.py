@@ -29,22 +29,22 @@ class UpdatePasswordSchema(Schema):
 
 
 @router.get("/get/{id}", auth=JWTAuth())
-def get(request, id: int) -> (User | HttpError):
+def get(request, id: int) -> User | HttpError:
     return UsersControl.get(id)
 
 
 @router.get("/getByEmail/{email}", auth=JWTAuth())
-def get_by_email(request, email: str) -> (User | HttpError):
+def get_by_email(request, email: str) -> User | HttpError:
     return UsersControl.get_by_email(email)
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> (User | HttpError):
+def update(request, data: UpdateSchema) -> User | HttpError:
     return UsersControl.update(data)
 
 
 @router.put("/updatePassword", auth=JWTAuth())
-def update_password(request, data: UpdatePasswordSchema) -> (User | HttpError):
+def update_password(request, data: UpdatePasswordSchema) -> User | HttpError:
     return UsersControl.update_password(data)
 
 

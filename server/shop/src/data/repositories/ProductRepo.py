@@ -1,5 +1,6 @@
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.models.Product import Product
+from shop.src.data.models.Category import Category
 
 
 class ProductRepo:
@@ -10,35 +11,28 @@ class ProductRepo:
         descripton: str,
         price: int,
         status: int,
-        category_id: int,
+        category: Category,
         image: str,
-        discount: int,
-        discount_order: int,
-        top_order: int,
-    ) -> (Product | None):
+    ) -> Product | None:
         try:
-            category = CategoryRepo.get(category_id)
-            if category:
-                product = Product.objects.create(
-                    name=name,
-                    description=descripton,
-                    price=price,
-                    status=status,
-                    category=category,
-                    image=image,
-                    discount=discount,
-                    discount_order=discount_order,
-                    top_order=top_order,
-                )
-                if product:
-                    return product
+            product = Product.objects.create(
+                name=name,
+                description=descripton,
+                price=price,
+                status=status,
+                category=category,
+                image=image,
+                top_order=0,
+            )
+            if product:
+                return product
         except Exception as e:
             print(e)
 
         return None
 
     @staticmethod
-    def get(id: int) -> (Product | None):
+    def get(id: int) -> Product | None:
         try:
             product = Product.objects.get(id=id)
             if product:
@@ -49,7 +43,7 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def get_all() -> (list[Product] | None):
+    def get_all() -> list[Product] | None:
         try:
             products = Product.objects.all()
             if products:
@@ -60,13 +54,11 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def get_all_by_category(category_id: int) -> (list[Product] | None):
+    def get_all_by_category(category: Category) -> list[Product] | None:
         try:
-            category = CategoryRepo.get(category_id)
-            if category:
-                products = Product.objects.filter(category=category)
-                if products:
-                    return products
+            products = Product.objects.filter(category=category)
+            if products:
+                return products
         except Exception as e:
             print(e)
 
@@ -79,32 +71,35 @@ class ProductRepo:
         descripton: str,
         price: int,
         status: int,
-        category_id: int,
+        category: Category,
         image: str,
-        discount: int,
-        discount_order: int,
-        top_order: int,
-    ) -> (Product | None):
+    ) -> Product | None:
         try:
-            category = CategoryRepo.get(category_id)
-            if category:
-                product = Product.objects.get(id=id)
-                if product:
-                    product.name = name
-                    product.description = descripton
-                    product.price = price
-                    product.status = status
-                    product.category = category
-                    product.image = image
-                    product.discount = discount
-                    product.discount_order = discount_order
-                    product.top_order = top_order
-                    product.save()
-                    return product
+            product = Product.objects.get(id=id)
+            if product:
+                product.name = name
+                product.description = descripton
+                product.price = price
+                product.status = status
+                product.category = category
+                product.image = image
+                product.save()
+                return product
         except Exception as e:
             print(e)
 
         return None
+
+    @staticmethod
+    def update_top(id: int, top_order: int) -> Product | None:
+        try:
+            product = Product.objects.get(id=id)
+            if product:
+                product.top_order = top_order
+                product.save()
+                return product
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def delete(id: int) -> bool:

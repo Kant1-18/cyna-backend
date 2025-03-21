@@ -16,17 +16,17 @@ class AddressService:
         city: str,
         region: str,
         country: str,
-    ) -> (Address | None):
+    ) -> Address | None:
         return AddressRepo.add(
             user, type, street, number, complement, zip_code, city, region, country
         )
 
     @staticmethod
-    def get(id: int) -> (Address | None):
+    def get(id: int) -> Address | None:
         return AddressRepo.get(id)
 
     @staticmethod
-    def get_all_by_user(user: User) -> (list[Address] | None):
+    def get_all_by_user(user: User) -> list[Address] | None:
         return AddressRepo.get_all_by_user(user)
 
     @staticmethod
@@ -40,7 +40,7 @@ class AddressService:
         city: str,
         region: str,
         country: str,
-    ) -> (Address | None):
+    ) -> Address | None:
         return AddressRepo.update(
             id, type, street, number, complement, zip_code, city, region, country
         )

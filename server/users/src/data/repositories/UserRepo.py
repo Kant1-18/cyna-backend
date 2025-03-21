@@ -8,7 +8,7 @@ class UserRepo:
     @staticmethod
     def add(
         first_name: str, last_name: str, email: str, role: int, password: str
-    ) -> (User | None):
+    ) -> User | None:
         salt = gen_salt()
         hashed_pass = encrypt(password, salt)
         try:
@@ -33,7 +33,7 @@ class UserRepo:
         return None
 
     @staticmethod
-    def get(id: int) -> (User | None):
+    def get(id: int) -> User | None:
         try:
             user = User.objects.get(id=id)
             if user:
@@ -44,7 +44,7 @@ class UserRepo:
         return None
 
     @staticmethod
-    def get_by_email(email: str) -> (User | None):
+    def get_by_email(email: str) -> User | None:
         try:
             user = User.objects.get(email=email)
             if user:
@@ -57,7 +57,7 @@ class UserRepo:
     @staticmethod
     def update(
         id: int, first_name: str, last_name: str, email: str, role: int
-    ) -> (User | None):
+    ) -> User | None:
         try:
             user = User.objects.get(id=id)
             if user:
@@ -72,7 +72,7 @@ class UserRepo:
         return None
 
     @staticmethod
-    def update_password(id: int, password: str) -> (User | None):
+    def update_password(id: int, password: str) -> User | None:
         try:
             user = User.objects.get(id=id)
             cred = UserCredential.objects.get(user=user)
