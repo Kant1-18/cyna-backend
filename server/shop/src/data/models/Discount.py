@@ -15,6 +15,6 @@ class Discount(models.Model):
             "product": self.product.to_json(),
             "percentage": self.percentage,
             "discount_price": self.discount_price,
-            "start_date": self.start_date.strftime("%d-%m-%Y"),
-            "end_date": self.end_date.strftime("%d-%m-%Y"),
+            "start_date": self.start_date.timestamp(),
+            "end_date": self.end_date.timestamp(),
         }
