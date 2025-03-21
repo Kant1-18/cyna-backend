@@ -20,6 +20,14 @@ class DiscountControl:
             if not CheckInfos.is_valid_date(data.endDate):
                 raise HttpError(400, "Invalid date")
 
+            if not ProductService.get(data.productId):
+                raise HttpError(404, "Product not found")
+
+            if not DiscountService.get_active_by_product(data.productId):
+                raise HttpError(
+                    400, "An active discount already exists for this product"
+                )
+
             discount = DiscountService.add(
                 data.productId, data.percentage, data.endDate
             )
