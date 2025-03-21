@@ -1,6 +1,5 @@
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from users.src.services.UserService import UserService
-from utils.checkInfos import CheckInfos
+from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 
@@ -19,6 +18,9 @@ class AuthControl:
 
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
+
+        if not CheckInfos.is_valid_role(data.role):
+            raise HttpError(400, "Invalid role")
 
         if not CheckInfos.is_valid_password(data.password):
             raise HttpError(400, "password invalid")

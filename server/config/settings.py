@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "ninja_jwt",
     "users",
+    "shop",
 ]
 
 REST_FRAMEWORK = {

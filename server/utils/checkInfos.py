@@ -37,6 +37,20 @@ class CheckInfos:
             return False
 
     @staticmethod
+    def is_valid_price(number: int) -> bool:
+        if number > 0 and len(str(number)) >= 4:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_percentage(percentage: int) -> bool:
+        if percentage >= 0 and percentage <= 100:
+            return True
+        else:
+            return False
+
+    @staticmethod
     def is_valid_password(password: str) -> bool:
         if len(password) < 8:
             return False
@@ -56,5 +70,33 @@ class CheckInfos:
         return True
 
     @staticmethod
+    def is_users_role(role: int) -> bool:
+        return int(role) in USER_ROLES
+
+    @staticmethod
     def is_type_address(type: int) -> bool:
         return int(type) in ADDRESS_TYPES
+
+    @staticmethod
+    def is_type_product(type: int) -> bool:
+        return int(type) in PRODUCT_TYPES
+
+    @staticmethod
+    def is_type_subscription(type: int) -> bool:
+        return int(type) in SUBSCRIPTION_TYPES
+
+    @staticmethod
+    def is_status_product(status: int) -> bool:
+        return int(status) in PRODUCT_STATUS
+
+    @staticmethod
+    def is_status_order(status: int) -> bool:
+        return int(status) in ORDER_STATUS
+
+    @staticmethod
+    def is_status_payment(status: int) -> bool:
+        return int(status) in PAYMENT_STATUS
+
+    @staticmethod
+    def is_status_ticket(status: int) -> bool:
+        return int(status) in TICKET_STATUS

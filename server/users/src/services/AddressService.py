@@ -1,6 +1,5 @@
 from users.src.data.models.User import User
 from users.src.data.models.Address import Address
-from typing import Optional, List
 from users.src.data.repositories.AddressRepo import AddressRepo
 
 
@@ -17,17 +16,17 @@ class AddressService:
         city: str,
         region: str,
         country: str,
-    ) -> Optional[Address]:
+    ) -> Address | None:
         return AddressRepo.add(
             user, type, street, number, complement, zip_code, city, region, country
         )
 
     @staticmethod
-    def get(id: int) -> Optional[Address]:
+    def get(id: int) -> Address | None:
         return AddressRepo.get(id)
 
     @staticmethod
-    def get_all_by_user(user: User) -> Optional[List[Address]]:
+    def get_all_by_user(user: User) -> list[Address] | None:
         return AddressRepo.get_all_by_user(user)
 
     @staticmethod
@@ -41,7 +40,7 @@ class AddressService:
         city: str,
         region: str,
         country: str,
-    ) -> Optional[Address]:
+    ) -> Address | None:
         return AddressRepo.update(
             id, type, street, number, complement, zip_code, city, region, country
         )

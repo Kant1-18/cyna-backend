@@ -1,8 +1,7 @@
 from users.src.data.models.User import User
 from users.src.data.models.Address import Address
 from users.src.services.AddressService import AddressService
-from typing import Optional, List
-from utils.checkInfos import CheckInfos
+from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 
@@ -10,7 +9,7 @@ from users.src.services.AuthService import AuthService
 class AddressControl:
 
     @staticmethod
-    def add(request, data) -> Optional[Address]:
+    def add(request, data) -> Address | HttpError:
         try:
             token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
@@ -63,12 +62,12 @@ class AddressControl:
             raise HttpError(401, "Invalid or expired refresh token")
 
     @staticmethod
-    def get(id: int) -> Optional[Address]:
+    def get(id: int) -> Address | HttpError:
         address = AddressService.get(id)
         return address.to_json() if address else HttpError(404, "Address not found")
 
     @staticmethod
-    def get_all_by_user(request) -> Optional[List[Address]]:
+    def get_all_by_user(request) -> list[Address] | HttpError:
         try:
             token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
@@ -87,7 +86,7 @@ class AddressControl:
             raise HttpError(401, "Invalid or expired refresh token")
 
     @staticmethod
-    def update(data) -> Optional[Address]:
+    def update(data) -> Address | HttpError:
         try:
             if not CheckInfos.is_valid_id(data.id):
                 raise HttpError(400, "Invalid id")

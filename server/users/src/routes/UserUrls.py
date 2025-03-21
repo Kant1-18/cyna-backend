@@ -1,6 +1,6 @@
 from ninja import Router, ModelSchema, Schema
+from ninja.errors import HttpError
 from ninja_jwt.authentication import JWTAuth
-from typing import Optional
 from users.src.controllers.UserControl import UsersControl
 from users.src.data.models.User import User
 
@@ -29,22 +29,22 @@ class UpdatePasswordSchema(Schema):
 
 
 @router.get("/get/{id}", auth=JWTAuth())
-def get(request, id: int) -> Optional[User]:
+def get(request, id: int) -> User | HttpError:
     return UsersControl.get(id)
 
 
 @router.get("/getByEmail/{email}", auth=JWTAuth())
-def get_by_email(request, email: str) -> Optional[User]:
+def get_by_email(request, email: str) -> User | HttpError:
     return UsersControl.get_by_email(email)
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> Optional[User]:
+def update(request, data: UpdateSchema) -> User | HttpError:
     return UsersControl.update(data)
 
 
 @router.put("/updatePassword", auth=JWTAuth())
-def update_password(request, data: UpdatePasswordSchema) -> Optional[User]:
+def update_password(request, data: UpdatePasswordSchema) -> User | HttpError:
     return UsersControl.update_password(data)
 
 

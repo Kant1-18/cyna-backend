@@ -10,7 +10,7 @@ class AuthService:
         return token
 
     @staticmethod
-    def get_user_by_access_token(token):
+    def get_user_by_access_token(token: AccessToken):
         try:
             access = AccessToken(token)
             user_id = access.payload["user_id"]
@@ -19,7 +19,7 @@ class AuthService:
             return None
 
     @staticmethod
-    def get_user_by_refresh_token(token):
+    def get_user_by_refresh_token(token: RefreshToken):
         try:
             refresh = RefreshToken(token)
             user_id = refresh.payload["user_id"]
@@ -32,3 +32,11 @@ class AuthService:
     def tokens_for_user(user):
         refresh = RefreshToken.for_user(user)
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
+
+    @staticmethod
+    def isAdmin(request):
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+        if user.role == 1:
+            return True
+        return False
