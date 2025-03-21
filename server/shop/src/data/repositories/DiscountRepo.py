@@ -40,7 +40,7 @@ class DiscountRepo:
         try:
             discounts = Discount.objects.filter(
                 product=product, end_date__gte=datetime.now()
-            )
+            ).first()
             if discounts:
                 return discounts
         except Exception as e:

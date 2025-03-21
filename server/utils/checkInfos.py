@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 # User Roles
 USER_ROLES = [0, 1]
@@ -100,3 +101,11 @@ class CheckInfos:
     @staticmethod
     def is_status_ticket(status: int) -> bool:
         return int(status) in TICKET_STATUS
+
+    @staticmethod
+    def is_valid_date(date) -> bool:
+        try:
+            datetime.fromtimestamp(date)
+            return True
+        except:
+            return False

@@ -19,7 +19,7 @@ class AuthControl:
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
 
-        if not CheckInfos.is_valid_role(data.role):
+        if not CheckInfos.is_users_role(data.role):
             raise HttpError(400, "Invalid role")
 
         if not CheckInfos.is_valid_password(data.password):

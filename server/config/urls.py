@@ -6,6 +6,7 @@ from users.src.routes.AddressUrls import router as address_router
 
 from shop.src.routes.CategoryUrls import router as category_router
 from shop.src.routes.ProductUrls import router as product_router
+from shop.src.routes.DiscountUrls import router as discount_router
 
 api = NinjaAPI()
 
@@ -15,6 +16,7 @@ api.add_router("/addresses", address_router)
 
 api.add_router("/categories", category_router)
 api.add_router("/products", product_router)
+api.add_router("/discounts", discount_router)
 
 urlpatterns = [
     path("api/", api.urls),
