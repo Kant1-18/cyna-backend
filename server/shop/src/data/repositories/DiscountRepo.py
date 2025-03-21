@@ -1,6 +1,5 @@
 from shop.src.data.models.Discount import Discount
 from shop.src.data.models.Product import Product
-from shop.src.services.ProductService import ProductService
 from datetime import datetime
 
 
