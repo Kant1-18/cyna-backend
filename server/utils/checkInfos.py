@@ -1,5 +1,10 @@
 import re
 from datetime import datetime
+import os
+from ninja.files import UploadedFile
+
+
+ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
 
 # User Roles
 USER_ROLES = [0, 1]
@@ -109,3 +114,8 @@ class CheckInfos:
             return True
         except:
             return False
+
+    @staticmethod
+    def is_valid_image_format(file: UploadedFile) -> bool:
+        _, ext = os.path.splitext(file.name.lower())
+        return ext in ALLOWED_IMAGE_EXTENSIONS

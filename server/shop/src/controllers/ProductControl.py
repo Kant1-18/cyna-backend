@@ -26,8 +26,8 @@ class ProductControl:
             if not CheckInfos.is_valid_id(data.categoryId):
                 raise HttpError(400, "Invalid id for category")
 
-            if not CheckInfos.is_valid_string(data.image):
-                raise HttpError(400, "Invalid string for image's url")
+            if not CheckInfos.is_valid_image_format(data.image):
+                raise HttpError(400, "Unsupported image format")
 
             product = ProductService.add(
                 data.name,

@@ -2,6 +2,8 @@ from shop.src.data.models.Product import Product
 from shop.src.data.repositories.ProductRepo import ProductRepo
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.repositories.DiscountRepo import DiscountRepo
+from ninja.files import UploadedFile
+from utils.Cloudinary import ImageUploader
 
 
 class ProductService:
@@ -9,14 +11,25 @@ class ProductService:
     @staticmethod
     def add(
         name: str,
-        descripton: str,
+        description: str,
         price: int,
         status: int,
         category_id: int,
-        image: str,
+        image: UploadedFile,
     ) -> Product | None:
         category = CategoryRepo.get(category_id)
-        return ProductRepo.add(name, descripton, price, status, category, image)
+        if not category:
+            return None
+
+        try:
+            image_url = ImageUploader.product(image)
+            return ProductRepo.add(
+                name, description, price, status, category, image_url
+            )
+
+        except Exception as e:
+            print(f"[Cloudinary Upload Error] {e}")
+            return None
 
     @staticmethod
     def get(id: int) -> Product | None:

@@ -2,6 +2,7 @@ from shop.src.data.models.Product import Product
 from shop.src.controllers.ProductControl import ProductControl
 from ninja import Router, ModelSchema, Schema
 from ninja.errors import HttpError
+from ninja import File, Form, UploadedFile
 from ninja_jwt.authentication import JWTAuth
 
 router = Router()
@@ -13,15 +14,6 @@ class ProductSchema(ModelSchema):
         fields = "__all__"
 
 
-class AddSchema(Schema):
-    name: str
-    description: str
-    price: int
-    status: int
-    categoryId: int
-    image: str
-
-
 class UpdateSchema(Schema):
     id: int
     name: str
@@ -29,12 +21,29 @@ class UpdateSchema(Schema):
     price: int
     status: int
     categoryId: int
-    image: str
 
 
 @router.post("/add", auth=JWTAuth())
-def add(request, data: AddSchema) -> Product | HttpError:
-    return ProductControl.add(request, data)
+def add(
+    request,
+    name: str = Form(...),
+    description: str = Form(...),
+    price: int = Form(...),
+    status: int = Form(...),
+    categoryId: int = Form(...),
+    image: UploadedFile = File(...),
+) -> Product | HttpError:
+    return ProductControl.add(
+        request,
+        {
+            "name": name,
+            "description": description,
+            "price": price,
+            "status": status,
+            "categoryId": categoryId,
+            "image": image,
+        },
+    )
 
 
 @router.get("/get/{id}", auth=JWTAuth())
