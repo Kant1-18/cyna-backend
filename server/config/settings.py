@@ -36,9 +36,19 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "ninja_jwt",
+    "cloudinary",
+    "cloudinary_storage",
     "users",
     "shop",
 ]
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
