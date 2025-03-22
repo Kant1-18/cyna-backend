@@ -48,8 +48,8 @@ def get_all(request) -> list[Product] | HttpError:
 
 
 @router.get("/getAllByCategory/{categoryId}", auth=JWTAuth())
-def get_all_by_category(request, category_id: int) -> list[Product] | HttpError:
-    return ProductControl.get_all_by_category(category_id)
+def get_all_by_category(request, categoryId: int) -> list[Product] | HttpError:
+    return ProductControl.get_all_by_category(categoryId)
 
 
 @router.put("/update", auth=JWTAuth())
@@ -60,3 +60,8 @@ def update(request, data: UpdateSchema) -> Product | HttpError:
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete(request, id: int) -> bool:
     return ProductControl.delete(request, id)
+
+
+@router.get("/getAllWithDiscounts", auth=JWTAuth())
+def get_all_with_discounts(request) -> list | HttpError:
+    return ProductControl.get_all_with_discounts()

@@ -124,3 +124,19 @@ class ProductControl:
                 raise HttpError(500, "Error when deleting product")
         else:
             raise HttpError(403, "Unauthorized")
+
+    @staticmethod
+    def get_all_with_discounts() -> list | HttpError:
+        discounts, products = ProductService.get_all_with_discounts()
+        if discounts is None and products is None:
+            raise HttpError(500, "Error when getting all products")
+        if discounts is not None and products is not None:
+            return {
+                "discounts": [discount.to_json() for discount in discounts],
+                "products": [product.to_json() for product in products],
+            }
+        else:
+            return {
+                "discounts": [],
+                "products": [product.to_json() for product in products],
+            }
