@@ -11,31 +11,31 @@ class ProductControl:
     @staticmethod
     def add(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_string(data.name):
+            if not CheckInfos.is_valid_string(data["name"]):
                 raise HttpError(400, "Invalid name")
 
-            if not CheckInfos.is_valid_string(data.description):
+            if not CheckInfos.is_valid_string(data["description"]):
                 raise HttpError(400, "Invalid description")
 
-            if not CheckInfos.is_valid_price(data.price):
+            if not CheckInfos.is_valid_price(data["price"]):
                 raise HttpError(400, "Invalid price")
 
-            if not CheckInfos.is_status_product(data.status):
+            if not CheckInfos.is_status_product(data["status"]):
                 raise HttpError(400, "Invalid status")
 
-            if not CheckInfos.is_valid_id(data.categoryId):
+            if not CheckInfos.is_valid_id(data["categoryId"]):
                 raise HttpError(400, "Invalid id for category")
 
-            if not CheckInfos.is_valid_image_format(data.image):
+            if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
 
             product = ProductService.add(
-                data.name,
-                data.description,
-                data.price,
-                data.status,
-                data.categoryId,
-                data.image,
+                data["name"],
+                data["description"],
+                data["price"],
+                data["status"],
+                data["categoryId"],
+                data["image"],
             )
             if product:
                 return product.to_json()
@@ -94,9 +94,6 @@ class ProductControl:
             if not CheckInfos.is_valid_id(data.categoryId):
                 raise HttpError(400, "Invalid id for category")
 
-            if not CheckInfos.is_valid_string(data.image):
-                raise HttpError(400, "Invalid string for image's url")
-
             product = ProductService.update(
                 data.id,
                 data.name,
@@ -104,7 +101,6 @@ class ProductControl:
                 data.price,
                 data.status,
                 data.categoryId,
-                data.image,
             )
             if product:
                 return product.to_json()
@@ -116,12 +112,12 @@ class ProductControl:
     @staticmethod
     def update_image(request, data) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data.id):
+            if not CheckInfos.is_valid_id(data["id"]):
                 raise HttpError(400, "Invalid id")
-            if not CheckInfos.is_valid_image_format(data.image):
+            if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
 
-            if ProductService.update_image(data.id, data.image):
+            if ProductService.update_image(data["id"], data["image"]):
                 return True
             else:
                 raise HttpError(500, "Error when updating product image")
