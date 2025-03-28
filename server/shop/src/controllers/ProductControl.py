@@ -114,6 +114,21 @@ class ProductControl:
             raise HttpError(403, "Unauthorized")
 
     @staticmethod
+    def update_image(request, data) -> bool | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data.id):
+                raise HttpError(400, "Invalid id")
+            if not CheckInfos.is_valid_image_format(data.image):
+                raise HttpError(400, "Unsupported image format")
+
+            if ProductService.update_image(data.id, data.image):
+                return True
+            else:
+                raise HttpError(500, "Error when updating product image")
+        else:
+            raise HttpError(403, "Unauthorized")
+
+    @staticmethod
     def delete(request, id: int) -> bool | HttpError:
         if AuthService.isAdmin(request):
             if not CheckInfos.is_valid_id(id):

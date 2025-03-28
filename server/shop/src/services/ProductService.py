@@ -46,16 +46,19 @@ class ProductService:
 
     @staticmethod
     def update(
-        id: int,
-        name: str,
-        descripton: str,
-        price: int,
-        status: int,
-        category_id: int,
-        image: str,
+        id: int, name: str, descripton: str, price: int, status: int, category_id: int
     ) -> Product | None:
         category = CategoryRepo.get(category_id)
-        return ProductRepo.update(id, name, descripton, price, status, category, image)
+        return ProductRepo.update(id, name, descripton, price, status, category)
+
+    @staticmethod
+    def update_image(id: int, image: str) -> bool:
+        try:
+            image_url = ImageUploader.product(image)
+            return ProductRepo.update_image(id, image_url)
+        except Exception as e:
+            print(f"[Cloudinary Upload Error] {e}")
+            return False
 
     # @staticmethod
     # def update_top(id: int, top_order: int) -> (Product | None):

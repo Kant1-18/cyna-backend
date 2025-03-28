@@ -91,6 +91,19 @@ class ProductRepo:
         return None
 
     @staticmethod
+    def update_image(id: int, image_url: str) -> bool:
+        try:
+            product = Product.objects.get(id=id)
+            if product:
+                product.image = image_url
+                product.save()
+                return True
+        except Exception as e:
+            print(e)
+
+        return False
+
+    @staticmethod
     def update_top(id: int, top_order: int) -> Product | None:
         try:
             product = Product.objects.get(id=id)

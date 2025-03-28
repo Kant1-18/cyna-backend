@@ -66,6 +66,13 @@ def update(request, data: UpdateSchema) -> Product | HttpError:
     return ProductControl.update(request, data)
 
 
+@router.put("/updateImage", auth=JWTAuth())
+def update_image(
+    request, id: int = Form(...), image: UploadedFile = File(...)
+) -> bool | HttpError:
+    return ProductControl.update_image(request, {"id": id, "image": image})
+
+
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete(request, id: int) -> bool:
     return ProductControl.delete(request, id)
