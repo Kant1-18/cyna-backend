@@ -6,6 +6,9 @@ from users.src.data.models.User import User
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.user.email
+
     def to_json(self):
         return {
             "id": self.id,

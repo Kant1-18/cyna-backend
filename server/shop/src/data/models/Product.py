@@ -11,6 +11,9 @@ class Product(models.Model):
     image = models.TextField()
     top_order = models.IntegerField(default=0, blank=False, null=False)
 
+    def __str__(self):
+        return self.name
+
     def to_json(self):
         return {
             "id": self.id,

@@ -9,6 +9,9 @@ class Discount(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=False)
 
+    def __str__(self):
+        return f"{self.product.name} - {self.percentage}%"
+
     def to_json(self):
         return {
             "id": self.id,
