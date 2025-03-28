@@ -76,8 +76,3 @@ def update_image(
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete(request, id: int) -> bool:
     return ProductControl.delete(request, id)
-
-
-@router.get("/getAllWithDiscounts", auth=JWTAuth())
-def get_all_with_discounts(request) -> list | HttpError:
-    return ProductControl.get_all_with_discounts()
