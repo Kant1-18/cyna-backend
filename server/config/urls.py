@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib import admin
 from ninja import NinjaAPI
 from users.src.routes.AuthUrls import router as auth_router
 from users.src.routes.UserUrls import router as user_router
@@ -19,5 +20,6 @@ api.add_router("/products", product_router)
 api.add_router("/discounts", discount_router)
 
 urlpatterns = [
+    path("admin/", admin.site.urls),
     path("api/", api.urls),
 ]

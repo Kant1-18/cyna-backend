@@ -6,6 +6,9 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.IntegerField(default=0, blank=False, null=False)
 
+    def __str__(self):
+        return f"{self.user.email} - {self.status}"
+
     def to_json(self):
         return {
             "id": self.id,
