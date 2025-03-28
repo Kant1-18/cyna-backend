@@ -3,7 +3,7 @@ from shop.src.data.repositories.ProductRepo import ProductRepo
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.repositories.DiscountRepo import DiscountRepo
 from ninja.files import UploadedFile
-from utils.Cloudinary import ImageUploader
+from utils.cloudinary import ImageUploader
 
 
 class ProductService:
