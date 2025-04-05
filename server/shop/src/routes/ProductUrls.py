@@ -14,7 +14,7 @@ class ProductSchema(ModelSchema):
         fields = "__all__"
 
 
-class UpdateSchema(Schema):
+class ProductUpdateSchema(Schema):
     id: int
     name: str
     description: str
@@ -62,7 +62,7 @@ def get_all_by_category(request, categoryId: int) -> list[Product] | HttpError:
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> Product | HttpError:
+def update(request, data: ProductUpdateSchema) -> Product | HttpError:
     return ProductControl.update(request, data)
 
 

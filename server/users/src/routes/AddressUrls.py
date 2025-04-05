@@ -24,7 +24,7 @@ class AddSchema(Schema):
     country: str
 
 
-class UpdateSchema(Schema):
+class AddressUpdateSchema(Schema):
     id: int
     type: int
     street: str
@@ -52,7 +52,7 @@ def get_all_by_user(request) -> list[Address] | HttpError:
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> Address | HttpError:
+def update(request, data: AddressUpdateSchema) -> Address | HttpError:
     return AddressControl.update(data)
 
 

@@ -13,7 +13,7 @@ class UserSchema(ModelSchema):
         fields = "__all__"
 
 
-class UpdateSchema(Schema):
+class UserUpdateSchema(Schema):
     id: int
     firstName: str
     lastName: str
@@ -39,7 +39,7 @@ def get_by_email(request, email: str) -> User | HttpError:
 
 
 @router.put("/update", auth=JWTAuth())
-def update(request, data: UpdateSchema) -> User | HttpError:
+def update(request, data: UserUpdateSchema) -> User | HttpError:
     return UsersControl.update(data)
 
 
