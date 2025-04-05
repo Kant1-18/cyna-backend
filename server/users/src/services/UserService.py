@@ -5,10 +5,8 @@ from users.src.data.models.User import User
 class UserService:
 
     @staticmethod
-    def add(
-        first_name: str, last_name: str, email: str, role: int, password: str
-    ) -> User | None:
-        return UserRepo.add(first_name, last_name, email, role, password)
+    def add(first_name: str, last_name: str, email: str, password: str) -> User | None:
+        return UserRepo.add(first_name, last_name, email, password)
 
     @staticmethod
     def get(id: int) -> User | None:

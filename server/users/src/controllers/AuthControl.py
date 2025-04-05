@@ -19,18 +19,13 @@ class AuthControl:
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
 
-        if not CheckInfos.is_users_role(data.role):
-            raise HttpError(400, "Invalid role")
-
         if not CheckInfos.is_valid_password(data.password):
             raise HttpError(400, "password invalid")
 
         if UserService.get_by_email(data.email):
             raise HttpError(409, "email already exists")
 
-        user = UserService.add(
-            data.firstName, data.lastName, data.email, data.role, data.password
-        )
+        user = UserService.add(data.firstName, data.lastName, data.email, data.password)
         if not user:
             raise HttpError(500, "An error occurred while creating the user")
 
