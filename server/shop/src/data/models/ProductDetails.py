@@ -3,9 +3,7 @@ from shop.src.data.models.Product import Product
 
 
 class ProductDetails(models.Model):
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, related_name="details"
-    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     locale = models.CharField(max_length=5, default="en")
     name = models.CharField(max_length=255, null=False)
     description_title = models.TextField(null=False)
