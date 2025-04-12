@@ -3,25 +3,26 @@ from shop.src.data.models.Category import Category
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.IntegerField(null=False)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     status = models.IntegerField(default=0, blank=False, null=False)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    image = models.TextField()
-    top_order = models.IntegerField(default=0, blank=False, null=False)
-
-    def __str__(self):
-        return self.name
+    base_price = models.IntegerField(default=0, blank=False, null=False)
+    price = models.IntegerField(default=0, blank=False, null=False)
+    discount_order = models.IntegerField(default=0, blank=False, null=False)
+    discount_percentage = models.IntegerField(default=0, blank=False, null=False)
+    image1 = models.TextField()
+    image2 = models.TextField()
+    image3 = models.TextField()
 
     def to_json(self):
         return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "price": self.price,
-            "status": self.status,
             "category": self.category.to_json(),
-            "image": self.image,
-            "top_order": self.top_order,
+            "status": self.status,
+            "base_price": self.base_price,
+            "price": self.price,
+            "discount_order": self.discount_order,
+            "discount_percentage": self.discount_percentage,
+            "image1": self.image1,
+            "image2": self.image2,
+            "image3": self.image3,
+            "details": [detail.to_json() for detail in self.details.all()],
         }

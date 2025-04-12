@@ -7,22 +7,21 @@ class ProductRepo:
 
     @staticmethod
     def add(
-        name: str,
-        descripton: str,
-        price: int,
-        status: int,
         category: Category,
-        image: str,
+        status: int,
+        base_price: int,
+        image1: str,
+        image2: str,
+        image3: str,
     ) -> Product | None:
         try:
             product = Product.objects.create(
-                name=name,
-                description=descripton,
-                price=price,
-                status=status,
                 category=category,
-                image=image,
-                top_order=0,
+                status=status,
+                base_price=base_price,
+                image1=image1,
+                image2=image2,
+                image3=image3,
             )
             if product:
                 return product
@@ -67,22 +66,20 @@ class ProductRepo:
     @staticmethod
     def update(
         id: int,
-        name: str,
-        descripton: str,
-        price: int,
-        status: int,
         category: Category,
-        image: str,
+        status: int,
+        base_price: int,
+        discount_order: int,
+        discount_percentage: int,
     ) -> Product | None:
         try:
             product = Product.objects.get(id=id)
             if product:
-                product.name = name
-                product.description = descripton
-                product.price = price
-                product.status = status
                 product.category = category
-                product.image = image
+                product.status = status
+                product.base_price = base_price
+                product.discount_order = discount_order
+                product.discount_percentage = discount_percentage
                 product.save()
                 return product
         except Exception as e:
@@ -91,11 +88,11 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def update_image(id: int, image_url: str) -> bool:
+    def update_image1(id: int, image_url: str) -> bool:
         try:
             product = Product.objects.get(id=id)
             if product:
-                product.image = image_url
+                product.image1 = image_url
                 product.save()
                 return True
         except Exception as e:
@@ -104,15 +101,30 @@ class ProductRepo:
         return False
 
     @staticmethod
-    def update_top(id: int, top_order: int) -> Product | None:
+    def update_image2(id: int, image_url: str) -> bool:
         try:
             product = Product.objects.get(id=id)
             if product:
-                product.top_order = top_order
+                product.image2 = image_url
                 product.save()
-                return product
+                return True
         except Exception as e:
             print(e)
+
+        return False
+
+    @staticmethod
+    def update_image3(id: int, image_url: str) -> bool:
+        try:
+            product = Product.objects.get(id=id)
+            if product:
+                product.image3 = image_url
+                product.save()
+                return True
+        except Exception as e:
+            print(e)
+
+        return False
 
     @staticmethod
     def delete(id: int) -> bool:
