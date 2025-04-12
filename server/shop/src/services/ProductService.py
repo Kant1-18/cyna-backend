@@ -42,7 +42,7 @@ class ProductService:
             )
 
         except Exception as e:
-            print("error: add product => ", e)
+            print(e)
             return None
 
     @staticmethod
@@ -72,7 +72,7 @@ class ProductService:
                 specifications,
             )
         except Exception as e:
-            print("creation errot", e)
+            print(e)
             return None
 
     ###########################################################################
