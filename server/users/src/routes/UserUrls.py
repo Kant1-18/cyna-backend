@@ -40,12 +40,12 @@ def get_by_email(request, email: str) -> User | HttpError:
 
 @router.put("/update", auth=JWTAuth())
 def update(request, data: UserUpdateSchema) -> User | HttpError:
-    return UsersControl.update(data)
+    return UsersControl.update(request, data)
 
 
 @router.put("/updatePassword", auth=JWTAuth())
 def update_password(request, data: UpdatePasswordSchema) -> User | HttpError:
-    return UsersControl.update_password(data)
+    return UsersControl.update_password(request, data)
 
 
 @router.delete("/delete/{id}", auth=JWTAuth())
