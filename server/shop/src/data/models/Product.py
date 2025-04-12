@@ -9,9 +9,9 @@ class Product(models.Model):
     price = models.IntegerField(default=0, blank=False, null=False)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     discount_percentage = models.IntegerField(default=0, blank=False, null=False)
-    image1 = models.TextField()
-    image2 = models.TextField()
-    image3 = models.TextField()
+    image1 = models.TextField(null=True)
+    image2 = models.TextField(null=True)
+    image3 = models.TextField(null=True)
 
     def to_json(self):
         return {
