@@ -1,4 +1,5 @@
-from shop.src.data.models.Product import Product
+from shop.models import Product
+from shop.models import ProductDetails
 from shop.src.data.repositories.ProductRepo import ProductRepo
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
