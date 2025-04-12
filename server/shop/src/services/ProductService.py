@@ -42,7 +42,7 @@ class ProductService:
             )
 
         except Exception as e:
-            print("creation errot", e)
+            print("error: add product => ", e)
             return None
 
     @staticmethod
@@ -164,10 +164,33 @@ class ProductService:
             return None
 
     @staticmethod
-    def update_details(product_id: int, locale: str, details: dict) -> Details | None:
-        product = ProductRepo.get(product_id)
-        details = DetailsRepo.get_all_by_product_and_locale(product, locale)
-        ...
+    def update_details(
+        product_id: int,
+        locale: str,
+        name: str,
+        description_title: str,
+        description_text: str,
+        benefits: dict,
+        functionalities: dict,
+        specifications: dict,
+    ) -> Details | None:
+        try:
+            product = ProductRepo.get(product_id)
+            details = DetailsRepo.get_all_by_product_and_locale(product, locale)
+
+            return DetailsRepo.update(
+                details.id,
+                name,
+                description_title,
+                description_text,
+                benefits,
+                functionalities,
+                specifications,
+            )
+
+        except Exception as e:
+            print(e)
+            return None
 
     @staticmethod
     def update_image1(id: int, image: str) -> bool:
@@ -201,5 +224,9 @@ class ProductService:
     ###########################################################################
 
     @staticmethod
-    def delete(id: int) -> bool:
+    def delete_product(id: int) -> bool:
         return ProductRepo.delete(id)
+
+    @staticmethod
+    def delete_details(id: int) -> bool:
+        return DetailsRepo.delete(id)

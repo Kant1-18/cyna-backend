@@ -24,5 +24,4 @@ class Product(models.Model):
             "image1": self.image1,
             "image2": self.image2,
             "image3": self.image3,
-            "details": [detail.to_json() for detail in self.details.all()],
         }
