@@ -8,6 +8,10 @@ from shop.src.services.CategoryService import CategoryService
 
 class ProductControl:
 
+    ###########################################################################
+    # ADD
+    ###########################################################################
+
     @staticmethod
     def add(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
@@ -44,6 +48,10 @@ class ProductControl:
         else:
             raise HttpError(403, "Unauthorized")
 
+    ###########################################################################
+    # GET
+    ###########################################################################
+
     @staticmethod
     def get(id: int) -> Product | HttpError:
         if not CheckInfos.is_valid_id(id):
@@ -72,6 +80,10 @@ class ProductControl:
             return [product.to_json() for product in products]
         else:
             raise HttpError(404, "Products not found for the category")
+
+    ###########################################################################
+    # UPDATE
+    ###########################################################################
 
     @staticmethod
     def update(request, data) -> Product | HttpError:
@@ -123,6 +135,10 @@ class ProductControl:
                 raise HttpError(500, "Error when updating product image")
         else:
             raise HttpError(403, "Unauthorized")
+
+    ###########################################################################
+    # delete
+    ###########################################################################
 
     @staticmethod
     def delete(request, id: int) -> bool | HttpError:
