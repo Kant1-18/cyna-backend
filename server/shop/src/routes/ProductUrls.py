@@ -14,4 +14,35 @@ class ProductSchema(ModelSchema):
         fields = "__all__"
 
 
+class ProductUpdateSchema(Schema):
+    id: int
+    name: str
+    description: str
+    price: int
+    status: int
+    categoryId: int
+
+
+# @router.post("/add", auth=JWTAuth())
+# def add(
+#     request,
+#     name: str = Form(...),
+#     description: str = Form(...),
+#     price: int = Form(...),
+#     status: int = Form(...),
+#     categoryId: int = Form(...),
+#     image: UploadedFile = File(...),
+# ) -> Product | HttpError:
+#     return ProductControl.add(
+#         request,
+#         {
+#             "name": name,
+#             "description": description,
+#             "price": price,
+#             "status": status,
+#             "categoryId": categoryId,
+#             "image": image,
+#         },
+#     )
+
 ...
