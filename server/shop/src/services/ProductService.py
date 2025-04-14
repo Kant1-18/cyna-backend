@@ -101,14 +101,14 @@ class ProductService:
 
     @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | None:
-        result = {}
+        result_details = {}
         try:
             products = ProductRepo.get_all()
             for product in products:
                 details = DetailsRepo.get_all_by_product_and_locale(product, locale)
-                result[product] = details
+                result_details[product] = details
 
-            return result
+            return products, result_details
         except Exception as e:
             print(e)
             return None
