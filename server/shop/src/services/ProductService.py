@@ -18,8 +18,12 @@ class ProductService:
     @staticmethod
     def add_product(
         category_id: int,
+        name: str,
         status: int,
         base_price: int,
+        price: int,
+        discount_order: int,
+        discount_percentage: int,
         image1: UploadedFile,
         image2: UploadedFile,
         image3: UploadedFile,
@@ -34,8 +38,12 @@ class ProductService:
             image3 = ImageUploader.product(image3)
             return ProductRepo.add(
                 category,
+                name,
                 status,
                 base_price,
+                price,
+                discount_order,
+                discount_percentage,
                 image1,
                 image2,
                 image3,
@@ -46,7 +54,7 @@ class ProductService:
             return None
 
     @staticmethod
-    def add_details(
+    def add_product_details(
         product_id: int,
         locale: str,
         name: str,
@@ -64,7 +72,6 @@ class ProductService:
             return DetailsRepo.add(
                 product,
                 locale,
-                name,
                 description_title,
                 description_text,
                 benefits,
@@ -87,7 +94,7 @@ class ProductService:
     def get_by_locale(product_id: int, locale: str) -> Product | None:
         try:
             product = ProductRepo.get(product_id)
-            details = DetailsRepo.get_all_by_product_and_locale(product, locale)
+            details = DetailsRepo.get_by_product_and_locale(product, locale)
 
             return product, details
 
@@ -96,16 +103,12 @@ class ProductService:
             return None
 
     @staticmethod
-    def get_all() -> list[Product] | None:
-        return ProductRepo.get_all()
-
-    @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | None:
         result_details = {}
         try:
             products = ProductRepo.get_all()
             for product in products:
-                details = DetailsRepo.get_all_by_product_and_locale(product, locale)
+                details = DetailsRepo.get_by_product_and_locale(product, locale)
                 result_details[product] = details
 
             return products, result_details
@@ -114,24 +117,22 @@ class ProductService:
             return None
 
     @staticmethod
-    def get_all_by_category(category_id: int) -> list[Product] | None:
-        category = CategoryRepo.get(category_id)
-        if not category:
-            return None
-        return ProductRepo.get_all_by_category(category)
-
-    @staticmethod
-    def get_all_by_category_and_status(
-        category_id: int, status: int
+    def get_all_by_category_and_locale(
+        category_id: int, locale: str
     ) -> list[Product] | None:
         category = CategoryRepo.get(category_id)
         if not category:
             return None
-        return ProductRepo.get_all_by_category_and_status(category, status)
-
-    @staticmethod
-    def get_all_by_status(status: int) -> list[Product] | None:
-        return ProductRepo.get_all_by_status(status)
+        result_details = {}
+        try:
+            products = ProductRepo.get_all_by_category(category)
+            for product in products:
+                details = DetailsRepo.get_by_product_and_locale(product, locale)
+                result_details[product] = details
+            return products, result_details
+        except Exception as e:
+            print(e)
+            return None
 
     ###########################################################################
     # UPDATE
@@ -176,7 +177,7 @@ class ProductService:
     ) -> Details | None:
         try:
             product = ProductRepo.get(product_id)
-            details = DetailsRepo.get_all_by_product_and_locale(product, locale)
+            details = DetailsRepo.get_by_product_and_locale(product, locale)
 
             return DetailsRepo.update(
                 details.id,

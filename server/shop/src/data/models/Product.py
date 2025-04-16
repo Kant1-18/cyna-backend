@@ -1,26 +1,26 @@
 from django.db import models
 from shop.src.data.models.Category import Category
-from shop.src.data.models.ProductDetails import ProductDetails as Details
 
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.TextField(null=True)
     status = models.IntegerField(default=0, blank=False, null=False)
     base_price = models.IntegerField(default=0, blank=False, null=False)
-    price = models.IntegerField(default=0, blank=False, null=False)
+    price = models.IntegerField(default=0, blank=False, null=True)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     discount_percentage = models.IntegerField(default=0, blank=False, null=False)
     image1 = models.TextField(null=True)
     image2 = models.TextField(null=True)
     image3 = models.TextField(null=True)
 
-    def to_json(self, details: Details):
+    def to_json(self, details):
         if self.price == None:
             self.price = (self.base_price * self.discount_percentage) / 100
         return {
             "id": self.id,
             "category": self.category.to_json(),
-            "name": details.name,
+            "name": self.name,
             "slides": [
                 self.image1,
                 self.image2,
@@ -41,4 +41,21 @@ class Product(models.Model):
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
+        }
+
+    def to_json_admin(self):
+        return {
+            "id": self.id,
+            "category": self.category.to_json(),
+            "name": self.name,
+            "basePrice": self.base_price,
+            "price": self.price,
+            "status": self.status,
+            "discountOrder": self.discount_order,
+            "discountPercentage": self.discount_percentage,
+            "slides": [
+                self.image1,
+                self.image2,
+                self.image3,
+            ],
         }

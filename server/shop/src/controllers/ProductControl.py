@@ -1,4 +1,5 @@
 from shop.src.data.models.Product import Product
+from shop.src.data.models.ProductDetails import ProductDetails as Details
 from shop.src.services.ProductService import ProductService
 from users.src.services.AuthService import AuthService
 from ninja.errors import HttpError
@@ -13,38 +14,86 @@ class ProductControl:
     ###########################################################################
 
     @staticmethod
-    def add(request, data) -> Product | HttpError:
+    def add_product(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data["categoryId"]):
+                raise HttpError(400, "Invalid id for category")
+
             if not CheckInfos.is_valid_string(data["name"]):
                 raise HttpError(400, "Invalid name")
-
-            if not CheckInfos.is_valid_string(data["description"]):
-                raise HttpError(400, "Invalid description")
-
-            if not CheckInfos.is_valid_price(data["price"]):
-                raise HttpError(400, "Invalid price")
 
             if not CheckInfos.is_status_product(data["status"]):
                 raise HttpError(400, "Invalid status")
 
-            if not CheckInfos.is_valid_id(data["categoryId"]):
-                raise HttpError(400, "Invalid id for category")
+            if not CheckInfos.is_valid_price(data["basePrice"]):
+                raise HttpError(400, "Invalid basePrice")
 
-            if not CheckInfos.is_valid_image_format(data["image"]):
+            if data["price"] != None:
+                if not CheckInfos.is_valid_price(data["basePrice"]):
+                    raise HttpError(400, "Invalid price")
+
+            if not CheckInfos.is_valid_id(data["discountOrder"]):
+                raise HttpError(400, "Invalid discountOrder")
+
+            if not CheckInfos.is_percentage(data["discountPercentage"]):
+                raise HttpError(400, "Invalid discountPercentage")
+
+            if not CheckInfos.is_valid_image_format(data["image1"]):
+                raise HttpError(400, "Unsupported image format")
+
+            if not CheckInfos.is_valid_image_format(data["image2"]):
+                raise HttpError(400, "Unsupported image format")
+
+            if not CheckInfos.is_valid_image_format(data["image3"]):
                 raise HttpError(400, "Unsupported image format")
 
             product = ProductService.add(
-                data["name"],
-                data["description"],
-                data["price"],
-                data["status"],
                 data["categoryId"],
-                data["image"],
+                data["name"],
+                data["status"],
+                data["basePrice"],
+                data["price"],
+                data["discountOrder"],
+                data["discountPercentage"],
+                data["image1"],
+                data["image2"],
+                data["image3"],
             )
             if product:
-                return product.to_json()
+                return product.to_json_admin()
             else:
                 raise HttpError(500, "Error when adding product")
+        else:
+            raise HttpError(403, "Unauthorized")
+
+    @staticmethod
+    def add_product_details(request, data) -> Details | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data["productId"]):
+                raise HttpError(400, "Invalid id for product")
+
+            if not CheckInfos.is_valid_locale(data["locale"]):
+                raise HttpError(400, "Invalid locale")
+
+            if not CheckInfos.is_valid_string(data["description_title"]):
+                raise HttpError(400, "Invalid description_title")
+
+            if not CheckInfos.is_valid_string(data["description_text"]):
+                raise HttpError(400, "Invalid description_text")
+
+            details = ProductService.add_product_details(
+                data["productId"],
+                data["locale"],
+                data["description_title"],
+                data["description_text"],
+                data["benefits"],
+                data["functionalities"],
+                data["specifications"],
+            )
+            if details:
+                return details.to_json()
+            else:
+                raise HttpError(500, "Error when adding product details")
         else:
             raise HttpError(403, "Unauthorized")
 
@@ -53,33 +102,46 @@ class ProductControl:
     ###########################################################################
 
     @staticmethod
-    def get(id: int) -> Product | HttpError:
+    def get_by_id_and_locale(id: int, locale: str) -> Product | HttpError:
         if not CheckInfos.is_valid_id(id):
             raise HttpError(400, "Invalid id")
-        product = ProductService.get(id)
-        if product:
-            return product.to_json()
+
+        if not CheckInfos.is_valid_locale(locale):
+            raise HttpError(400, "Invalid locale")
+
+        product, details = ProductService.get_by_locale(id, locale)
+        if product and details:
+            return product.to_json(details)
         else:
             raise HttpError(404, "Product not found")
 
     @staticmethod
-    def get_all() -> list[Product] | HttpError:
-        products = ProductService.get_all()
+    def get_all_by_locale(locale: str) -> list[Product] | HttpError:
+        if not CheckInfos.is_valid_locale(locale):
+            raise HttpError(400, "Invalid locale")
+
+        products, details = ProductService.get_all_by_locale(locale)
         if products:
-            return [product.to_json() for product in products]
+            return [product.to_json(details[product]) for product in products]
         else:
-            raise HttpError(404, "Products not found")
+            raise HttpError(404, "No products found")
 
     @staticmethod
-    def get_all_by_category(category_id: int) -> list[Product] | HttpError:
+    def get_all_by_category_and_locale(
+        category_id: int, locale: str
+    ) -> list[Product] | HttpError:
         if not CategoryService.is_category_exist(category_id):
-            raise HttpError(404, "Category not found")
+            raise HttpError(400, "Invalid category id")
+        if not CheckInfos.is_valid_locale(locale):
+            raise HttpError(400, "Invalid locale")
 
-        products = ProductService.get_by_category(category_id)
+        products, details = ProductService.get_all_by_category_and_locale(
+            category_id, locale
+        )
         if products:
-            return [product.to_json() for product in products]
+            return [product.to_json(details[product]) for product in products]
         else:
-            raise HttpError(404, "Products not found for the category")
+            raise HttpError(404, "No products found")
 
     ###########################################################################
     # UPDATE
