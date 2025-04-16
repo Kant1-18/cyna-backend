@@ -1,5 +1,6 @@
 from django.db import models
 from shop.src.data.models.Category import Category
+from shop.src.data.models.ProductDetails import ProductDetails as Details
 
 
 class Product(models.Model):
@@ -13,15 +14,31 @@ class Product(models.Model):
     image2 = models.TextField(null=True)
     image3 = models.TextField(null=True)
 
-    def to_json(self):
+    def to_json(self, details: Details):
+        if self.price == None:
+            self.price = (self.base_price * self.discount_percentage) / 100
         return {
+            "id": self.id,
             "category": self.category.to_json(),
-            "status": self.status,
-            "base_price": self.base_price,
+            "name": details.name,
+            "slides": [
+                self.image1,
+                self.image2,
+                self.image3,
+            ],
+            "description": {
+                "title": details.description_title,
+                "text": details.description_text,
+            },
+            "benefits": [benefit for benefit in details.benefits.split(",")],
+            "functionalities": [
+                functionality for functionality in details.functionalities.split(",")
+            ],
+            "specifications": [
+                specification for specification in details.specifications.split(",")
+            ],
             "price": self.price,
-            "discount_order": self.discount_order,
-            "discount_percentage": self.discount_percentage,
-            "image1": self.image1,
-            "image2": self.image2,
-            "image3": self.image3,
+            "status": self.status,
+            "discountOrder": self.discount_order,
+            "discountPercentage": self.discount_percentage,
         }
