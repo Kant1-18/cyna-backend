@@ -8,6 +8,7 @@ class ProductRepo:
     @staticmethod
     def add(
         category: Category,
+        name: str,
         status: int,
         base_price: int,
         price: int,
@@ -20,6 +21,7 @@ class ProductRepo:
         try:
             product = Product.objects.create(
                 category=category,
+                name=name,
                 status=status,
                 base_price=base_price,
                 price=price,

@@ -8,7 +8,6 @@ class ProductDetailsRepo:
     def add(
         product: Product,
         locale: str,
-        name: str,
         description_title: str,
         description_text: str,
         benefits: dict,
@@ -19,7 +18,6 @@ class ProductDetailsRepo:
             product_details = ProductDetails.objects.create(
                 product=product,
                 locale=locale,
-                name=name,
                 description_title=description_title,
                 description_text=description_text,
                 benefits=benefits,
@@ -45,7 +43,7 @@ class ProductDetailsRepo:
         return None
 
     @staticmethod
-    def get_all_by_product_and_locale(
+    def get_by_product_and_locale(
         product: Product, locale: str
     ) -> ProductDetails | None:
         try:

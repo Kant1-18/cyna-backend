@@ -119,3 +119,10 @@ class CheckInfos:
     def is_valid_image_format(file: UploadedFile) -> bool:
         _, ext = os.path.splitext(file.name.lower())
         return ext in ALLOWED_IMAGE_EXTENSIONS
+
+    @staticmethod
+    def is_valid_locale(locale: str) -> bool:
+        if locale in ["en", "fr"]:
+            return True
+        else:
+            return False

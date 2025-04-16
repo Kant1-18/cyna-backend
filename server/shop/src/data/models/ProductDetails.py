@@ -5,7 +5,6 @@ from shop.src.data.models.Product import Product
 class ProductDetails(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     locale = models.CharField(max_length=5, default="en")
-    name = models.CharField(max_length=255, null=False)
     description_title = models.TextField(null=False)
     description_text = models.TextField(null=False)
     benefits = models.JSONField()
@@ -16,7 +15,6 @@ class ProductDetails(models.Model):
         return {
             "id": self.id,
             "locale": self.locale,
-            "name": self.name,
             "description_title": self.description_title,
             "description_text": self.description_text,
             "benefits": self.benefits,
