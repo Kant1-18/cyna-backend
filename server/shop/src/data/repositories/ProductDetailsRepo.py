@@ -91,7 +91,6 @@ class ProductDetailsRepo:
     @staticmethod
     def update(
         id: int,
-        name: str,
         description_title: str,
         description_text: str,
         benefits: dict,
@@ -101,7 +100,6 @@ class ProductDetailsRepo:
         try:
             product_details = ProductDetails.objects.get(id=id)
             if product_details:
-                product_details.name = name
                 product_details.description_title = description_title
                 product_details.description_text = description_text
                 product_details.benefits = benefits

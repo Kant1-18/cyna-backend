@@ -17,18 +17,17 @@ class ProductSchema(ModelSchema):
 
 class ProductUpdateSchema(Schema):
     id: int
-    name: str
-    description: str
-    price: int
-    status: int
     categoryId: int
+    name: str
+    status: int
+    basePrice: int
+    price: int
+    discountOrder: int
+    discountPercentage: int
 
 
 class ProductDetailsUpdateSchema(Schema):
     id: int
-    productId: int
-    locale: str
-    name: str
     description_title: str
     description_text: str
     benefits: dict
@@ -131,10 +130,54 @@ def get_all_by_category_and_locale(
 # UPDATE
 ###########################################################################
 
-...
+
+@router.put("/update", auth=JWTAuth())
+def update(request, data: ProductUpdateSchema) -> Product | HttpError:
+    return ProductControl.update(request, data)
+
+
+@router.patch("/update/image1", auth=JWTAuth())
+def update_image1(
+    request, productId: int, image: UploadedFile = File(...)
+) -> bool | HttpError:
+    return ProductControl.update_image1(
+        request, {"productId": productId, "image": image}
+    )
+
+
+@router.patch("/update/image2", auth=JWTAuth())
+def update_image2(
+    request, productId: int, image: UploadedFile = File(...)
+) -> bool | HttpError:
+    return ProductControl.update_image2(
+        request, {"productId": productId, "image": image}
+    )
+
+
+@router.patch("/update/image3", auth=JWTAuth())
+def update_image3(
+    request, productId: int, image: UploadedFile = File(...)
+) -> bool | HttpError:
+    return ProductControl.update_image3(
+        request, {"productId": productId, "image": image}
+    )
+
+
+@router.put("/update/details", auth=JWTAuth())
+def update_details(request, data: ProductDetailsUpdateSchema) -> Details | HttpError:
+    return ProductControl.update_details(request, data)
+
 
 ###########################################################################
 # DELETE
 ###########################################################################
 
-...
+
+@router.delete("/delete/{id}", auth=JWTAuth())
+def delete_by_id(request, id: int) -> Product | HttpError:
+    return ProductControl.delete_by_id(id)
+
+
+@router.delete("/delete/details/{id}", auth=JWTAuth())
+def delete_by_id_details(request, id: int) -> Details | HttpError:
+    return ProductControl.delete_by_id_details(id)

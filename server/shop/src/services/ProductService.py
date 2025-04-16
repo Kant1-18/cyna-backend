@@ -144,6 +144,7 @@ class ProductService:
         category_id: int,
         status: int,
         base_price: int,
+        price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -166,9 +167,7 @@ class ProductService:
 
     @staticmethod
     def update_details(
-        product_id: int,
-        locale: str,
-        name: str,
+        id: int,
         description_title: str,
         description_text: str,
         benefits: dict,
@@ -176,12 +175,8 @@ class ProductService:
         specifications: dict,
     ) -> Details | None:
         try:
-            product = ProductRepo.get(product_id)
-            details = DetailsRepo.get_by_product_and_locale(product, locale)
-
             return DetailsRepo.update(
-                details.id,
-                name,
+                id,
                 description_title,
                 description_text,
                 benefits,
@@ -194,7 +189,7 @@ class ProductService:
             return None
 
     @staticmethod
-    def update_image1(id: int, image: str) -> bool:
+    def update_image1(id: int, image) -> bool:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image1(id, image_url)
@@ -203,7 +198,7 @@ class ProductService:
             return False
 
     @staticmethod
-    def update_image2(id: int, image: str) -> bool:
+    def update_image2(id: int, image) -> bool:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image2(id, image_url)
@@ -212,7 +207,7 @@ class ProductService:
             return False
 
     @staticmethod
-    def update_image3(id: int, image: str) -> bool:
+    def update_image3(id: int, image) -> bool:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image3(id, image_url)

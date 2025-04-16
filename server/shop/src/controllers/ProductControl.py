@@ -153,38 +153,48 @@ class ProductControl:
             if not CheckInfos.is_valid_id(data.id):
                 raise HttpError(400, "Invalid id")
 
+            if not CategoryService.is_category_exist(data.categoryId):
+                raise HttpError(400, "Invalid id for category")
+
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
-            if not CheckInfos.is_valid_string(data.description):
+            if not CheckInfos.is_status_product(data.status):
                 raise HttpError(400, "Invalid string for description")
 
-            if not CheckInfos.is_valid_price(data.price):
+            if not CheckInfos.is_valid_price(data.basePrice):
                 raise HttpError(400, "Invalid price")
 
-            if not CheckInfos.is_status_product(data.status):
-                raise HttpError(400, "Invalid status")
+            if data.price != None:
+                if not CheckInfos.is_valid_price(data.basePrice):
+                    raise HttpError(400, "Invalid price")
 
-            if not CheckInfos.is_valid_id(data.categoryId):
-                raise HttpError(400, "Invalid id for category")
+            if data.discountPercentage != None:
+                if not CheckInfos.is_valid_id(data.discountOrder):
+                    raise HttpError(400, "Invalid discountOrder")
+
+            if data.discountPercentage != None:
+                if not CheckInfos.is_percentage(data.discountPercentage):
+                    raise HttpError(400, "Invalid discountPercentage")
 
             product = ProductService.update(
                 data.id,
                 data.name,
-                data.description,
-                data.price,
-                data.status,
                 data.categoryId,
+                data.basePrice,
+                data.price,
+                data.discountOrder,
+                data.discountPercentage,
             )
             if product:
-                return product.to_json()
+                return product.to_json_admin()
             else:
                 raise HttpError(500, "Error when updating product")
         else:
             raise HttpError(403, "Unauthorized")
 
     @staticmethod
-    def update_image(request, data) -> bool | HttpError:
+    def update_image1(request, data) -> bool | HttpError:
         if AuthService.isAdmin(request):
             if not CheckInfos.is_valid_id(data["id"]):
                 raise HttpError(400, "Invalid id")
@@ -198,12 +208,69 @@ class ProductControl:
         else:
             raise HttpError(403, "Unauthorized")
 
+    @staticmethod
+    def update_image2(request, data) -> bool | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data["id"]):
+                raise HttpError(400, "Invalid id")
+            if not CheckInfos.is_valid_image_format(data["image"]):
+                raise HttpError(400, "Unsupported image format")
+
+            if ProductService.update_image2(data["id"], data["image"]):
+                return True
+            else:
+                raise HttpError(500, "Error when updating product image")
+        else:
+            raise HttpError(403, "Unauthorized")
+
+    @staticmethod
+    def update_image3(request, data) -> bool | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data["id"]):
+                raise HttpError(400, "Invalid id")
+            if not CheckInfos.is_valid_image_format(data["image"]):
+                raise HttpError(400, "Unsupported image format")
+
+            if ProductService.update_image3(data["id"], data["image"]):
+                return True
+            else:
+                raise HttpError(500, "Error when updating product image")
+        else:
+            raise HttpError(403, "Unauthorized")
+
+    @staticmethod
+    def update_details(request, data) -> Details | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(data.id):
+                raise HttpError(400, "Invalid id")
+
+            if not CheckInfos.is_valid_string(data.description_title):
+                raise HttpError(400, "Invalid string for description_title")
+
+            if not CheckInfos.is_valid_string(data.description_text):
+                raise HttpError(400, "Invalid string for description_text")
+
+            details = ProductService.update_details(
+                data.id,
+                data.description_title,
+                data.description_text,
+                data.benefits,
+                data.functionalities,
+                data.specifications,
+            )
+            if details:
+                return details.to_json()
+            else:
+                raise HttpError(500, "Error when updating product details")
+        else:
+            raise HttpError(403, "Unauthorized")
+
     ###########################################################################
     # delete
     ###########################################################################
 
     @staticmethod
-    def delete(request, id: int) -> bool | HttpError:
+    def delete_by_id(request, id: int) -> bool | HttpError:
         if AuthService.isAdmin(request):
             if not CheckInfos.is_valid_id(id):
                 raise HttpError(400, "Invalid id")
@@ -211,5 +278,17 @@ class ProductControl:
                 return True
             else:
                 raise HttpError(500, "Error when deleting product")
+        else:
+            raise HttpError(403, "Unauthorized")
+
+    @staticmethod
+    def delete_by_id_details(request, id: int) -> bool | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_valid_id(id):
+                raise HttpError(400, "Invalid id")
+            if ProductService.delete_details(id):
+                return True
+            else:
+                raise HttpError(500, "Error when deleting product details")
         else:
             raise HttpError(403, "Unauthorized")
