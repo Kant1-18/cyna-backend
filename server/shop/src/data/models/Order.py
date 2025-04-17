@@ -6,8 +6,12 @@ from users.models import Address
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.IntegerField(default=0, blank=False, null=False)
-    shipping_address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
-    billing_address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+    shipping_address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, related_name="shipping_address"
+    )
+    billing_address = models.ForeignKey(
+        Address, on_delete=models.SET_NULL, null=True, related_name="billing_address"
+    )
 
     def to_json(self):
         return {
