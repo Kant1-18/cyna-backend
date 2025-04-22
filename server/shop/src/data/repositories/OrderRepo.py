@@ -5,15 +5,13 @@ from users.models import User, Address
 class OrderRepo:
 
     @staticmethod
-    def add(
-        user: User, shipping_address: Address, billing_address: Address
-    ) -> Order | None:
+    def add(user: User) -> Order | None:
         try:
             order = Order.objects.create(
                 user=user,
                 status=0,
-                shipping_address=shipping_address,
-                billing_address=billing_address,
+                shipping_address=None,
+                billing_address=None,
             )
             if order:
                 return order

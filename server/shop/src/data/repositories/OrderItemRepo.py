@@ -23,6 +23,17 @@ class OrderItemRepo:
         return None
 
     @staticmethod
+    def get_by_order_and_product(order: Order, product: Product) -> OrderItem | None:
+        try:
+            item = OrderItem.objects.get(order=order, product=product)
+            if item:
+                return item
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def get_all_by_order(order: Order) -> list[OrderItem]:
         try:
             items = OrderItem.objects.filter(order=order)
