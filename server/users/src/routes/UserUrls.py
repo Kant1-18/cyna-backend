@@ -13,17 +13,29 @@ class UserSchema(ModelSchema):
         fields = "__all__"
 
 
+class UserAddAdminSchema(Schema):
+    firstName: str
+    lastName: str
+    email: str
+    password: str
+    confirmPassword: str
+
+
 class UserUpdateSchema(Schema):
     firstName: str
     lastName: str
     email: str
-    role: int
 
 
 class UpdatePasswordSchema(Schema):
     previousPassword: str
     newPassword: str
     confirmNewPassword: str
+
+
+@router.post("/addAdmin", auth=JWTAuth())
+def add_admin(request, data: UserAddAdminSchema) -> User | HttpError:
+    return UsersControl.add_admin(request, data)
 
 
 @router.get("/get/{id}", auth=JWTAuth())

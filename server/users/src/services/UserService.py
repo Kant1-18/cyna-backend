@@ -6,7 +6,13 @@ class UserService:
 
     @staticmethod
     def add(first_name: str, last_name: str, email: str, password: str) -> User | None:
-        return UserRepo.add(first_name, last_name, email, password)
+        return UserRepo.add(first_name, last_name, email, password, role=0)
+
+    @staticmethod
+    def add_admin(
+        first_name: str, last_name: str, email: str, password: str
+    ) -> User | None:
+        return UserRepo.add(first_name, last_name, email, password, role=1)
 
     @staticmethod
     def get(id: int) -> User | None:
@@ -17,10 +23,8 @@ class UserService:
         return UserRepo.get_by_email(email)
 
     @staticmethod
-    def update(
-        id: int, first_name: str, last_name: str, email: str, role: int
-    ) -> User | None:
-        return UserRepo.update(id, first_name, last_name, email, role)
+    def update(id: int, first_name: str, last_name: str, email: str) -> User | None:
+        return UserRepo.update(id, first_name, last_name, email)
 
     @staticmethod
     def update_password(id: int, password: str) -> User | None:
