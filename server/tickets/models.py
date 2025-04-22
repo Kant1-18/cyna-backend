@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+from tickets.src.data.models.Ticket import Ticket
