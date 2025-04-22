@@ -26,6 +26,13 @@ class OrderRouteSchema(Schema):
     quantity: int
 
 
+class OrderUpdateSchema(Schema):
+    orderId: int
+    status: int
+    shippingAddressId: int
+    billingAddressId: int
+
+
 class SratusUpdateSchema(Schema):
     orderId: int
     status: int
@@ -59,6 +66,11 @@ def get_all_orders(request) -> list[Order] | HttpError:
 @router.get("/getOrderById/{orderId}", auth=JWTAuth())
 def get_order_by_id(request, orderId: int) -> Order | HttpError:
     return OrderControl.get_order_by_id(request, orderId)
+
+
+@router.put("/updateOrder", auth=JWTAuth())
+def update_order(request, data: OrderUpdateSchema) -> Order | HttpError:
+    return OrderControl.update_order(request, data)
 
 
 @router.patch("/updateOrderStatus", auth=JWTAuth())

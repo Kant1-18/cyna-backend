@@ -99,6 +99,24 @@ class OrderService:
         return None
 
     @staticmethod
+    def update_order(
+        order_id: int,
+        status: int,
+        shipping_address: str,
+        billing_address: str,
+    ) -> Order | None:
+        try:
+            order = OrderRepo.update(
+                order_id, status, shipping_address, billing_address
+            )
+            if order:
+                return order
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def update_order_status(order_id: int, status: int) -> Order | None:
         try:
             order = OrderRepo.update_status(order_id, status)

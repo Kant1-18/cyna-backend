@@ -116,6 +116,35 @@ class OrderControl:
             raise HttpError(500, "An error occurred while getting the order")
 
     @staticmethod
+    def update_order(request, data):
+        try:
+            if not CheckInfos.is_positive_int(data.orderId):
+                return HttpError(400, "Invalid orderId")
+
+            if not CheckInfos.is_status_order(data.status):
+                return HttpError(400, "Invalid status")
+
+            if not CheckInfos.is_positive_int(data.shippingAddressId):
+                return HttpError(400, "Invalid shippingAddressId")
+
+            if not CheckInfos.is_positive_int(data.billingAddressId):
+                return HttpError(400, "Invalid billingAddressId")
+
+            order = OrderService.update_order(
+                data.orderId,
+                data.status,
+                data.shippingAddressId,
+                data.billingAddressId,
+            )
+            if order:
+                return order.to_json()
+            else:
+                raise HttpError(404, "Order not found")
+        except Exception as e:
+            print(e)
+            raise HttpError(500, "An error occurred while updating the order")
+
+    @staticmethod
     def update_order_status(request, data):
         try:
             if not CheckInfos.is_positive_int(data.orderId):
