@@ -84,8 +84,10 @@ class OrderRepo:
     def delete(order_id: int) -> Order | None:
         try:
             order = Order.objects.get(id=order_id)
-            order.delete()
-            return order
+            if order:
+                order.delete()
+                return True
         except Exception as e:
             print(e)
-            return None
+
+        return False

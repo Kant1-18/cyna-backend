@@ -58,7 +58,8 @@ class OrderItemRepo:
     def delete(order_item: OrderItem) -> OrderItem | None:
         try:
             order_item.delete()
-            return order_item
+            return True
         except Exception as e:
             print(e)
-            return None
+
+        return False
