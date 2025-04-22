@@ -39,7 +39,7 @@ class TicketControl:
             raise HttpError(500, "An error occurred while getting the ticket")
 
     @staticmethod
-    def get_all_by_user(request) -> list[Ticket] | HttpError:
+    def get_all_my(request) -> list[Ticket] | HttpError:
         try:
             token = AuthService.get_access_token(request)
             user = AuthService.get_user_by_access_token(token)
@@ -53,8 +53,29 @@ class TicketControl:
             raise HttpError(500, "An error occurred while getting all tickets")
 
     @staticmethod
+    def get_all_by_user(request, id: int) -> list[Ticket] | HttpError:
+        try:
+            if not AuthService.isAdmin(request):
+                raise HttpError(403, "Not authorized")
+
+            if not CheckInfos.is_positive_int(id):
+                return HttpError(400, "Invalid id")
+
+            tickets = TicketService.get_all_tickets_by_user(id)
+            if tickets:
+                return [ticket.to_json() for ticket in tickets]
+            else:
+                raise HttpError(404, "No tickets found")
+        except Exception as e:
+            print(e)
+            raise HttpError(500, "An error occurred while getting all tickets")
+
+    @staticmethod
     def update_status(request, data) -> Ticket | HttpError:
         try:
+            if not AuthService.isAdmin(request):
+                raise HttpError(403, "Not authorized")
+
             if not CheckInfos.is_positive_int(data.ticketId):
                 return HttpError(400, "Invalid id")
 
@@ -73,6 +94,9 @@ class TicketControl:
     @staticmethod
     def delete(request, id: int) -> Ticket | HttpError:
         try:
+            if not AuthService.isAdmin(request):
+                raise HttpError(403, "Not authorized")
+
             token = TicketService.delete_ticket(id)
             if token:
                 return token.to_json()

@@ -33,9 +33,14 @@ def get(request, id: int) -> Ticket | HttpError:
     return TicketControl.get(id)
 
 
-@router.get("/getAllByUser", auth=JWTAuth())
-def get_all_by_user(request) -> list[Ticket] | HttpError:
-    return TicketControl.get_all_by_user(request)
+@router.get("/getAllMy", auth=JWTAuth())
+def get_all_my(request) -> list[Ticket] | HttpError:
+    return TicketControl.get_all_my(request)
+
+
+@router.get("/getAllByUser/{id}", auth=JWTAuth())
+def get_all_by_user(request, id: int) -> list[Ticket] | HttpError:
+    return TicketControl.get_all_by_user(request, id)
 
 
 @router.patch("/updateStatus", auth=JWTAuth())
