@@ -23,7 +23,7 @@ class CategoryControl:
 
     @staticmethod
     def get(id: int) -> Category | HttpError:
-        if not CheckInfos.is_valid_id(id):
+        if not CheckInfos.is_positive_int(id):
             raise HttpError(400, "Invalid id")
         category = CategoryService.get(id)
         return category.to_json() if category else HttpError(404, "Category not found")
@@ -46,7 +46,7 @@ class CategoryControl:
     @staticmethod
     def update(request, data) -> Category | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data.id):
+            if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
             if not CheckInfos.is_valid_string(data.name):
@@ -63,7 +63,7 @@ class CategoryControl:
     @staticmethod
     def delete(request, id: int) -> bool:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(id):
+            if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
 
             result = CategoryService.delete(id)

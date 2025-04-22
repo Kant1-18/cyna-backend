@@ -16,7 +16,6 @@ class Order(models.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "user": self.user.to_json(),
             "status": self.status,
             "shippingAddress": self.shipping_address.to_json(),
             "billingAddress": self.billing_address.to_json(),

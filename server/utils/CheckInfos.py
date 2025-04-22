@@ -36,7 +36,7 @@ class CheckInfos:
             return False
 
     @staticmethod
-    def is_valid_id(id: int) -> bool:
+    def is_positive_int(id: int) -> bool:
         if id > 0:
             return True
         else:
