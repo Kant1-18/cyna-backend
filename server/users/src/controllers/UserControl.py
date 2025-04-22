@@ -8,6 +8,34 @@ from ninja.errors import HttpError
 class UsersControl:
 
     @staticmethod
+    def add_admin(request, data) -> User | HttpError:
+        try:
+            if not AuthService.isAdmin(request):
+                raise HttpError(403, "Not authorized")
+            if not CheckInfos.is_valid_string(data.firstName):
+                raise HttpError(400, "Invalid firstName")
+            if not CheckInfos.is_valid_string(data.lastName):
+                raise HttpError(400, "Invalid lastName")
+            if not CheckInfos.is_email(data.email):
+                raise HttpError(400, "Invalid email")
+            if not CheckInfos.is_valid_password(
+                data.password
+            ) or not CheckInfos.is_valid_password(data.confirmPassword):
+                raise HttpError(400, "Invalid passwords")
+
+            if not data.password == data.confirmPassword:
+                raise HttpError(400, "Passwords doesn't match")
+
+            user = UserService.add_admin(
+                data.firstName, data.lastName, data.email, data.password
+            )
+            if user:
+                return user.to_json()
+        except Exception as e:
+            print(e)
+            raise HttpError(500, "An error occurred")
+
+    @staticmethod
     def get(id: int) -> User | HttpError:
         user = UserService.get(id)
         if not user:
