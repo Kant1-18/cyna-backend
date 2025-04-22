@@ -14,7 +14,6 @@ class UserSchema(ModelSchema):
 
 
 class UserUpdateSchema(Schema):
-    id: int
     firstName: str
     lastName: str
     email: str
@@ -22,7 +21,6 @@ class UserUpdateSchema(Schema):
 
 
 class UpdatePasswordSchema(Schema):
-    id: int
     previousPassword: str
     newPassword: str
     confirmNewPassword: str

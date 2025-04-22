@@ -16,7 +16,7 @@ SUBSCRIPTION_TYPES = [0, 1]
 
 # Status
 PRODUCT_STATUS = [0, 1]
-ORDER_STATUS = [0, 1, 2, 3, 4]
+ORDER_STATUS = [0, 1, 2, 3, 4, 5]
 PAYMENT_STATUS = [0, 1, 2, 3, 4]
 TICKET_STATUS = [0, 1, 2]
 
@@ -36,7 +36,7 @@ class CheckInfos:
             return False
 
     @staticmethod
-    def is_valid_id(id: int) -> bool:
+    def is_positive_int(id: int) -> bool:
         if id > 0:
             return True
         else:

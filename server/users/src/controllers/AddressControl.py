@@ -88,7 +88,7 @@ class AddressControl:
     @staticmethod
     def update(data) -> Address | HttpError:
         try:
-            if not CheckInfos.is_valid_id(data.id):
+            if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
             if not CheckInfos.is_type_address(data.type):

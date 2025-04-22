@@ -16,7 +16,7 @@ class ProductControl:
     @staticmethod
     def add_product(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data["categoryId"]):
+            if not CheckInfos.is_positive_int(data["categoryId"]):
                 raise HttpError(400, "Invalid id for category")
 
             if not CheckInfos.is_valid_string(data["name"]):
@@ -32,7 +32,7 @@ class ProductControl:
                 if not CheckInfos.is_valid_price(data["basePrice"]):
                     raise HttpError(400, "Invalid price")
 
-            if not CheckInfos.is_valid_id(data["discountOrder"]):
+            if not CheckInfos.is_positive_int(data["discountOrder"]):
                 raise HttpError(400, "Invalid discountOrder")
 
             if not CheckInfos.is_percentage(data["discountPercentage"]):
@@ -69,7 +69,7 @@ class ProductControl:
     @staticmethod
     def add_product_details(request, data) -> Details | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data["productId"]):
+            if not CheckInfos.is_positive_int(data["productId"]):
                 raise HttpError(400, "Invalid id for product")
 
             if not CheckInfos.is_valid_locale(data["locale"]):
@@ -103,7 +103,7 @@ class ProductControl:
 
     @staticmethod
     def get_by_id_and_locale(id: int, locale: str) -> Product | HttpError:
-        if not CheckInfos.is_valid_id(id):
+        if not CheckInfos.is_positive_int(id):
             raise HttpError(400, "Invalid id")
 
         if not CheckInfos.is_valid_locale(locale):
@@ -150,7 +150,7 @@ class ProductControl:
     @staticmethod
     def update(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data.id):
+            if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
             if not CategoryService.is_category_exist(data.categoryId):
@@ -170,7 +170,7 @@ class ProductControl:
                     raise HttpError(400, "Invalid price")
 
             if data.discountPercentage != None:
-                if not CheckInfos.is_valid_id(data.discountOrder):
+                if not CheckInfos.is_positive_int(data.discountOrder):
                     raise HttpError(400, "Invalid discountOrder")
 
             if data.discountPercentage != None:
@@ -196,7 +196,7 @@ class ProductControl:
     @staticmethod
     def update_image1(request, data) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data["id"]):
+            if not CheckInfos.is_positive_int(data["id"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
@@ -211,7 +211,7 @@ class ProductControl:
     @staticmethod
     def update_image2(request, data) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data["id"]):
+            if not CheckInfos.is_positive_int(data["id"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
@@ -226,7 +226,7 @@ class ProductControl:
     @staticmethod
     def update_image3(request, data) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data["id"]):
+            if not CheckInfos.is_positive_int(data["id"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
@@ -241,7 +241,7 @@ class ProductControl:
     @staticmethod
     def update_details(request, data) -> Details | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(data.id):
+            if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
             if not CheckInfos.is_valid_string(data.description_title):
@@ -272,7 +272,7 @@ class ProductControl:
     @staticmethod
     def delete_by_id(request, id: int) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(id):
+            if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
             if ProductService.delete(id):
                 return True
@@ -284,7 +284,7 @@ class ProductControl:
     @staticmethod
     def delete_by_id_details(request, id: int) -> bool | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_id(id):
+            if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
             if ProductService.delete_details(id):
                 return True
