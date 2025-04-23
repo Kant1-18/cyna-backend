@@ -32,12 +32,12 @@ def get(request, id: int) -> Category | HttpError:
     return CategoryControl.get(id)
 
 
-@router.get("/getByName/{name}", auth=JWTAuth())
+@router.get("/get-by-name/{name}", auth=JWTAuth())
 def get_by_name(request, name: str) -> Category | HttpError:
     return CategoryControl.get_by_name(name)
 
 
-@router.get("/getAll", auth=JWTAuth())
+@router.get("/get-all", auth=JWTAuth())
 def get_all(request) -> list[Category] | HttpError:
     return CategoryControl.get_all()
 

@@ -38,46 +38,46 @@ class SratusUpdateSchema(Schema):
     status: int
 
 
-@router.post("/addProduct", auth=JWTAuth())
+@router.post("/add-product", auth=JWTAuth())
 def add_product(request, data: OrderRouteSchema) -> Order | HttpError:
     return OrderControl.add_product(request, data)
 
 
-@router.put("/updateCartItem", auth=JWTAuth())
+@router.put("/update-cart-item", auth=JWTAuth())
 def update_product_in_cart(request, data: OrderRouteSchema) -> Order | HttpError:
     return OrderControl.update_product_in_cart(request, data)
 
 
-@router.delete("/deleteCartItem/{productId}", auth=JWTAuth())
+@router.delete("/delete-cart-item/{productId}", auth=JWTAuth())
 def delete_product_from_cart(request, productId: int) -> Order | HttpError:
     return OrderControl.delete_product_from_cart(request, productId)
 
 
-@router.get("/getCart", auth=JWTAuth())
+@router.get("/get-cart", auth=JWTAuth())
 def get_cart(request) -> Order | HttpError:
     return OrderControl.get_cart(request)
 
 
-@router.get("/getAllOrders", auth=JWTAuth())
+@router.get("/get-all-orders", auth=JWTAuth())
 def get_all_orders(request) -> list[Order] | HttpError:
     return OrderControl.get_all_orders(request)
 
 
-@router.get("/getOrderById/{orderId}", auth=JWTAuth())
+@router.get("/get-order-by-id/{orderId}", auth=JWTAuth())
 def get_order_by_id(request, orderId: int) -> Order | HttpError:
     return OrderControl.get_order_by_id(request, orderId)
 
 
-@router.put("/updateOrder", auth=JWTAuth())
+@router.put("/update-order", auth=JWTAuth())
 def update_order(request, data: OrderUpdateSchema) -> Order | HttpError:
     return OrderControl.update_order(request, data)
 
 
-@router.patch("/updateOrderStatus", auth=JWTAuth())
+@router.patch("/update-order-status", auth=JWTAuth())
 def update_order_status(request, data: SratusUpdateSchema) -> Order | HttpError:
     return OrderControl.update_order_status(request, data)
 
 
-@router.delete("/deleteOrder/{orderId}", auth=JWTAuth())
+@router.delete("/delete-order/{orderId}", auth=JWTAuth())
 def delete_order(request, orderId: int) -> Order | HttpError:
     return OrderControl.delete_order(request, orderId)

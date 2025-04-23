@@ -46,7 +46,7 @@ def get(request, id: int) -> Address | HttpError:
     return AddressControl.get(id)
 
 
-@router.get("/getAll", auth=JWTAuth())
+@router.get("/get-all", auth=JWTAuth())
 def get_all_by_user(request) -> list[Address] | HttpError:
     return AddressControl.get_all_by_user(request)
 

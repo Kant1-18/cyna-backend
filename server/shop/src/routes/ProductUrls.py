@@ -106,12 +106,12 @@ def get_by_id_and_locale(request, id: int, locale: str) -> Product | HttpError:
     return ProductControl.get_by_id_and_locale(id, locale)
 
 
-@router.get("/getAll/{locale}", auth=JWTAuth())
+@router.get("/get-all/{locale}", auth=JWTAuth())
 def get_all_by_locale(request, locale: str) -> list[Product] | HttpError:
     return ProductControl.get_all_by_locale(locale)
 
 
-@router.get("/getAllByCategory/{categoryId}/{locale}", auth=JWTAuth())
+@router.get("/get-all-by-category/{categoryId}/{locale}", auth=JWTAuth())
 def get_all_by_category_and_locale(
     request, categoryId: int, locale: str
 ) -> list[Product] | HttpError:
