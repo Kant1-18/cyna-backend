@@ -33,7 +33,7 @@ class UpdatePasswordSchema(Schema):
     confirmNewPassword: str
 
 
-@router.post("/addAdmin", auth=JWTAuth())
+@router.post("/add-admin", auth=JWTAuth())
 def add_admin(request, data: UserAddAdminSchema) -> User | HttpError:
     return UsersControl.add_admin(request, data)
 
@@ -43,7 +43,7 @@ def get(request, id: int) -> User | HttpError:
     return UsersControl.get(id)
 
 
-@router.get("/getByEmail/{email}", auth=JWTAuth())
+@router.get("/get-by-email/{email}", auth=JWTAuth())
 def get_by_email(request, email: str) -> User | HttpError:
     return UsersControl.get_by_email(email)
 
@@ -53,7 +53,7 @@ def update(request, data: UserUpdateSchema) -> User | HttpError:
     return UsersControl.update(request, data)
 
 
-@router.put("/updatePassword", auth=JWTAuth())
+@router.put("/update-password", auth=JWTAuth())
 def update_password(request, data: UpdatePasswordSchema) -> User | HttpError:
     return UsersControl.update_password(request, data)
 

@@ -58,7 +58,7 @@ class OrderService:
                 if not product:
                     return None
                 order_item = OrderItemRepo.get_by_order_and_product(order, product)
-                OrderItemRepo.delete(order_item)
+                OrderItemRepo.delete(order_item.id)
                 return order
         except Exception as e:
             print(e)

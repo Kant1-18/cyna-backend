@@ -59,8 +59,10 @@ class TicketRepo:
     def delete(ticket_id: int) -> Ticket | None:
         try:
             ticket = Ticket.objects.get(id=ticket_id)
-            ticket.delete()
-            return ticket
+            if ticket:
+                ticket.delete()
+                return True
         except Exception as e:
             print(e)
-            return None
+
+        return False
