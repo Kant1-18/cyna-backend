@@ -91,15 +91,18 @@ class Stripe:
         customer_id: str, recurrence: bool, products: list[Product]
     ) -> stripe.Subscription | None:
         try:
-            for product in products:
-                prices = []
-                if not recurrence:
-                    prices = [product.stripe_monthly_price_id for product in products]
-                elif recurrence:
-                    prices = [product.stripe_yearly_price_id for product in products]
+            if not recurrence:
+                prices = [product.stripe_monthly_price_id for product in products]
+            else:
+                prices = [product.stripe_yearly_price_id for product in products]
 
-            items = [{"price": product.stripe_monthly_price_id} for price in prices]
-            subscription = stripe.Subscription.create(customer=customer_id, items=items)
+            items = [{"price": price} for price in prices]
+            subscription = stripe.Subscription.create(
+                customer=customer_id,
+                items=items,
+                payment_behavior="default_incomplete",
+                expand=["latest_invoice.payment_intent"],
+            )
             return subscription
 
         except Exception as e:
