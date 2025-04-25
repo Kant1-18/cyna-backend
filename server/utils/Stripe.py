@@ -87,3 +87,52 @@ class Stripe:
         except Exception as e:
             print(e)
             return False
+
+    @staticmethod
+    def create_subscription(
+        customer_id: str, recurrence: bool, products: list[Product]
+    ) -> stripe.Subscription | None:
+        try:
+            for product in products:
+                prices = []
+                if not recurrence:
+                    prices = [product.stripe_monthly_price_id for product in products]
+                elif recurrence:
+                    prices = [product.stripe_yearly_price_id for product in products]
+
+            items = [{"price": product.stripe_monthly_price_id} for price in prices]
+            subscription = stripe.Subscription.create(customer=customer_id, items=items)
+            return subscription
+
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
+    def delete_subscription(subscription_id: str) -> bool:
+        try:
+            stripe.Subscription.delete(subscription_id)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    @staticmethod
+    def delete_item_subscription(subscription_id: str, product_id: str) -> bool:
+        try:
+            stripe.SubscriptionItem.delete(subscription_id, product_id)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    @staticmethod
+    def add_item_subscription(subscription_id: str, product_id: str) -> bool:
+        try:
+            stripe.SubscriptionItem.create(
+                subscription=subscription_id, price=product_id
+            )
+            return True
+        except Exception as e:
+            print(e)
+            return False
