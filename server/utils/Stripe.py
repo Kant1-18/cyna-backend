@@ -22,7 +22,6 @@ class Stripe:
             for p in prices.auto_paging_iter():
                 stripe.Price.modify(p.id, active=False)
 
-            # Crée le nouveau prix
             return stripe.Price.create(
                 unit_amount=price,
                 currency="eur",
@@ -40,7 +39,6 @@ class Stripe:
             for p in prices.auto_paging_iter():
                 stripe.Price.modify(p.id, active=False)
 
-            # Crée le nouveau prix
             return stripe.Price.create(
                 unit_amount=price,
                 currency="eur",
