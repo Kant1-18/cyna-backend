@@ -8,6 +8,7 @@ class User(AbstractUser):
     email = models.EmailField(max_length=100, unique=True, blank=False, null=False)
     role = models.IntegerField(default=0, blank=False, null=False)
     registration_date = models.DateTimeField(auto_now_add=True)
+    stripe_id = models.TextField(null=True)
 
     def to_json(self):
         return {

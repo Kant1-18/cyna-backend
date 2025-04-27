@@ -69,9 +69,9 @@ class Stripe:
             return False
 
     @staticmethod
-    def create_customer(email: str, name: str, address: dict) -> stripe.Customer | None:
+    def create_customer(email: str, name: str) -> stripe.Customer | None:
         try:
-            customer = stripe.Customer.create(email=email, name=name, address=address)
+            customer = stripe.Customer.create(email=email, name=name)
             return customer
         except Exception as e:
             print(e)
