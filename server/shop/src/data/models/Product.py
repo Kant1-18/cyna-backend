@@ -13,6 +13,9 @@ class Product(models.Model):
     image1 = models.TextField(null=True)
     image2 = models.TextField(null=True)
     image3 = models.TextField(null=True)
+    stripe_id = models.TextField()
+    stripe_monthly_price_id = models.TextField(null=True)
+    stripe_yearly_price_id = models.TextField(null=True)
 
     def to_json(self, details):
         if self.price == None:
