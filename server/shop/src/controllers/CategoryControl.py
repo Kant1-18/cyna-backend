@@ -10,10 +10,10 @@ class CategoryControl:
     @staticmethod
     def add(request, data) -> Category | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_valid_string(data.name):
+            if not CheckInfos.is_valid_string(data.globalName):
                 raise HttpError(400, "Invalid string for name")
 
-            category = CategoryService.add(data.name)
+            category = CategoryService.add(data.globalName)
             if category:
                 return category.to_json()
             else:
@@ -22,24 +22,48 @@ class CategoryControl:
             raise HttpError(403, "Forbidden")
 
     @staticmethod
-    def get(id: int) -> Category | HttpError:
+    def add_locale(request, data) -> Category | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_positive_int(data.id):
+                raise HttpError(400, "Invalid id")
+
+            if not CheckInfos.is_valid_string(data.locale):
+                raise HttpError(400, "Invalid string for locale")
+
+            if not CheckInfos.is_valid_string(data.name):
+                raise HttpError(400, "Invalid string for name")
+
+            category = CategoryService.add_locale(data.id, data.locale, data.name)
+            if category:
+                return category.to_json(locale=data.locale)
+            else:
+                raise HttpError(500, "An error occurred while creating the category")
+        else:
+            raise HttpError(403, "Forbidden")
+
+    @staticmethod
+    def get(id: int, locale: str) -> Category | HttpError:
         if not CheckInfos.is_positive_int(id):
             raise HttpError(400, "Invalid id")
         category = CategoryService.get(id)
-        return category.to_json() if category else HttpError(404, "Category not found")
+        return (
+            category.to_json(locale=locale)
+            if category
+            else HttpError(404, "Category not found")
+        )
 
     @staticmethod
-    def get_by_name(name: str) -> Category | HttpError:
-        if not CheckInfos.is_valid_string(name):
+    def get_by_global_name(global_name: str) -> Category | HttpError:
+        if not CheckInfos.is_valid_string(global_name):
             raise HttpError(400, "Invalid string for name")
-        category = CategoryService.get_by_name(name)
+        category = CategoryService.get_by_global_name(global_name)
         return category.to_json() if category else HttpError(404, "Category not found")
 
     @staticmethod
-    def get_all() -> list[Category] | HttpError:
+    def get_all(locale: str) -> list[Category] | HttpError:
         categories = CategoryService.get_all()
         if categories:
-            return [category.to_json() for category in categories]
+            return [category.to_json(locale=locale) for category in categories]
         else:
             raise HttpError(404, "No categories found")
 
@@ -49,12 +73,32 @@ class CategoryControl:
             if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
+            if not CheckInfos.is_valid_string(data.globalName):
+                raise HttpError(400, "Invalid string for name")
+
+            category = CategoryService.update(data.id, data.gobalName)
+            if category:
+                return category.to_json()
+            else:
+                raise HttpError(500, "An error occurred while updating the category")
+        else:
+            raise HttpError(403, "Forbidden")
+
+    @staticmethod
+    def update_locale(request, data) -> Category | HttpError:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_positive_int(data.id):
+                raise HttpError(400, "Invalid id")
+
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
-            category = CategoryService.update(data.id, data.name)
+            if not CheckInfos.is_valid_locale(data.locale):
+                raise HttpError(400, "Invalid locale")
+
+            category = CategoryService.update_locale(data.id, data.locale, data.name)
             if category:
-                return category.to_json()
+                return category.to_json(locale=data.locale)
             else:
                 raise HttpError(500, "An error occurred while updating the category")
         else:
@@ -67,6 +111,23 @@ class CategoryControl:
                 raise HttpError(400, "Invalid id")
 
             result = CategoryService.delete(id)
+            if result:
+                return True
+            else:
+                raise HttpError(500, "An error occurred while deleting the category")
+        else:
+            raise HttpError(403, "Forbidden")
+
+    @staticmethod
+    def delete_locale(request, id: int, locale: str) -> bool:
+        if AuthService.isAdmin(request):
+            if not CheckInfos.is_positive_int(id):
+                raise HttpError(400, "Invalid id")
+
+            if not CheckInfos.is_valid_locale(locale):
+                raise HttpError(400, "Invalid locale")
+
+            result = CategoryService.delete_locale(id, locale)
             if result:
                 return True
             else:

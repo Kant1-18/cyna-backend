@@ -22,7 +22,7 @@ class Product(models.Model):
             self.price = (self.base_price * self.discount_percentage) / 100
         return {
             "id": self.id,
-            "category": self.category.to_json(),
+            "category": self.category.to_json(details.locale),
             "name": self.name,
             "slides": [
                 self.image1,
