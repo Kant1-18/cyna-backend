@@ -17,6 +17,9 @@ class ProductRepo:
         image1: str,
         image2: str,
         image3: str,
+        stripe_id: str,
+        stripe_monthly_price_id: str,
+        stripe_yearly_price_id: str,
     ) -> Product | None:
         try:
             product = Product.objects.create(
@@ -30,6 +33,9 @@ class ProductRepo:
                 image1=image1,
                 image2=image2,
                 image3=image3,
+                stripe_id=stripe_id,
+                stripe_monthly_price_id=stripe_monthly_price_id,
+                stripe_yearly_price_id=stripe_yearly_price_id,
             )
             if product:
                 return product

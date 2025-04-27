@@ -7,7 +7,12 @@ class UserRepo:
 
     @staticmethod
     def add(
-        first_name: str, last_name: str, email: str, password: str, role: int
+        first_name: str,
+        last_name: str,
+        email: str,
+        password: str,
+        role: int,
+        stripe_id: str,
     ) -> User | None:
         salt = gen_salt()
         hashed_pass = encrypt(password, salt)
@@ -18,6 +23,7 @@ class UserRepo:
                 email=email,
                 username=email,
                 role=role,
+                stripe_id=stripe_id,
             )
             if user:
                 cred = UserCredential.objects.create(

@@ -7,6 +7,7 @@ from shop.src.data.repositories.ProductDetailsRepo import (
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
 from utils.cloudinary import ImageUploader
+from utils.Stripe import Stripe
 
 
 class ProductService:
@@ -33,6 +34,14 @@ class ProductService:
             return None
 
         try:
+            stripe_product = Stripe.create_product(name)
+            stripe_monthly_price = Stripe.add_monthly_price(
+                stripe_product.id, base_price
+            )
+            stripe_yearly_price = Stripe.add_yealy_price(
+                stripe_product.id, (base_price * 12)
+            )
+
             image1 = ImageUploader.product(image1)
             image2 = ImageUploader.product(image2)
             image3 = ImageUploader.product(image3)
@@ -47,6 +56,9 @@ class ProductService:
                 image1,
                 image2,
                 image3,
+                stripe_id=stripe_product.id,
+                stripe_monthly_price_id=stripe_monthly_price.id,
+                stripe_yearly_price_id=stripe_yearly_price.id,
             )
 
         except Exception as e:

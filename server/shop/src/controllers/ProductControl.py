@@ -32,7 +32,7 @@ class ProductControl:
                 if not CheckInfos.is_valid_price(data["basePrice"]):
                     raise HttpError(400, "Invalid price")
 
-            if not CheckInfos.is_positive_int(data["discountOrder"]):
+            if not data["discountOrder"] >= 0:
                 raise HttpError(400, "Invalid discountOrder")
 
             if not CheckInfos.is_percentage(data["discountPercentage"]):
@@ -47,7 +47,7 @@ class ProductControl:
             if not CheckInfos.is_valid_image_format(data["image3"]):
                 raise HttpError(400, "Unsupported image format")
 
-            product = ProductService.add(
+            product = ProductService.add_product(
                 data["categoryId"],
                 data["name"],
                 data["status"],

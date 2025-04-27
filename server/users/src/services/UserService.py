@@ -1,18 +1,35 @@
 from users.src.data.repositories.UserRepo import UserRepo
 from users.src.data.models.User import User
+from utils.Stripe import Stripe
 
 
 class UserService:
 
     @staticmethod
     def add(first_name: str, last_name: str, email: str, password: str) -> User | None:
-        return UserRepo.add(first_name, last_name, email, password, role=0)
+        try:
+            stripe_customer = Stripe.create_customer(
+                email=email, name=f"{first_name} {last_name}"
+            )
+            return UserRepo.add(
+                first_name,
+                last_name,
+                email,
+                password,
+                role=0,
+                stripe_id=stripe_customer.id,
+            )
+        except Exception as e:
+            print(e)
+            return None
 
     @staticmethod
     def add_admin(
         first_name: str, last_name: str, email: str, password: str
     ) -> User | None:
-        return UserRepo.add(first_name, last_name, email, password, role=1)
+        return UserRepo.add(
+            first_name, last_name, email, password, role=1, stripe_id=None
+        )
 
     @staticmethod
     def get(id: int) -> User | None:
