@@ -1,8 +1,5 @@
-from config.settings import STRIPE_API_KEY
 import stripe
 from shop.models import Product
-
-stripe.api_key = STRIPE_API_KEY
 
 
 class Stripe:
