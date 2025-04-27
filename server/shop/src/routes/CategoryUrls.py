@@ -14,11 +14,23 @@ class CategorySchema(ModelSchema):
 
 
 class AddCategorySchema(Schema):
+    globalName: str
+
+
+class AddLocaleCategorySchema(Schema):
+    id: int
+    locale: str
     name: str
 
 
 class UpdateCategorySchema(Schema):
     id: int
+    globalName: str
+
+
+class UpdateCategoryLocaleSchema(Schema):
+    id: int
+    locale: str
     name: str
 
 
@@ -27,19 +39,24 @@ def add(request, data: AddCategorySchema) -> Category | HttpError:
     return CategoryControl.add(request, data)
 
 
-@router.get("/get/{id}", auth=JWTAuth())
-def get(request, id: int) -> Category | HttpError:
-    return CategoryControl.get(id)
+@router.post("/add-locale", auth=JWTAuth())
+def add_locale(request, data: AddLocaleCategorySchema) -> Category | HttpError:
+    return CategoryControl.add_locale(request, data)
 
 
-@router.get("/get-by-name/{name}", auth=JWTAuth())
-def get_by_name(request, name: str) -> Category | HttpError:
-    return CategoryControl.get_by_name(name)
+@router.get("/get/{id}/{locale}", auth=JWTAuth())
+def get(request, id: int, locale: str) -> Category | HttpError:
+    return CategoryControl.get(id, locale)
 
 
-@router.get("/get-all", auth=JWTAuth())
-def get_all(request) -> list[Category] | HttpError:
-    return CategoryControl.get_all()
+@router.get("/get-by-global-name/{gloabal_name}", auth=JWTAuth())
+def get_by_global_name(request, gloabal_name: str) -> Category | HttpError:
+    return CategoryControl.get_by_global_name(gloabal_name)
+
+
+@router.get("/get-all/{locale}", auth=JWTAuth())
+def get_all(request, locale: str) -> list[Category] | HttpError:
+    return CategoryControl.get_all(locale=locale)
 
 
 @router.put("/update", auth=JWTAuth())
@@ -47,6 +64,16 @@ def update(request, data: UpdateCategorySchema) -> Category | HttpError:
     return CategoryControl.update(request, data)
 
 
+@staticmethod
+def update_locale(request, data: UpdateCategoryLocaleSchema) -> Category | HttpError:
+    return CategoryControl.update_locale(request, data)
+
+
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete(request, id: int) -> bool:
     return CategoryControl.delete(request, id)
+
+
+@router.delete("/delete-locale/{category_id}/{locale}", auth=JWTAuth())
+def delete_locale(request, category_id: int, locale: str) -> bool:
+    return CategoryControl.delete_locale(request, category_id, locale)

@@ -8,3 +8,9 @@ class CategoryLocale(models.Model):
     )
     locale = models.TextField(null=False)
     name = models.TextField(null=False)
+
+    def to_json(self):
+        return {
+            "locale": self.locale,
+            "name": self.name,
+        }
