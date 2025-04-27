@@ -107,6 +107,22 @@ class Stripe:
             return None
 
     @staticmethod
+    def create_payment_intent(
+        amount: int, user_stripe_id: str
+    ) -> stripe.PaymentIntent | None:
+        try:
+            payment_intent = stripe.PaymentIntent.create(
+                amount=amount,
+                currency="eur",
+                customer=user_stripe_id,
+                automatic_payment_methods={"enabled": True},
+            )
+            return payment_intent
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
     def delete_subscription(subscription_id: str) -> bool:
         try:
             stripe.Subscription.delete(subscription_id)
