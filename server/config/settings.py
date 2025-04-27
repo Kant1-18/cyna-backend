@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "users",
     "shop",
     "tickets",
+    "payments",
 ]
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
