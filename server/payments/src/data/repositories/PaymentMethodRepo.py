@@ -37,6 +37,17 @@ class PaymentMethodRepo:
         return None
 
     @staticmethod
+    def get_all() -> list[PaymentMethod] | None:
+        try:
+            methods = PaymentMethod.objects.all()
+            if methods:
+                return methods
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def update(method_id: int, name: str, stripe_code: str) -> PaymentMethod | None:
         try:
             method = PaymentMethod.objects.get(id=method_id)

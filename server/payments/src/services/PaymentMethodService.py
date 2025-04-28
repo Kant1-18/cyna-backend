@@ -17,6 +17,10 @@ class PaymentMethodService:
         return PaymentMethodRepo.get_by_name(name)
 
     @staticmethod
+    def get_all() -> list[PaymentMethod] | None:
+        return PaymentMethodRepo.get_all()
+
+    @staticmethod
     def update(method_id: int, name: str, stripe_code: str) -> PaymentMethod | None:
         return PaymentMethodRepo.update(method_id, name, stripe_code)
 
