@@ -57,19 +57,17 @@ class UsersControl:
             raise HttpError(400, "Invalid lastName")
         if not CheckInfos.is_email(data.email):
             raise HttpError(400, "Invalid email")
-        if not CheckInfos.is_users_role(data.role):
-            raise HttpError(400, "Invalid role")
 
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
-        user = UserService.update(
-            user.id, data.firstName, data.lastName, data.email, data.role
-        )
+        user = UserService.update(user.id, data.firstName, data.lastName, data.email)
         return user.to_json() if user else HttpError(500, "An error occurred")
 
     @staticmethod
     def update_password(request, data) -> User | HttpError:
-        if not UserService.check_password(data.id, data.previousPassword):
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+        if not UserService.check_password(user.id, data.previousPassword):
             raise HttpError(400, "Invalid privious password")
 
         if not CheckInfos.is_valid_password(
