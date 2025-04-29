@@ -7,7 +7,6 @@ from shop.src.data.repositories.ProductDetailsRepo import (
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
 from utils.cloudinary import ImageUploader
-from utils.Stripe import Stripe
 
 
 class ProductService:
@@ -29,16 +28,18 @@ class ProductService:
         image2: UploadedFile,
         image3: UploadedFile,
     ) -> Product | None:
+        from utils.Stripe import StripeUtils
+
         category = CategoryRepo.get(category_id)
         if not category:
             return None
 
         try:
-            stripe_product = Stripe.create_product(name)
-            stripe_monthly_price = Stripe.add_monthly_price(
+            stripe_product = StripeUtils.create_product(name)
+            stripe_monthly_price = StripeUtils.add_monthly_price(
                 stripe_product.id, base_price
             )
-            stripe_yearly_price = Stripe.add_yealy_price(
+            stripe_yearly_price = StripeUtils.add_yealy_price(
                 stripe_product.id, (base_price * 12)
             )
 
