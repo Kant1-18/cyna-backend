@@ -10,6 +10,7 @@ class Subscription(models.Model):
         PaymentMethod, on_delete=models.SET_NULL, null=True
     )
     stripe_id = models.TextField(default="")
+    recurrence = models.BooleanField(default=False)
 
     def to_json(self):
         return {
@@ -17,5 +18,6 @@ class Subscription(models.Model):
             "user": self.user.to_json(),
             "billing_address": self.billing_address.to_json(),
             "payment_method": self.payment_method.to_json(),
+            "recurrence": self.recurrence,
             "items": [item.to_json() for item in self.items.all()],
         }

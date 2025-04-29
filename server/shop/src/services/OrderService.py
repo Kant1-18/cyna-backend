@@ -33,6 +33,17 @@ class OrderService:
         return None
 
     @staticmethod
+    def get_all_items(order: Order) -> list[OrderItem] | None:
+        try:
+            order_items = OrderItemRepo.get_all_by_order(order)
+            if order_items:
+                return order_items
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def update_product_in_cart(
         user_id: int, product_id: int, quantity: int
     ) -> Order | None:

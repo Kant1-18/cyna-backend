@@ -10,6 +10,7 @@ class SubscriptionRepo:
         billing_address: Address,
         stripe_id: str,
         payment_method: PaymentMethod,
+        recurrence: bool,
     ) -> Subscription | None:
         try:
             subscription = Subscription.objects.create(
@@ -17,6 +18,7 @@ class SubscriptionRepo:
                 billing_address=billing_address,
                 payment_method=payment_method,
                 stripe_id=stripe_id,
+                recurrence=recurrence,
             )
             if subscription:
                 return subscription

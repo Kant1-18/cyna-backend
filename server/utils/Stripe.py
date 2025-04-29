@@ -1,5 +1,6 @@
 import stripe
-from shop.models import Product
+from shop.models import Order, OrderItem
+from shop.src.services.OrderService import OrderService
 
 
 class Stripe:
@@ -85,18 +86,23 @@ class Stripe:
 
     @staticmethod
     def create_subscription(
-        customer_id: str, recurrence: bool, products: list[Product]
+        customer_id: str, recurrence: bool, order: Order
     ) -> stripe.Subscription | None:
         try:
-            if not recurrence:
-                prices = [product.stripe_monthly_price_id for product in products]
-            else:
-                prices = [product.stripe_yearly_price_id for product in products]
+            order_items = OrderService.get_all_items(order)
 
-            items = [{"price": price} for price in prices]
+            prices = []
+            if recurrence == False:
+                for item in order_items:
+                    prices.append(item.product.stripe_monthly_price_id)
+            else:
+                for item in order_items:
+                    prices.append(item.product.stripe_yearly_price_id)
+
+            prices = [{"price": price} for price in prices]
             subscription = stripe.Subscription.create(
                 customer=customer_id,
-                items=items,
+                items=prices,
                 payment_behavior="default_incomplete",
                 expand=["latest_invoice.payment_intent"],
             )
