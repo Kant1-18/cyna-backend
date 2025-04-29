@@ -84,3 +84,10 @@ class SubscriptionRepo:
             print(e)
 
         return False
+
+    @staticmethod
+    def have_subscription(user: User) -> bool:
+        try:
+            return Subscription.objects.filter(user=user).exists()
+        except Exception as e:
+            print(e)

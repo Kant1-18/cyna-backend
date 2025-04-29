@@ -8,6 +8,7 @@ from users.src.services.UserService import UserService
 from users.src.services.AddressService import AddressService
 from utils.Stripe import Stripe
 from shop.src.services.OrderService import OrderService
+from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 
 
 class SubscriptionService:
@@ -26,6 +27,13 @@ class SubscriptionService:
             payment_method = PaymentMethodRepo.get(payment_method_id)
 
             order = OrderService.get(order_id)
+            OrderService.update_order_status(order_id, 1)
+
+            if SubscriptionRepo.have_subscription(user):
+                subscription = SubscriptionRepo.get_by_user(user)
+                return SubscriptionService.add_order_in_subscription(
+                    subscription, order
+                )
 
             stripe_subscription = Stripe.create_subscription(
                 customer_id=user.stripe_id,
@@ -54,8 +62,107 @@ class SubscriptionService:
                         else:
                             return None
 
+                    OrderService.update_order_status(order_id, 5)
                     return subscription
+        except Exception as e:
+            OrderService.update_order_status(order_id, 2)
+            print(e)
+
+        return None
+
+    @staticmethod
+    def add_order_in_subscription(subscription: Subscription, order: Order) -> bool:
+        try:
+            OrderService.update_order_status(order.id, 1)
+
+            recurrence = subscription.recurrence
+            for item in order.items.all():
+                for i in range(item.quantity):
+                    if Stripe.add_item_subscription(
+                        subscription_id=subscription.stripe_id,
+                        product_id=(
+                            item.product.stripe_monthly_price_id
+                            if not recurrence
+                            else item.product.stripe_yearly_price_id
+                        ),
+                    ):
+                        continue
+                    else:
+                        return None
+
+                subscription_item = SubscriptionItemRepo.add(
+                    subscription_id=subscription.id,
+                    order_item=item,
+                )
+
+                if subscription_item:
+                    continue
+                else:
+                    return None
+            OrderService.update_order_status(order.id, 5)
+            return subscription
+        except Exception as e:
+            OrderService.update_order_status(order.id, 2)
+            print(e)
+
+        return None
+
+    @staticmethod
+    def get_subscription_by_id(subscription_id: int) -> Subscription | None:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                return subscription
         except Exception as e:
             print(e)
 
         return None
+
+    @staticmethod
+    def get_subscription_by_user(user_id: int) -> Subscription | None:
+        try:
+            user = UserService.get(user_id)
+            subscriptions = SubscriptionRepo.get_by_user(user)
+            if subscriptions:
+                return subscriptions
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
+    def delete_item_subscription(subscription_id: int, order_item_id: int) -> bool:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                order_item = OrderItemRepo.get_by_id(order_item_id)
+                if order_item:
+                    if Stripe.delete_item_subscription(
+                        subscription_id=subscription.stripe_id,
+                        product_id=(
+                            order_item.product.stripe_monthly_price_id
+                            if subscription.recurrence
+                            else order_item.product.stripe_yearly_price_id
+                        ),
+                    ):
+                        SubscriptionRepo.delete_item_subscription(
+                            subscription_id, order_item_id
+                        )
+                        return True
+        except Exception as e:
+            print(e)
+
+        return False
+
+    @staticmethod
+    def delete_subscription(subscription_id: int) -> bool:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                if Stripe.delete_subscription(subscription_id=subscription.stripe_id):
+                    SubscriptionRepo.delete(subscription_id)
+                    return True
+        except Exception as e:
+            print(e)
+
+        return False

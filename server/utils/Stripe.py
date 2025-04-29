@@ -94,10 +94,12 @@ class Stripe:
             prices = []
             if recurrence == False:
                 for item in order_items:
-                    prices.append(item.product.stripe_monthly_price_id)
+                    for i in range(item.quantity):
+                        prices.append(item.product.stripe_monthly_price_id)
             else:
                 for item in order_items:
-                    prices.append(item.product.stripe_yearly_price_id)
+                    for i in range(item.quantity):
+                        prices.append(item.product.stripe_yearly_price_id)
 
             prices = [{"price": price} for price in prices]
             subscription = stripe.Subscription.create(
