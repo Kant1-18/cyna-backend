@@ -32,7 +32,8 @@ class SubscriptionService:
             if SubscriptionRepo.have_subscription(user):
                 subscription = SubscriptionRepo.get_by_user(user)
                 return SubscriptionService.add_order_in_subscription(
-                    subscription, order
+                    subscription,
+                    order,
                 )
 
             stripe_subscription = Stripe.create_subscription(
@@ -56,14 +57,20 @@ class SubscriptionService:
                             subscription_id=subscription.id,
                             order_item=item,
                         )
-
-                        if subscription_item:
-                            continue
-                        else:
+                        if not subscription_item:
+                            OrderService.update_order_status(order_id, 2)
                             return None
 
                     OrderService.update_order_status(order_id, 5)
-                    return subscription
+
+                    client_secret = (
+                        stripe_subscription["latest_invoice"]
+                        .get("payment_intent", {})
+                        .get("client_secret")
+                    )
+
+                    return subscription, client_secret
+
         except Exception as e:
             OrderService.update_order_status(order_id, 2)
             print(e)
