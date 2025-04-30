@@ -54,7 +54,12 @@ def get_by_global_name(request, gloabal_name: str) -> Category | HttpError:
     return CategoryControl.get_by_global_name(gloabal_name)
 
 
-@router.get("/get-all/{locale}", auth=JWTAuth())
+@router.get("/get-all", auth=JWTAuth())
+def get_all(request) -> list[Category] | HttpError:
+    return CategoryControl.get_all(locale=None)
+
+
+@router.get("/get-all-locales/{locale}", auth=JWTAuth())
 def get_all(request, locale: str) -> list[Category] | HttpError:
     return CategoryControl.get_all(locale=locale)
 
@@ -64,7 +69,7 @@ def update(request, data: UpdateCategorySchema) -> Category | HttpError:
     return CategoryControl.update(request, data)
 
 
-@staticmethod
+@router.put("/update-locale", auth=JWTAuth())
 def update_locale(request, data: UpdateCategoryLocaleSchema) -> Category | HttpError:
     return CategoryControl.update_locale(request, data)
 

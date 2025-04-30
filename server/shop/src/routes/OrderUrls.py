@@ -48,9 +48,9 @@ def update_product_in_cart(request, data: OrderRouteSchema) -> Order | HttpError
     return OrderControl.update_product_in_cart(request, data)
 
 
-@router.delete("/delete-cart-item/{productId}", auth=JWTAuth())
-def delete_product_from_cart(request, productId: int) -> Order | HttpError:
-    return OrderControl.delete_product_from_cart(request, productId)
+@router.delete("/delete-cart-item/{product_id}", auth=JWTAuth())
+def delete_product_from_cart(request, product_id: int) -> Order | HttpError:
+    return OrderControl.delete_product_from_cart(request, product_id)
 
 
 @router.get("/get-cart", auth=JWTAuth())
@@ -63,9 +63,9 @@ def get_all_orders(request) -> list[Order] | HttpError:
     return OrderControl.get_all_orders(request)
 
 
-@router.get("/get-order-by-id/{orderId}", auth=JWTAuth())
-def get_order_by_id(request, orderId: int) -> Order | HttpError:
-    return OrderControl.get_order_by_id(request, orderId)
+@router.get("/get-order-by-id/{order_id}", auth=JWTAuth())
+def get_order_by_id(request, order_id: int) -> Order | HttpError:
+    return OrderControl.get_order_by_id(request, order_id)
 
 
 @router.put("/update-order", auth=JWTAuth())
@@ -78,6 +78,6 @@ def update_order_status(request, data: SratusUpdateSchema) -> Order | HttpError:
     return OrderControl.update_order_status(request, data)
 
 
-@router.delete("/delete-order/{orderId}", auth=JWTAuth())
-def delete_order(request, orderId: int) -> Order | HttpError:
-    return OrderControl.delete_order(request, orderId)
+@router.delete("/delete-order/{order_id}", auth=JWTAuth())
+def delete_order(request, order_id: int) -> Order | HttpError:
+    return OrderControl.delete_order(request, order_id)

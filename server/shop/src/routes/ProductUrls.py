@@ -111,11 +111,11 @@ def get_all_by_locale(request, locale: str) -> list[Product] | HttpError:
     return ProductControl.get_all_by_locale(locale)
 
 
-@router.get("/get-all-by-category/{categoryId}/{locale}", auth=JWTAuth())
+@router.get("/get-all-by-category/{category_id}/{locale}", auth=JWTAuth())
 def get_all_by_category_and_locale(
-    request, categoryId: int, locale: str
+    request, category_id: int, locale: str
 ) -> list[Product] | HttpError:
-    return ProductControl.get_all_by_category_and_locale(categoryId, locale)
+    return ProductControl.get_all_by_category_and_locale(category_id, locale)
 
 
 # @router.get("details/{productId}/{locale}", auth=JWTAuth())
