@@ -60,7 +60,7 @@ def get_all(request) -> list[Category] | HttpError:
 
 
 @router.get("/get-all-locales/{locale}", auth=JWTAuth())
-def get_all(request, locale: str) -> list[Category] | HttpError:
+def get_all_locales(request, locale: str) -> list[Category] | HttpError:
     return CategoryControl.get_all(locale=locale)
 
 
