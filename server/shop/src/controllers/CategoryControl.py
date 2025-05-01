@@ -68,12 +68,12 @@ class CategoryControl:
             raise HttpError(404, "No categories found")
 
     @staticmethod
-    def get_all_locales(category_id: int) -> list[Category] | HttpError:
-        category = CategoryService.get(category_id)
-        if category:
-            return category.to_json_all_locales()
+    def get_all_locales() -> list[Category] | HttpError:
+        categories = CategoryService.get_all()
+        if categories:
+            return [category.to_json_all_locales() for category in categories]
         else:
-            raise HttpError(404, "Category not found")
+            raise HttpError(404, "No Categories found")
 
     @staticmethod
     def update(request, data) -> Category | HttpError:

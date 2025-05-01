@@ -64,9 +64,9 @@ def get_all_categories(request, locale: str) -> list[Category] | HttpError:
     return CategoryControl.get_all(locale=locale)
 
 
-@router.get("/get-all-locales/{category_id}", auth=JWTAuth())
-def get_all_locales(request, category_id: int) -> list[Category] | HttpError:
-    return CategoryControl.get_all_locales(category_id)
+@router.get("/get-all-locales", auth=JWTAuth())
+def get_all_locales(request) -> list[Category] | HttpError:
+    return CategoryControl.get_all_locales()
 
 
 @router.put("/update", auth=JWTAuth())
