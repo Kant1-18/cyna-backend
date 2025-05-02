@@ -61,8 +61,6 @@ class SubscriptionService:
                             OrderService.update_order_status(order_id, 2)
                             return None
 
-                    OrderService.update_order_status(order_id, 5)
-
                     client_secret = (
                         stripe_subscription["latest_invoice"]
                         .get("payment_intent", {})
@@ -106,7 +104,6 @@ class SubscriptionService:
                     continue
                 else:
                     return None
-            OrderService.update_order_status(order.id, 5)
             return subscription
         except Exception as e:
             OrderService.update_order_status(order.id, 2)
