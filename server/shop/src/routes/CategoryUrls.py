@@ -56,7 +56,7 @@ def get_by_global_name(request, gloabal_name: str) -> Category | HttpError:
 
 @router.get("/get-all", auth=JWTAuth())
 def get_all(request) -> list[Category] | HttpError:
-    return CategoryControl.get_all(locale=None)
+    return CategoryControl.get_all()
 
 
 @router.get("/get-all-categories/{locale}", auth=JWTAuth())

@@ -11,6 +11,7 @@ class CategoryLocale(models.Model):
 
     def to_json(self):
         return {
+            "id": self.id,
             "locale": self.locale,
             "name": self.name,
         }

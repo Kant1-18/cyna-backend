@@ -5,14 +5,13 @@ class Category(models.Model):
     global_name = models.TextField(default="")
 
     def to_json(self, locale: str = "en"):
+        locale_obj = self.locales.get(locale=locale)
         return {
             "id": self.id,
-            "global_name": self.global_name,
-            "locale_name": (
-                self.locales.get(locale=locale).name
-                if self.locales.filter(locale=locale).exists()
-                else self.global_name
-            ),
+            "globalName": self.global_name,
+            "localeId": locale_obj.id,
+            "locale": locale_obj.locale,
+            "localeName": locale_obj.name,
         }
 
     def to_json_all_locales(self):
