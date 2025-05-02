@@ -127,15 +127,12 @@ class CategoryControl:
             raise HttpError(403, "Forbidden")
 
     @staticmethod
-    def delete_locale(request, id: int, locale: str) -> bool:
+    def delete_locale(request, locale_id: int) -> bool:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(id):
-                raise HttpError(400, "Invalid id")
+            if not CheckInfos.is_positive_int(locale_id):
+                raise HttpError(400, "Invalid locale id")
 
-            if not CheckInfos.is_valid_locale(locale):
-                raise HttpError(400, "Invalid locale")
-
-            result = CategoryService.delete_locale(id, locale)
+            result = CategoryService.delete_locale(locale_id)
             if result:
                 return True
             else:

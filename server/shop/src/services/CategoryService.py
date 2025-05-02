@@ -40,8 +40,8 @@ class CategoryService:
         return CategoryRepo.delete(id)
 
     @staticmethod
-    def delete_locale(id: int, locale: str) -> bool:
-        return CategoryRepo.delete_locale(id, locale)
+    def delete_locale(locale_id: int) -> bool:
+        return CategoryRepo.delete_locale(locale_id)
 
     @staticmethod
     def is_category_exist(id: int) -> bool:

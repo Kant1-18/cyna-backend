@@ -84,6 +84,6 @@ def delete(request, id: int) -> bool:
     return CategoryControl.delete(request, id)
 
 
-@router.delete("/delete-locale/{category_id}/{locale}", auth=JWTAuth())
-def delete_locale(request, category_id: int, locale: str) -> bool:
-    return CategoryControl.delete_locale(request, category_id, locale)
+@router.delete("/delete-locale/{locale_id}", auth=JWTAuth())
+def delete_locale(request, locale_id: int) -> bool:
+    return CategoryControl.delete_locale(request, locale_id)

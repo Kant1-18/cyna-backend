@@ -106,16 +106,12 @@ class CategoryRepo:
         return False
 
     @staticmethod
-    def delete_locale(category_id: int, locale: str) -> bool:
+    def delete_locale(locale_id: int) -> bool:
         try:
-            category = Category.objects.get(id=category_id)
-            if category:
-                category_locale = CategoryLocale.objects.get(
-                    category=category, locale=locale
-                )
-                if category_locale:
-                    category_locale.delete()
-                    return True
+            category_locale = CategoryLocale.objects.get(id=locale_id)
+            if category_locale:
+                category_locale.delete()
+                return True
         except Exception as e:
             print(e)
 
