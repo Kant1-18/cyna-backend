@@ -78,20 +78,18 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def update_locale(category_id: int, locale: str, name: str) -> Category | None:
+    def update_locale(locale_id: int, locale: str, name: str) -> Category | None:
         try:
-            category = Category.objects.get(id=category_id)
-            if category:
-                category_locale = CategoryLocale.objects.get(
-                    category=category, locale=locale
-                )
-                if category_locale:
-                    category_locale.name = name
-                    category_locale.save()
-                    return category
+            locale = CategoryLocale.objects.get(id=locale_id)
+            if locale:
+                locale.locale = locale
+                locale.name = name
+                locale.save()
+                return locale
         except Exception as e:
             print(e)
-            return None
+
+        return None
 
     @staticmethod
     def delete(id: int) -> bool:

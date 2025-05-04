@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h2>Invoice #{{ order.id }}</h2>
+  <p>Date: {{ date }}</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Product</th><th>Qty</th><th>Unit Price (€)</th><th>Total (€)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.product.price }}</td>
+        <td>{{ item.total }}</td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3"><strong>Total</strong></td>
+        <td><strong>{{ total }}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
