@@ -4,6 +4,7 @@ from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from shop.src.services import OrderService
 from payments.src.services import PaymentMethodService
 from payments.src.services import SubscriptionService
+import utils.sendInvoice as sendInvoice
 
 
 class PaymentService:
@@ -88,8 +89,18 @@ class PaymentService:
             payment = PaymentRepo.get(payment_id)
             if payment:
                 payment = PaymentRepo.update_status(payment, status)
-                if payment:
-                    return payment
+                if status == 5:
+                    if payment.order != None and payment.subscription == None:
+                        sendInvoice.send_order_invoice(
+                            payment.order.user.email,
+                            payment.order,
+                        )
+                    elif payment.subscription != None and payment.order == None:
+                        sendInvoice.send_subscription_invoice(
+                            payment.subscription.user.email,
+                            payment.subscription,
+                        )
+                return payment
         except Exception as e:
             print(e)
 
