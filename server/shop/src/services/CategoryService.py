@@ -32,8 +32,8 @@ class CategoryService:
         return CategoryRepo.update(id, globalName)
 
     @staticmethod
-    def update_locale(id: int, locale: str, name: str) -> Category | None:
-        return CategoryRepo.update_locale(id, locale, name)
+    def update_locale(locale_id: int, locale: str, name: str) -> Category | None:
+        return CategoryRepo.update_locale(locale_id, locale, name)
 
     @staticmethod
     def delete(id: int) -> bool:
