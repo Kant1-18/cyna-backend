@@ -15,8 +15,8 @@ class ProductDetails(models.Model):
         return {
             "id": self.id,
             "locale": self.locale,
-            "description_title": self.description_title,
-            "description_text": self.description_text,
+            "descriptionTitle": self.description_title,
+            "descriptionText": self.description_text,
             "benefits": self.benefits,
             "functionalities": self.functionalities,
             "specifications": self.specifications,
