@@ -6,7 +6,7 @@ from shop.src.data.repositories.ProductDetailsRepo import (
 )
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
-from utils.cloudinary import ImageUploader
+from utils.Cloudinary import ImageUploader
 
 
 class ProductService:

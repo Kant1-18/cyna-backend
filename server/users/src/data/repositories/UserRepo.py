@@ -1,6 +1,6 @@
 from users.src.data.models.User import User
 from users.src.data.models.UserCredential import UserCredential
-from utils.HashPass import gen_salt, encrypt, check_pass
+from utils.hashPass import gen_salt, encrypt, check_pass
 
 
 class UserRepo:
