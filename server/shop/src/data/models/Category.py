@@ -17,6 +17,6 @@ class Category(models.Model):
     def to_json_all_locales(self):
         return {
             "id": self.id,
-            "global_name": self.global_name,
+            "globalName": self.global_name,
             "locales": [locale.to_json() for locale in self.locales.all()],
         }
