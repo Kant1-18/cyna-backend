@@ -22,7 +22,7 @@ class DetailsAddSchema(Schema):
     descriptionText: str
     benefits: list[dict]
     specifications: list[dict]
-    functionalities: list[str]
+    functionalities: list[dict]
 
 
 class ProductUpdateSchema(Schema):
@@ -42,7 +42,7 @@ class ProductDetailsUpdateSchema(Schema):
     descriptionText: str
     benefits: list[dict]
     specifications: list[dict]
-    functionalities: list[str]
+    functionalities: list[dict]
 
 
 ###########################################################################

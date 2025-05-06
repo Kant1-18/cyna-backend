@@ -140,10 +140,3 @@ class CheckInfos:
                     return False
 
         return True
-
-    @staticmethod
-    def is_list_of_strings(value) -> bool:
-        if not isinstance(value, list):
-            return False
-
-        return all(isinstance(item, str) for item in value)
