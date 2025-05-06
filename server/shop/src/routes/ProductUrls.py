@@ -15,6 +15,16 @@ class ProductSchema(ModelSchema):
         fields = "__all__"
 
 
+class DetailsAddSchema(Schema):
+    productId: int
+    locale: str
+    descriptionTitle: str
+    descriptionText: str
+    benefits: list
+    functionalities: list
+    specifications: list
+
+
 class ProductUpdateSchema(Schema):
     id: int
     categoryId: int
@@ -30,9 +40,9 @@ class ProductDetailsUpdateSchema(Schema):
     id: int
     descriptionTitle: str
     descriptionText: str
-    benefits: dict
-    functionalities: dict
-    specifications: dict
+    benefits: list
+    functionalities: list
+    specifications: list
 
 
 ###########################################################################
@@ -72,29 +82,8 @@ def add_product(
 
 
 @router.post("/add/details", auth=JWTAuth())
-def add_details(
-    request,
-    productId: int = Form(...),
-    locale: str = Form(...),
-    descriptionTitle: str = Form(...),
-    descriptionText: str = Form(...),
-    benefits=Form(...),
-    functionalities=Form(...),
-    specifications=Form(...),
-    dummy_file: bytes = File(None),
-) -> Details | HttpError:
-    return ProductControl.add_product_details(
-        request,
-        {
-            "productId": productId,
-            "locale": locale,
-            "description_title": descriptionTitle,
-            "description_text": descriptionText,
-            "benefits": benefits,
-            "functionalities": functionalities,
-            "specifications": specifications,
-        },
-    )
+def add_details(request, data: DetailsAddSchema) -> Details | HttpError:
+    return ProductControl.add_product_details(request, data)
 
 
 ###########################################################################

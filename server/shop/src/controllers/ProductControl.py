@@ -67,35 +67,35 @@ class ProductControl:
     @staticmethod
     def add_product_details(request, data) -> Details | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data["productId"]):
+            if not CheckInfos.is_positive_int(data.productId):
                 raise HttpError(400, "Invalid id for product")
 
-            if not CheckInfos.is_valid_locale(data["locale"]):
+            if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
 
-            if not CheckInfos.is_valid_string(data["description_title"]):
+            if not CheckInfos.is_valid_string(data.description_title):
                 raise HttpError(400, "Invalid description_title")
 
-            if not CheckInfos.is_valid_string(data["description_text"]):
+            if not CheckInfos.is_valid_string(data.description_text):
                 raise HttpError(400, "Invalid description_text")
 
-            if not CheckInfos.is_list_of_str_dicts(data["benefits"]):
+            if not CheckInfos.is_list_of_str_dicts(data.benefits):
                 raise HttpError(400, "Invalid benefits")
 
-            if not CheckInfos.is_list_of_str_dicts(data["specifications"]):
+            if not CheckInfos.is_list_of_str_dicts(data.specifications):
                 raise HttpError(400, "Invalid specifications")
 
-            if not CheckInfos.is_list_of_strings(data["functionalities"]):
+            if not CheckInfos.is_list_of_strings(data.functionalities):
                 raise HttpError(400, "Invalid functionalities")
 
             details = ProductService.add_product_details(
-                data["productId"],
-                data["locale"],
-                data["description_title"],
-                data["description_text"],
-                data["benefits"],
-                data["functionalities"],
-                data["specifications"],
+                data.productId,
+                data.locale,
+                data.description_title,
+                data.description_text,
+                data.benefits,
+                data.functionalities,
+                data.specifications,
             )
             if details:
                 return details.to_json()
