@@ -5,6 +5,7 @@ from shop.src.data.models.Category import Category
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.TextField(null=True)
+    type = models.IntegerField(default=0)
     status = models.IntegerField(default=0, blank=False, null=False)
     base_price = models.IntegerField(default=0, blank=False, null=False)
     price = models.IntegerField(default=0, blank=False, null=True)
@@ -24,6 +25,7 @@ class Product(models.Model):
             "id": self.id,
             "category": self.category.to_json(details.locale),
             "name": self.name,
+            "type": self.type,
             "slides": [
                 self.image1,
                 self.image2,
@@ -51,6 +53,7 @@ class Product(models.Model):
             "id": self.id,
             "category": self.category.to_json(),
             "name": self.name,
+            "type": self.type,
             "basePrice": self.base_price,
             "price": self.price,
             "status": self.status,

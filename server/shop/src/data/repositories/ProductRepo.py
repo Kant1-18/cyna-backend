@@ -9,6 +9,7 @@ class ProductRepo:
     def add(
         category: Category,
         name: str,
+        type: int,
         status: int,
         base_price: int,
         price: int,
@@ -25,6 +26,7 @@ class ProductRepo:
             product = Product.objects.create(
                 category=category,
                 name=name,
+                type=type,
                 status=status,
                 base_price=base_price,
                 price=price,
@@ -81,6 +83,7 @@ class ProductRepo:
     def update(
         id: int,
         category: Category,
+        type: int,
         status: int,
         base_price: int,
         discount_order: int,
@@ -90,6 +93,7 @@ class ProductRepo:
             product = Product.objects.get(id=id)
             if product:
                 product.category = category
+                product.type = type
                 product.status = status
                 product.base_price = base_price
                 product.discount_order = discount_order

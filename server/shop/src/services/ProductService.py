@@ -19,6 +19,7 @@ class ProductService:
     def add_product(
         category_id: int,
         name: str,
+        type: int,
         status: int,
         base_price: int,
         price: int,
@@ -49,6 +50,7 @@ class ProductService:
             return ProductRepo.add(
                 category,
                 name,
+                type,
                 status,
                 base_price,
                 price,
@@ -70,7 +72,6 @@ class ProductService:
     def add_product_details(
         product_id: int,
         locale: str,
-        name: str,
         description_title: str,
         description_text: str,
         benefits: dict,
@@ -155,9 +156,9 @@ class ProductService:
     def update_product(
         product_id: int,
         category_id: int,
+        type: int,
         status: int,
         base_price: int,
-        price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -169,6 +170,7 @@ class ProductService:
             return ProductRepo.update(
                 product_id,
                 category,
+                type,
                 status,
                 base_price,
                 discount_order,
