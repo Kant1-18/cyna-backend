@@ -46,18 +46,20 @@ class CategoryControl:
         if not CheckInfos.is_positive_int(id):
             raise HttpError(400, "Invalid id")
         category = CategoryService.get(id)
-        return (
-            category.to_json(locale=locale)
-            if category
-            else HttpError(404, "Category not found")
-        )
+        if category:
+            return category.to_json(locale=locale)
+        else:
+            raise HttpError(404, "Category not found")
 
     @staticmethod
     def get_by_global_name(global_name: str) -> Category | HttpError:
         if not CheckInfos.is_valid_string(global_name):
-            raise HttpError(400, "Invalid string for name")
+            raise HttpError(400, "Invalid string for global name")
         category = CategoryService.get_by_global_name(global_name)
-        return category.to_json() if category else HttpError(404, "Category not found")
+        if category:
+            return category.to_json()
+        else:
+            raise HttpError(404, "Category not found")
 
     @staticmethod
     def get_all() -> list[Category] | HttpError:
@@ -95,7 +97,7 @@ class CategoryControl:
     @staticmethod
     def update_locale(request, data) -> Category | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data.id):
+            if not CheckInfos.is_positive_int(data.locale_id):
                 raise HttpError(400, "Invalid id")
 
             if not CheckInfos.is_valid_string(data.name):

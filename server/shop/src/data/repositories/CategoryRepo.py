@@ -43,9 +43,9 @@ class CategoryRepo:
         return None
 
     @staticmethod
-    def get_by_name(name: str) -> Category | None:
+    def get_by_name(global_name: str) -> Category | None:
         try:
-            category = Category.objects.get(name=name)
+            category = Category.objects.get(global_name=global_name)
             if category:
                 return category
         except Exception as e:
@@ -88,7 +88,8 @@ class CategoryRepo:
                 return category_locale
         except Exception as e:
             print(e)
-            return None
+
+        return None
 
     @staticmethod
     def delete(id: int) -> bool:

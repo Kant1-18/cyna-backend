@@ -29,7 +29,7 @@ class UpdateCategorySchema(Schema):
 
 
 class UpdateCategoryLocaleSchema(Schema):
-    id: int
+    locale_id: int
     locale: str
     name: str
 
