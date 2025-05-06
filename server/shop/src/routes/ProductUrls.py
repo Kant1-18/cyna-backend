@@ -40,9 +40,9 @@ class ProductDetailsUpdateSchema(Schema):
     id: int
     descriptionTitle: str
     descriptionText: str
-    benefits: list
-    functionalities: list
-    specifications: list
+    benefits: list[dict]
+    specifications: list[dict]
+    functionalities: list[str]
 
 
 ###########################################################################
