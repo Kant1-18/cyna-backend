@@ -8,7 +8,6 @@ class Product(models.Model):
     name = models.TextField(null=True)
     type = models.IntegerField(default=0)
     status = models.IntegerField(default=0, blank=False, null=False)
-    base_price = models.IntegerField(default=0, blank=False, null=False)
     price = models.IntegerField(default=0, blank=False, null=True)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     discount_percentage = models.IntegerField(default=0, blank=False, null=False)
@@ -20,8 +19,6 @@ class Product(models.Model):
     stripe_yearly_price_id = models.TextField(null=True)
 
     def to_json(self, details):
-        if self.price == None:
-            self.price = (self.base_price * self.discount_percentage) / 100
         return {
             "id": self.id,
             "category": self.category.to_json(details.locale),
@@ -39,7 +36,7 @@ class Product(models.Model):
             "benefits": json.loads(details.benefits),
             "functionalities": json.loads(details.functionalities),
             "specifications": json.loads(details.specifications),
-            "price": self.price,
+            "price": (self.price * self.discount_percentage) / 100,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
@@ -51,8 +48,7 @@ class Product(models.Model):
             "category": self.category.to_json(),
             "name": self.name,
             "type": self.type,
-            "basePrice": self.base_price,
-            "price": self.price,
+            "price": (self.price * self.discount_percentage) / 100,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,

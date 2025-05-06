@@ -28,12 +28,8 @@ class ProductControl:
             if not CheckInfos.is_status_product(data["status"]):
                 raise HttpError(400, "Invalid status")
 
-            if not CheckInfos.is_valid_price(data["basePrice"]):
-                raise HttpError(400, "Invalid basePrice")
-
-            if data["price"] != None:
-                if not CheckInfos.is_valid_price(data["basePrice"]):
-                    raise HttpError(400, "Invalid price")
+            if not CheckInfos.is_valid_price(data["price"]):
+                raise HttpError(400, "Invalid price")
 
             if not data["discountOrder"] >= 0:
                 raise HttpError(400, "Invalid discountOrder")
@@ -54,7 +50,6 @@ class ProductControl:
                 data["categoryId"],
                 data["name"],
                 data["status"],
-                data["basePrice"],
                 data["price"],
                 data["discountOrder"],
                 data["discountPercentage"],
@@ -177,12 +172,8 @@ class ProductControl:
             if not CheckInfos.is_status_product(data.status):
                 raise HttpError(400, "Invalid string for description")
 
-            if not CheckInfos.is_valid_price(data.basePrice):
+            if not CheckInfos.is_valid_price(data.price):
                 raise HttpError(400, "Invalid price")
-
-            if data.price != None:
-                if not CheckInfos.is_valid_price(data.basePrice):
-                    raise HttpError(400, "Invalid price")
 
             if data.discountPercentage != None:
                 if not CheckInfos.is_positive_int(data.discountOrder):
@@ -197,7 +188,6 @@ class ProductControl:
                 data.name,
                 data.type,
                 data.status,
-                data.basePrice,
                 data.price,
                 data.discountOrder,
                 data.discountPercentage,

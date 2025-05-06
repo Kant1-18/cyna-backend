@@ -22,7 +22,6 @@ class ProductService:
         name: str,
         type: int,
         status: int,
-        base_price: int,
         price: int,
         discount_order: int,
         discount_percentage: int,
@@ -39,10 +38,10 @@ class ProductService:
         try:
             stripe_product = StripeUtils.create_product(name)
             stripe_monthly_price = StripeUtils.add_monthly_price(
-                stripe_product.id, base_price
+                stripe_product.id, price
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, (base_price * 12)
+                stripe_product.id, (price * 12)
             )
 
             image1 = ImageUploader.product(image1)
@@ -53,7 +52,6 @@ class ProductService:
                 name,
                 type,
                 status,
-                base_price,
                 price,
                 discount_order,
                 discount_percentage,
@@ -159,7 +157,7 @@ class ProductService:
         category_id: int,
         type: int,
         status: int,
-        base_price: int,
+        price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -173,7 +171,7 @@ class ProductService:
                 category,
                 type,
                 status,
-                base_price,
+                price,
                 discount_order,
                 discount_percentage,
             )
