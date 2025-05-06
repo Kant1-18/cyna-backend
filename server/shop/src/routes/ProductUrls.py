@@ -81,9 +81,9 @@ def add_details(
     locale: str = Form(...),
     descriptionTitle: str = Form(...),
     descriptionText: str = Form(...),
-    benefits: dict = Form(...),
-    functionalities: dict = Form(...),
-    specifications: dict = Form(...),
+    benefits=Form(...),
+    functionalities=Form(...),
+    specifications=Form(...),
 ) -> Details | HttpError:
     return ProductControl.add_product_details(
         request,

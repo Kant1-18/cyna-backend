@@ -7,6 +7,7 @@ from shop.src.data.repositories.ProductDetailsRepo import (
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
 from utils.cloudinary import ImageUploader
+import json
 
 
 class ProductService:
@@ -74,9 +75,9 @@ class ProductService:
         locale: str,
         description_title: str,
         description_text: str,
-        benefits: dict,
-        functionalities: dict,
-        specifications: dict,
+        benefits,
+        functionalities,
+        specifications,
     ) -> Details | None:
         product = ProductRepo.get(product_id)
         if not product:
@@ -88,9 +89,9 @@ class ProductService:
                 locale,
                 description_title,
                 description_text,
-                benefits,
-                functionalities,
-                specifications,
+                json.dump(benefits),
+                json.dump(functionalities),
+                json.dump(specifications),
             )
         except Exception as e:
             print(e)

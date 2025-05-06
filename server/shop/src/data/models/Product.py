@@ -1,5 +1,6 @@
 from django.db import models
 from shop.src.data.models.Category import Category
+import json
 
 
 class Product(models.Model):
@@ -35,13 +36,9 @@ class Product(models.Model):
                 "title": details.description_title,
                 "text": details.description_text,
             },
-            "benefits": [benefit for benefit in details.benefits.split(",")],
-            "functionalities": [
-                functionality for functionality in details.functionalities.split(",")
-            ],
-            "specifications": [
-                specification for specification in details.specifications.split(",")
-            ],
+            "benefits": json.loads(details.benefits),
+            "functionalities": json.loads(details.functionalities),
+            "specifications": json.loads(details.specifications),
             "price": self.price,
             "status": self.status,
             "discountOrder": self.discount_order,

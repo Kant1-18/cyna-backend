@@ -1,5 +1,6 @@
 from django.db import models
 from shop.src.data.models.Product import Product
+import json
 
 
 class ProductDetails(models.Model):
@@ -7,9 +8,9 @@ class ProductDetails(models.Model):
     locale = models.CharField(max_length=5, default="en")
     description_title = models.TextField(null=False)
     description_text = models.TextField(null=False)
-    benefits = models.JSONField()
-    functionalities = models.JSONField()
-    specifications = models.JSONField()
+    benefits = models.TextField()
+    functionalities = models.TextField()
+    specifications = models.TextField()
 
     def to_json(self):
         return {
@@ -17,7 +18,7 @@ class ProductDetails(models.Model):
             "locale": self.locale,
             "descriptionTitle": self.description_title,
             "descriptionText": self.description_text,
-            "benefits": self.benefits,
-            "functionalities": self.functionalities,
-            "specifications": self.specifications,
+            "benefits": json.loads(self.benefits),
+            "functionalities": json.loads(self.functionalities),
+            "specifications": json.loads(self.specifications),
         }

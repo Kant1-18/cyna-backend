@@ -84,6 +84,15 @@ class ProductControl:
             if not CheckInfos.is_valid_string(data["description_text"]):
                 raise HttpError(400, "Invalid description_text")
 
+            if not CheckInfos.is_list_of_str_dicts(data["benefits"]):
+                raise HttpError(400, "Invalid benefits")
+
+            if not CheckInfos.is_list_of_str_dicts(data["specifications"]):
+                raise HttpError(400, "Invalid specifications")
+
+            if not CheckInfos.is_list_of_strings(data["functionalities"]):
+                raise HttpError(400, "Invalid functionalities")
+
             details = ProductService.add_product_details(
                 data["productId"],
                 data["locale"],

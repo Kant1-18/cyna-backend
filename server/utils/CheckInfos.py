@@ -126,3 +126,24 @@ class CheckInfos:
             return True
         else:
             return False
+
+    @staticmethod
+    def is_list_of_str_dicts(value) -> bool:
+        if not isinstance(value, list):
+            return False
+
+        for item in value:
+            if not isinstance(item, dict):
+                return False
+            for key, val in item.items():
+                if not isinstance(key, str) or not isinstance(val, str):
+                    return False
+
+        return True
+
+    @staticmethod
+    def is_list_of_strings(value) -> bool:
+        if not isinstance(value, list):
+            return False
+
+        return all(isinstance(item, str) for item in value)
