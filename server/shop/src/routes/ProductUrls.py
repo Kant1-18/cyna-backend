@@ -81,6 +81,7 @@ def add_details(
     benefits=Form(...),
     functionalities=Form(...),
     specifications=Form(...),
+    dummy_file: bytes = File(None),
 ) -> Details | HttpError:
     return ProductControl.add_product_details(
         request,
