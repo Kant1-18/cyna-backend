@@ -184,18 +184,18 @@ class ProductService:
         id: int,
         description_title: str,
         description_text: str,
-        benefits: dict,
-        functionalities: dict,
-        specifications: dict,
+        benefits,
+        functionalities,
+        specifications,
     ) -> Details | None:
         try:
             return DetailsRepo.update(
                 id,
                 description_title,
                 description_text,
-                benefits,
-                functionalities,
-                specifications,
+                json.dumps(benefits),
+                json.dumps(functionalities),
+                json.dumps(specifications),
             )
 
         except Exception as e:

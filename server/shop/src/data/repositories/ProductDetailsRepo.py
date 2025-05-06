@@ -93,9 +93,9 @@ class ProductDetailsRepo:
         id: int,
         description_title: str,
         description_text: str,
-        benefits: dict,
-        functionalities: dict,
-        specifications: dict,
+        benefits: str,
+        functionalities: str,
+        specifications: str,
     ) -> ProductDetails | None:
         try:
             product_details = ProductDetails.objects.get(id=id)
