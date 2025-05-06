@@ -9,8 +9,8 @@ class ProductRepo:
     def add(
         category: Category,
         name: str,
+        type: int,
         status: int,
-        base_price: int,
         price: int,
         discount_order: int,
         discount_percentage: int,
@@ -25,8 +25,8 @@ class ProductRepo:
             product = Product.objects.create(
                 category=category,
                 name=name,
+                type=type,
                 status=status,
-                base_price=base_price,
                 price=price,
                 discount_order=discount_order,
                 discount_percentage=discount_percentage,
@@ -81,8 +81,9 @@ class ProductRepo:
     def update(
         id: int,
         category: Category,
+        type: int,
         status: int,
-        base_price: int,
+        price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -90,8 +91,9 @@ class ProductRepo:
             product = Product.objects.get(id=id)
             if product:
                 product.category = category
+                product.type = type
                 product.status = status
-                product.base_price = base_price
+                product.price = price
                 product.discount_order = discount_order
                 product.discount_percentage = discount_percentage
                 product.save()

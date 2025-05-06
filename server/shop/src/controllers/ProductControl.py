@@ -22,15 +22,14 @@ class ProductControl:
             if not CheckInfos.is_valid_string(data["name"]):
                 raise HttpError(400, "Invalid name")
 
+            if not CheckInfos.is_type_product(data["type"]):
+                raise HttpError(400, "Invalid type")
+
             if not CheckInfos.is_status_product(data["status"]):
                 raise HttpError(400, "Invalid status")
 
-            if not CheckInfos.is_valid_price(data["basePrice"]):
-                raise HttpError(400, "Invalid basePrice")
-
-            if data["price"] != None:
-                if not CheckInfos.is_valid_price(data["basePrice"]):
-                    raise HttpError(400, "Invalid price")
+            if not CheckInfos.is_valid_price(data["price"]):
+                raise HttpError(400, "Invalid price")
 
             if not data["discountOrder"] >= 0:
                 raise HttpError(400, "Invalid discountOrder")
@@ -51,7 +50,6 @@ class ProductControl:
                 data["categoryId"],
                 data["name"],
                 data["status"],
-                data["basePrice"],
                 data["price"],
                 data["discountOrder"],
                 data["discountPercentage"],
@@ -80,6 +78,15 @@ class ProductControl:
 
             if not CheckInfos.is_valid_string(data["description_text"]):
                 raise HttpError(400, "Invalid description_text")
+
+            if not CheckInfos.is_list_of_str_dicts(data["benefits"]):
+                raise HttpError(400, "Invalid benefits")
+
+            if not CheckInfos.is_list_of_str_dicts(data["specifications"]):
+                raise HttpError(400, "Invalid specifications")
+
+            if not CheckInfos.is_list_of_strings(data["functionalities"]):
+                raise HttpError(400, "Invalid functionalities")
 
             details = ProductService.add_product_details(
                 data["productId"],
@@ -159,15 +166,14 @@ class ProductControl:
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
+            if not CheckInfos.is_type_product(data.type):
+                raise HttpError(400, "Invalid type")
+
             if not CheckInfos.is_status_product(data.status):
                 raise HttpError(400, "Invalid string for description")
 
-            if not CheckInfos.is_valid_price(data.basePrice):
+            if not CheckInfos.is_valid_price(data.price):
                 raise HttpError(400, "Invalid price")
-
-            if data.price != None:
-                if not CheckInfos.is_valid_price(data.basePrice):
-                    raise HttpError(400, "Invalid price")
 
             if data.discountPercentage != None:
                 if not CheckInfos.is_positive_int(data.discountOrder):
@@ -177,11 +183,11 @@ class ProductControl:
                 if not CheckInfos.is_percentage(data.discountPercentage):
                     raise HttpError(400, "Invalid discountPercentage")
 
-            product = ProductService.update(
+            product = ProductService.update_product(
                 data.id,
                 data.name,
-                data.categoryId,
-                data.basePrice,
+                data.type,
+                data.status,
                 data.price,
                 data.discountOrder,
                 data.discountPercentage,
@@ -244,16 +250,16 @@ class ProductControl:
             if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
-            if not CheckInfos.is_valid_string(data.description_title):
-                raise HttpError(400, "Invalid string for description_title")
+            if not CheckInfos.is_valid_string(data.descriptionTitle):
+                raise HttpError(400, "Invalid string for description title")
 
-            if not CheckInfos.is_valid_string(data.description_text):
-                raise HttpError(400, "Invalid string for description_text")
+            if not CheckInfos.is_valid_string(data.descriptionText):
+                raise HttpError(400, "Invalid string for description text")
 
             details = ProductService.update_details(
                 data.id,
-                data.description_title,
-                data.description_text,
+                data.descriptionTitle,
+                data.descriptionText,
                 data.benefits,
                 data.functionalities,
                 data.specifications,

@@ -19,8 +19,8 @@ class ProductUpdateSchema(Schema):
     id: int
     categoryId: int
     name: str
+    type: int
     status: int
-    basePrice: int
     price: int
     discountOrder: int
     discountPercentage: int
@@ -28,8 +28,8 @@ class ProductUpdateSchema(Schema):
 
 class ProductDetailsUpdateSchema(Schema):
     id: int
-    description_title: str
-    description_text: str
+    descriptionTitle: str
+    descriptionText: str
     benefits: dict
     functionalities: dict
     specifications: dict
@@ -45,8 +45,8 @@ def add_product(
     request,
     categoryId: int = Form(...),
     name: str = Form(...),
+    type: int = Form(...),
     status: int = Form(...),
-    basePrice: int = Form(...),
     price: int = Form(...),
     discountOrder: int = Form(...),
     discountPercentage: int = Form(...),
@@ -59,8 +59,8 @@ def add_product(
         {
             "categoryId": categoryId,
             "name": name,
+            "type": type,
             "status": status,
-            "basePrice": basePrice,
             "price": price,
             "discountOrder": discountOrder,
             "discountPercentage": discountPercentage,
@@ -76,19 +76,20 @@ def add_details(
     request,
     productId: int = Form(...),
     locale: str = Form(...),
-    description_title: str = Form(...),
-    description_text: str = Form(...),
-    benefits: dict = Form(...),
-    functionalities: dict = Form(...),
-    specifications: dict = Form(...),
+    descriptionTitle: str = Form(...),
+    descriptionText: str = Form(...),
+    benefits=Form(...),
+    functionalities=Form(...),
+    specifications=Form(...),
+    dummy_file: bytes = File(None),
 ) -> Details | HttpError:
     return ProductControl.add_product_details(
         request,
         {
             "productId": productId,
             "locale": locale,
-            "description_title": description_title,
-            "description_text": description_text,
+            "description_title": descriptionTitle,
+            "description_text": descriptionText,
             "benefits": benefits,
             "functionalities": functionalities,
             "specifications": specifications,

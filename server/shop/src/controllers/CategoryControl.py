@@ -106,9 +106,7 @@ class CategoryControl:
             if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
 
-            category = CategoryService.update_locale(
-                data.locale_id, data.locale, data.name
-            )
+            category = CategoryService.update_locale(data.id, data.locale, data.name)
             if category:
                 return category.to_json(locale=data.locale)
             else:

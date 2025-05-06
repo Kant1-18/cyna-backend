@@ -1,12 +1,13 @@
 from django.db import models
 from shop.src.data.models.Category import Category
+import json
 
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.TextField(null=True)
+    type = models.IntegerField(default=0)
     status = models.IntegerField(default=0, blank=False, null=False)
-    base_price = models.IntegerField(default=0, blank=False, null=False)
     price = models.IntegerField(default=0, blank=False, null=True)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     discount_percentage = models.IntegerField(default=0, blank=False, null=False)
@@ -18,12 +19,11 @@ class Product(models.Model):
     stripe_yearly_price_id = models.TextField(null=True)
 
     def to_json(self, details):
-        if self.price == None:
-            self.price = (self.base_price * self.discount_percentage) / 100
         return {
             "id": self.id,
             "category": self.category.to_json(details.locale),
             "name": self.name,
+            "type": self.type,
             "slides": [
                 self.image1,
                 self.image2,
@@ -33,14 +33,10 @@ class Product(models.Model):
                 "title": details.description_title,
                 "text": details.description_text,
             },
-            "benefits": [benefit for benefit in details.benefits.split(",")],
-            "functionalities": [
-                functionality for functionality in details.functionalities.split(",")
-            ],
-            "specifications": [
-                specification for specification in details.specifications.split(",")
-            ],
-            "price": self.price,
+            "benefits": json.loads(details.benefits),
+            "functionalities": json.loads(details.functionalities),
+            "specifications": json.loads(details.specifications),
+            "price": (self.price * self.discount_percentage) / 100,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
@@ -51,8 +47,8 @@ class Product(models.Model):
             "id": self.id,
             "category": self.category.to_json(),
             "name": self.name,
-            "basePrice": self.base_price,
-            "price": self.price,
+            "type": self.type,
+            "price": (self.price * self.discount_percentage) / 100,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,

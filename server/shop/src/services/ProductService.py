@@ -7,6 +7,7 @@ from shop.src.data.repositories.ProductDetailsRepo import (
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from ninja.files import UploadedFile
 from utils.Cloudinary import ImageUploader
+import json
 
 
 class ProductService:
@@ -19,8 +20,8 @@ class ProductService:
     def add_product(
         category_id: int,
         name: str,
+        type: int,
         status: int,
-        base_price: int,
         price: int,
         discount_order: int,
         discount_percentage: int,
@@ -37,10 +38,10 @@ class ProductService:
         try:
             stripe_product = StripeUtils.create_product(name)
             stripe_monthly_price = StripeUtils.add_monthly_price(
-                stripe_product.id, base_price
+                stripe_product.id, price
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, (base_price * 12)
+                stripe_product.id, (price * 12)
             )
 
             image1 = ImageUploader.product(image1)
@@ -49,8 +50,8 @@ class ProductService:
             return ProductRepo.add(
                 category,
                 name,
+                type,
                 status,
-                base_price,
                 price,
                 discount_order,
                 discount_percentage,
@@ -70,12 +71,11 @@ class ProductService:
     def add_product_details(
         product_id: int,
         locale: str,
-        name: str,
         description_title: str,
         description_text: str,
-        benefits: dict,
-        functionalities: dict,
-        specifications: dict,
+        benefits,
+        functionalities,
+        specifications,
     ) -> Details | None:
         product = ProductRepo.get(product_id)
         if not product:
@@ -87,9 +87,9 @@ class ProductService:
                 locale,
                 description_title,
                 description_text,
-                benefits,
-                functionalities,
-                specifications,
+                json.dump(benefits),
+                json.dump(functionalities),
+                json.dump(specifications),
             )
         except Exception as e:
             print(e)
@@ -155,8 +155,8 @@ class ProductService:
     def update_product(
         product_id: int,
         category_id: int,
+        type: int,
         status: int,
-        base_price: int,
         price: int,
         discount_order: int,
         discount_percentage: int,
@@ -169,8 +169,9 @@ class ProductService:
             return ProductRepo.update(
                 product_id,
                 category,
+                type,
                 status,
-                base_price,
+                price,
                 discount_order,
                 discount_percentage,
             )
