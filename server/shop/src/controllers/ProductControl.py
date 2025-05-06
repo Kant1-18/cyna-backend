@@ -74,10 +74,10 @@ class ProductControl:
             if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
 
-            if not CheckInfos.is_valid_string(data.description_title):
+            if not CheckInfos.is_valid_string(data.descriptionTitle):
                 raise HttpError(400, "Invalid description_title")
 
-            if not CheckInfos.is_valid_string(data.description_text):
+            if not CheckInfos.is_valid_string(data.descriptionText):
                 raise HttpError(400, "Invalid description_text")
 
             if not CheckInfos.is_list_of_str_dicts(data.benefits):
@@ -92,8 +92,8 @@ class ProductControl:
             details = ProductService.add_product_details(
                 data.productId,
                 data.locale,
-                data.description_title,
-                data.description_text,
+                data.descriptionTitle,
+                data.descriptionText,
                 data.benefits,
                 data.functionalities,
                 data.specifications,

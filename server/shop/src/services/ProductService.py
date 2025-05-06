@@ -87,9 +87,9 @@ class ProductService:
                 locale,
                 description_title,
                 description_text,
-                json.dump(benefits),
-                json.dump(functionalities),
-                json.dump(specifications),
+                json.dumps(benefits),
+                json.dumps(functionalities),
+                json.dumps(specifications),
             )
         except Exception as e:
             print(e)
