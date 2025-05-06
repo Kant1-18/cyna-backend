@@ -49,6 +49,7 @@ class ProductControl:
             product = ProductService.add_product(
                 data["categoryId"],
                 data["name"],
+                data["type"],
                 data["status"],
                 data["price"],
                 data["discountOrder"],

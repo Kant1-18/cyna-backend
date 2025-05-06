@@ -3,7 +3,7 @@ from shop.models import Order, OrderItem
 from shop.src.services.OrderService import OrderService
 
 
-class Stripe:
+class StripeUtils:
 
     @staticmethod
     def create_product(name: str) -> stripe.Product | None:

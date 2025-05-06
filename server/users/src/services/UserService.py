@@ -1,6 +1,6 @@
 from users.src.data.repositories.UserRepo import UserRepo
 from users.src.data.models.User import User
-from utils.Stripe import Stripe
+from utils.Stripe import StripeUtils
 
 
 class UserService:
@@ -8,7 +8,7 @@ class UserService:
     @staticmethod
     def add(first_name: str, last_name: str, email: str, password: str) -> User | None:
         try:
-            stripe_customer = Stripe.create_customer(
+            stripe_customer = StripeUtils.create_customer(
                 email=email, name=f"{first_name} {last_name}"
             )
             return UserRepo.add(

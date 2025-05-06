@@ -6,7 +6,7 @@ from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItem
 from payments.src.data.repositories.PaymentMethodRepo import PaymentMethodRepo
 from users.src.services.UserService import UserService
 from users.src.services.AddressService import AddressService
-from utils.Stripe import Stripe
+from utils.Stripe import StripeUtils
 from shop.src.services.OrderService import OrderService
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 
@@ -36,7 +36,7 @@ class SubscriptionService:
                     order,
                 )
 
-            stripe_subscription = Stripe.create_subscription(
+            stripe_subscription = StripeUtils.create_subscription(
                 customer_id=user.stripe_id,
                 recurrence=recurrence,
                 order=order,
@@ -83,7 +83,7 @@ class SubscriptionService:
             recurrence = subscription.recurrence
             for item in order.items.all():
                 for i in range(item.quantity):
-                    if Stripe.add_item_subscription(
+                    if StripeUtils.add_item_subscription(
                         subscription_id=subscription.stripe_id,
                         product_id=(
                             item.product.stripe_monthly_price_id
@@ -141,7 +141,7 @@ class SubscriptionService:
             if subscription:
                 order_item = OrderItemRepo.get_by_id(order_item_id)
                 if order_item:
-                    if Stripe.delete_item_subscription(
+                    if StripeUtils.delete_item_subscription(
                         subscription_id=subscription.stripe_id,
                         product_id=(
                             order_item.product.stripe_monthly_price_id
@@ -163,7 +163,9 @@ class SubscriptionService:
         try:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:
-                if Stripe.delete_subscription(subscription_id=subscription.stripe_id):
+                if StripeUtils.delete_subscription(
+                    subscription_id=subscription.stripe_id
+                ):
                     SubscriptionRepo.delete(subscription_id)
                     return True
         except Exception as e:
