@@ -16,7 +16,7 @@ class TicketControl:
             if not CheckInfos.is_valid_string(data.message):
                 return HttpError(400, "Invalid string for message")
 
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
 
             ticket = TicketService.add_ticket(user.id, data.subject, data.message)
@@ -41,7 +41,7 @@ class TicketControl:
     @staticmethod
     def get_all_my(request) -> list[Ticket] | HttpError:
         try:
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
             tickets = TicketService.get_all_tickets_by_user(user.id)
             if tickets:

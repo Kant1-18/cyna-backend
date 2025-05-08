@@ -6,7 +6,9 @@ class OrderItemRepo:
     @staticmethod
     def add(order: Order, product: Product, quantity: int) -> OrderItem | None:
         try:
-            return OrderItem.create(order=order, product=product, quantity=quantity)
+            return OrderItem.objects.create(
+                order=order, product=product, quantity=quantity
+            )
         except Exception as e:
             print(e)
             return None

@@ -37,7 +37,7 @@ class CheckInfos:
 
     @staticmethod
     def is_positive_int(number: int) -> bool:
-        if number > 0:
+        if number >= 0:
             return True
         else:
             return False

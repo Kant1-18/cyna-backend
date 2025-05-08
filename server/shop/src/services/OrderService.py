@@ -2,6 +2,7 @@ from shop.models import Order, OrderItem, Product
 from shop.src.data.repositories.OrderRepo import OrderRepo
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 from shop.src.services.ProductService import ProductService
+from users.src.data.repositories.UserRepo import UserRepo
 
 
 class OrderService:
@@ -21,9 +22,9 @@ class OrderService:
     def add_product(user_id: int, product_id: int, quantity: int) -> Order | None:
         try:
             if not OrderService.is_cart_exist(user_id):
-                order = OrderRepo.add(user_id)
-
-            product = ProductService.get_product_by_id(product_id)
+                user = UserRepo.get(user_id)
+                order = OrderRepo.add(user)
+            product = ProductService.get(product_id)
             OrderItemRepo.add(order, product, quantity)
 
             return order
@@ -141,9 +142,7 @@ class OrderService:
     @staticmethod
     def delete_order(order_id: int) -> Order | None:
         try:
-            order = OrderRepo.delete(order_id)
-            if order:
-                return order
+            return OrderRepo.delete(order_id)
         except Exception as e:
             print(e)
 

@@ -11,7 +11,7 @@ class SubscriptionRepo:
         billing_address: Address,
         stripe_id: str,
         payment_method: PaymentMethod,
-        recurrence: bool,
+        recurrence: int,
     ) -> Subscription | None:
         try:
             subscription = Subscription.objects.create(
@@ -101,8 +101,13 @@ class SubscriptionRepo:
         return False
 
     @staticmethod
-    def have_subscription(user: User) -> bool:
+    def have_active_subscription(user: User) -> bool:
         try:
-            return Subscription.objects.filter(user=user).exists()
+            subscription = Subscription.objects.filter(user=user, status=1)
+            if subscription:
+                return True
+            else:
+                return False
         except Exception as e:
             print(e)
+            return None

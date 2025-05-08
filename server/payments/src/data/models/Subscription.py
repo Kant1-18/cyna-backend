@@ -11,7 +11,7 @@ class Subscription(models.Model):
         PaymentMethod, on_delete=models.SET_NULL, null=True
     )
     stripe_id = models.TextField(default="")
-    recurrence = models.BooleanField(default=False)
+    recurrence = models.IntegerField(default=0)
 
     def to_json(self):
         return {

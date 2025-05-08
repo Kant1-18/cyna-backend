@@ -86,13 +86,13 @@ class StripeUtils:
 
     @staticmethod
     def create_subscription(
-        customer_id: str, recurrence: bool, order: Order
+        customer_id: str, recurrence: int, order: Order
     ) -> stripe.Subscription | None:
         try:
             order_items = OrderService.get_all_items(order)
 
             prices = []
-            if recurrence == False:
+            if recurrence == 0:
                 for item in order_items:
                     for i in range(item.quantity):
                         prices.append(item.product.stripe_monthly_price_id)

@@ -21,11 +21,11 @@ class OrderControl:
             if error:
                 return error
 
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
 
             order = OrderService.add_product(user.id, data.productId, data.quantity)
-            if order:
+            if order and order is not None:
                 return order.to_json()
         except Exception as e:
             print(e)
@@ -40,7 +40,7 @@ class OrderControl:
             if error:
                 return error
 
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
 
             order = OrderService.update_product_in_cart(
@@ -60,7 +60,7 @@ class OrderControl:
             if not CheckInfos.is_positive_int(productId):
                 return HttpError(400, "Invalid productId")
 
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
 
             order = OrderService.delete_product_from_cart(user.id, productId)
@@ -75,7 +75,7 @@ class OrderControl:
     @staticmethod
     def get_cart(request) -> Order | HttpError:
         try:
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
             order = OrderService.get_cart(user.id)
             if order:
@@ -89,7 +89,7 @@ class OrderControl:
     @staticmethod
     def get_all_orders(request) -> list[Order] | HttpError:
         try:
-            token = AuthService.get_access_token(request)
+            token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
             orders = OrderService.get_all_orders(user.id)
             if orders:
@@ -168,11 +168,7 @@ class OrderControl:
             if not CheckInfos.is_positive_int(id):
                 return HttpError(400, "Invalid id")
 
-            order = OrderService.delete_order(id)
-            if order:
-                return order.to_json()
-            else:
-                raise HttpError(404, "Order not found")
+            return OrderService.delete_order(id)
         except Exception as e:
             print(e)
             raise HttpError(500, "An error occurred while deleting the order")

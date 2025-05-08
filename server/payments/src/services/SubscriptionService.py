@@ -18,7 +18,7 @@ class SubscriptionService:
         user_id: int,
         billing_address_id: int,
         payment_method_id: int,
-        recurrence: bool,
+        recurrence: int,
         order_id: int,
     ):
         try:
@@ -29,7 +29,7 @@ class SubscriptionService:
             order = OrderService.get(order_id)
             OrderService.update_order_status(order_id, 1)
 
-            if SubscriptionRepo.have_subscription(user):
+            if SubscriptionRepo.have_active_subscription(user):
                 subscription = SubscriptionRepo.get_by_user(user)
                 return SubscriptionService.add_order_in_subscription(
                     subscription,
@@ -88,7 +88,7 @@ class SubscriptionService:
                         subscription_id=subscription.stripe_id,
                         product_id=(
                             item.product.stripe_monthly_price_id
-                            if not recurrence
+                            if recurrence == 0
                             else item.product.stripe_yearly_price_id
                         ),
                     ):
@@ -170,7 +170,7 @@ class SubscriptionService:
                         subscription_id=subscription.stripe_id,
                         product_id=(
                             order_item.product.stripe_monthly_price_id
-                            if subscription.recurrence
+                            if subscription.recurrence == 0
                             else order_item.product.stripe_yearly_price_id
                         ),
                     ):
