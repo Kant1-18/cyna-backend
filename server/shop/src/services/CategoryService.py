@@ -46,3 +46,13 @@ class CategoryService:
     @staticmethod
     def is_category_exist(id: int) -> bool:
         return CategoryRepo.is_category_exist(id)
+
+    @staticmethod
+    def is_category_locale_exist(category_id: int, locale: str) -> bool:
+        try:
+            category = CategoryRepo.get(category_id)
+            if category:
+                return CategoryRepo.is_category_locale_exist(category, locale)
+        except Exception as e:
+            print(e)
+            return None

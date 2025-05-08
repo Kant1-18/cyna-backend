@@ -118,3 +118,12 @@ class CategoryRepo:
     @staticmethod
     def is_category_exist(id: int) -> bool:
         return Category.objects.filter(id=id).exists()
+
+    @staticmethod
+    def is_category_locale_exist(category: Category, locale: str) -> bool:
+        try:
+            locale = CategoryLocale.objects.get(category=category, locale=locale)
+            return True if locale else False
+        except Exception as e:
+            print(e)
+            return None

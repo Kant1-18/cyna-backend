@@ -127,7 +127,8 @@ class ProductDetailsRepo:
     @staticmethod
     def is_locale_exist(product: Product, locale: str) -> bool:
         try:
-            return ProductDetails.objects.get(product=product, locale=locale).exists()
+            details = ProductDetails.objects.get(product=product, locale=locale)
+            return True if details else False
         except Exception as e:
             print(e)
             return None

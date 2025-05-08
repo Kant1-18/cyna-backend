@@ -74,7 +74,7 @@ class ProductControl:
             if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
 
-            if not ProductService.is_product_exist(data.productId, data.locale):
+            if ProductService.is_product_exist(data.productId, data.locale):
                 raise HttpError(409, "locale already exists for this product")
 
             if not CheckInfos.is_valid_string(data.descriptionTitle):
