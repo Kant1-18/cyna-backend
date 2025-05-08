@@ -13,6 +13,7 @@ from tickets.src.routes.TicketUrls import router as ticket_router
 
 from payments.src.routes.PaymentMethodUrls import router as payment_method_router
 from payments.src.routes.SubscriptionUrls import router as subscription_router
+from payments.src.routes.PaymentUrls import router as payment_router
 
 
 api = NinjaAPI()
@@ -29,6 +30,7 @@ api.add_router("tickets", ticket_router)
 
 api.add_router("payment-methods", payment_method_router)
 api.add_router("subscriptions", subscription_router)
+api.add_router("payments", payment_router)
 
 
 urlpatterns = [

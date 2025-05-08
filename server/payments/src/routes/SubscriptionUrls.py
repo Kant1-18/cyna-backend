@@ -55,14 +55,14 @@ def get_by_user_id(request, user_id: int) -> Subscription | HttpError:
     return SubscriptionControl.get_by_user(request, user_id)
 
 
-@router.put("/billing-address", auth=JWTAuth())
+@router.patch("/billing-address", auth=JWTAuth())
 def update_billing_address(
     request, data: UpdateSubscriptionAddressSchema
 ) -> Subscription | HttpError:
     return SubscriptionControl.update_billing_address(request, data)
 
 
-@router.put("/status", auth=JWTAuth())
+@router.patch("/status", auth=JWTAuth())
 def update_status(
     request, data: UpdateSubscriptionStatusSchema
 ) -> Subscription | HttpError:
