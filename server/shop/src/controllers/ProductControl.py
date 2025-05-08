@@ -124,6 +124,14 @@ class ProductControl:
             raise HttpError(404, "Product not found")
 
     @staticmethod
+    def get_all() -> list[Product] | HttpError:
+        products = ProductService.get_all()
+        if products:
+            return [product.to_json_all() for product in products]
+        else:
+            raise HttpError(404, "No products found")
+
+    @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | HttpError:
         if not CheckInfos.is_valid_locale(locale):
             raise HttpError(400, "Invalid locale")

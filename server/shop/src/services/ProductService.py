@@ -116,6 +116,16 @@ class ProductService:
             return None
 
     @staticmethod
+    def get_all() -> list[Product] | None:
+        try:
+            products = ProductRepo.get_all()
+            if products:
+                return products
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | None:
         result_details = {}
         try:

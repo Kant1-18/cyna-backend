@@ -18,7 +18,7 @@ class Product(models.Model):
     stripe_monthly_price_id = models.TextField(null=True)
     stripe_yearly_price_id = models.TextField(null=True)
 
-    def to_json(self, details):
+    def to_json_single(self, details):
         return {
             "id": self.id,
             "category": self.category.to_json(details.locale),
@@ -36,10 +36,28 @@ class Product(models.Model):
             "benefits": json.loads(details.benefits),
             "functionalities": json.loads(details.functionalities),
             "specifications": json.loads(details.specifications),
-            "price": (self.price * self.discount_percentage) / 100,
+            "price": self.price * (1 - self.discount_percentage / 100),
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
+        }
+
+    def to_json_all(self):
+        return {
+            "id": self.id,
+            "category": self.category.to_json(),
+            "name": self.name,
+            "type": self.type,
+            "price": self.price * (1 - self.discount_percentage / 100),
+            "status": self.status,
+            "discountOrder": self.discount_order,
+            "discountPercentage": self.discount_percentage,
+            "slides": [
+                self.image1,
+                self.image2,
+                self.image3,
+            ],
+            "details": [detail.to_json() for detail in self.details.all()],
         }
 
     def to_json_admin(self):
@@ -48,7 +66,7 @@ class Product(models.Model):
             "category": self.category.to_json(),
             "name": self.name,
             "type": self.type,
-            "price": (self.price * self.discount_percentage) / 100,
+            "price": self.price * (1 - self.discount_percentage / 100),
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,

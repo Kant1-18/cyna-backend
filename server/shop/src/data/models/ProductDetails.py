@@ -4,7 +4,9 @@ import json
 
 
 class ProductDetails(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="details"
+    )
     locale = models.CharField(max_length=5, default="en")
     description_title = models.TextField(null=False)
     description_text = models.TextField(null=False)
