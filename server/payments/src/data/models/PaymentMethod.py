@@ -9,5 +9,5 @@ class PaymentMethod(models.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "stripe_code": self.stripe_code,
+            "stripeCode": self.stripe_code,
         }
