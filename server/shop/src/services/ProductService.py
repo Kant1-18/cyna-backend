@@ -250,3 +250,18 @@ class ProductService:
     @staticmethod
     def delete_details(id: int) -> bool:
         return DetailsRepo.delete(id)
+
+    ###########################################################################
+    # check
+    ###########################################################################
+
+    @staticmethod
+    def is_product_exist(product_id: int, locale: str) -> bool:
+        try:
+            product = ProductRepo.get(product_id)
+            if product:
+                return DetailsRepo.is_locale_exist(product, locale)
+
+        except Exception as e:
+            print(e)
+            return False

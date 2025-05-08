@@ -123,3 +123,11 @@ class ProductDetailsRepo:
             print(e)
 
         return False
+
+    @staticmethod
+    def is_locale_exist(product: Product, locale: str) -> bool:
+        try:
+            return ProductDetails.objects.get(product=product, locale=locale).exists()
+        except Exception as e:
+            print(e)
+            return None
