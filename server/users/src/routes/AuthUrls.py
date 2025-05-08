@@ -32,7 +32,7 @@ def login(request, data: LoginSchema):
     return AuthControl.login(data)
 
 
-@router.post("/refresh", auth=JWTAuth())
+@router.post("/refresh")
 def refresh(request, data: TokenShema):
     return AuthControl.refresh(data)
 

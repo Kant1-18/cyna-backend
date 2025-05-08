@@ -17,6 +17,7 @@ class ProductDetails(models.Model):
     def to_json(self):
         return {
             "id": self.id,
+            "productId": self.product.id,
             "locale": self.locale,
             "descriptionTitle": self.description_title,
             "descriptionText": self.description_text,
