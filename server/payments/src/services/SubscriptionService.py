@@ -45,6 +45,7 @@ class SubscriptionService:
             if stripe_subscription:
                 subscription = SubscriptionRepo.add(
                     user_id=user.id,
+                    status=0,
                     billing_address_id=address.id,
                     payment_method_id=payment_method.id,
                     stripe_id=stripe_subscription.id,
@@ -132,6 +133,30 @@ class SubscriptionService:
         except Exception as e:
             print(e)
 
+        return None
+
+    @staticmethod
+    def update_address(
+        subscription_id: int, billing_address_id: int
+    ) -> Subscription | None:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                address = AddressService.get(billing_address_id)
+                if address:
+                    return SubscriptionRepo.update_address(subscription_id, address)
+        except Exception as e:
+            print(e)
+        return None
+
+    @staticmethod
+    def update_status(subscription_id: int, status: int) -> Subscription | None:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                return SubscriptionRepo.update_status(subscription_id, status)
+        except Exception as e:
+            print(e)
         return None
 
     @staticmethod

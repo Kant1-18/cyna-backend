@@ -27,8 +27,8 @@ def send_order_invoice(user_email: str, order: Order):
 
     msg = EmailMultiAlternatives(
         subject=f"Invoice for Order #{order.id}",
-        body="Please find your invoice attached.",
-        from_email="billing@cyna.com",
+        body="Your invoice attached.",
+        from_email="cyna.b3pe@gmail.com",
         to=[user_email],
     )
     msg.attach_alternative(html, "text/html")
@@ -58,7 +58,7 @@ def send_subscription_invoice(user_email: str, subscription: Subscription):
     msg = EmailMultiAlternatives(
         subject=f"Invoice for Subscription #{subscription.id}",
         body="Please find your subscription invoice attached.",
-        from_email="billing@cyna.com",
+        from_email="cyna.b3pe@gmail.com",
         to=[user_email],
     )
     msg.attach_alternative(html, "text/html")

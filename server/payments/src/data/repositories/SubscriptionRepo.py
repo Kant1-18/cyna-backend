@@ -7,6 +7,7 @@ class SubscriptionRepo:
     @staticmethod
     def add(
         user: User,
+        status: int,
         billing_address: Address,
         stripe_id: str,
         payment_method: PaymentMethod,
@@ -15,6 +16,7 @@ class SubscriptionRepo:
         try:
             subscription = Subscription.objects.create(
                 user=user,
+                status=status,
                 billing_address=billing_address,
                 payment_method=payment_method,
                 stripe_id=stripe_id,
@@ -66,6 +68,19 @@ class SubscriptionRepo:
             subscription = Subscription.objects.get(id=id)
             if subscription:
                 subscription.billing_address = billing_address
+                subscription.save()
+                return subscription
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
+    def update_status(id: int, status: int) -> Subscription | None:
+        try:
+            subscription = Subscription.objects.get(id=id)
+            if subscription:
+                subscription.status = status
                 subscription.save()
                 return subscription
         except Exception as e:

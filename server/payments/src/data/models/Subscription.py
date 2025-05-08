@@ -5,6 +5,7 @@ from users.models import User, Address
 
 class Subscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.IntegerField(default=0)
     billing_address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     payment_method = models.ForeignKey(
         PaymentMethod, on_delete=models.SET_NULL, null=True
