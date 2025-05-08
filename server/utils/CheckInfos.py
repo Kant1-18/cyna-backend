@@ -36,15 +36,8 @@ class CheckInfos:
             return False
 
     @staticmethod
-    def is_positive_int(id: int) -> bool:
-        if id > 0:
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def is_valid_price(number: int) -> bool:
-        if number > 0 and len(str(number)) >= 4:
+    def is_positive_int(number: int) -> bool:
+        if number > 0:
             return True
         else:
             return False
