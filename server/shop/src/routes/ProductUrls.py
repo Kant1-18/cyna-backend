@@ -113,7 +113,7 @@ def get_all_by_category_and_locale(
     return ProductControl.get_all_by_category_and_locale(category_id, locale)
 
 
-@router.get("/{id}", auth=JWTAuth())
+@router.get("/get/{id}", auth=JWTAuth())
 def get_by_id(request, id: int) -> Product | HttpError:
     return ProductControl.get_by_id(id)
 
