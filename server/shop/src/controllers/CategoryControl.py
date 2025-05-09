@@ -30,7 +30,7 @@ class CategoryControl:
             if not CheckInfos.is_valid_string(data.locale):
                 raise HttpError(400, "Invalid string for locale")
 
-            if not CategoryService.is_category_locale_exist(data.id, data.locale):
+            if CategoryService.is_category_locale_exist(data.id, data.locale):
                 raise HttpError(409, "Category locale already exists")
 
             if not CheckInfos.is_valid_string(data.name):
