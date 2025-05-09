@@ -52,7 +52,7 @@ class AuthControl:
                 value=tokens["refresh"],
                 httponly=True,
                 secure=True,
-                samesite="Strict",  # ou 'Lax' selon les besoins
+                samesite="None",  # ou 'Lax' selon les besoins
                 max_age=7 * 24 * 3600,  # 1 semaine
             )
             return response
@@ -81,7 +81,7 @@ class AuthControl:
                 value=new_tokens["refresh"],
                 httponly=True,
                 secure=True,
-                samesite="Strict",
+                samesite="None",
                 max_age=7 * 24 * 3600,
             )
             return response
