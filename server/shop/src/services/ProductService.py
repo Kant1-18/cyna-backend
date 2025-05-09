@@ -165,6 +165,7 @@ class ProductService:
     def update_product(
         product_id: int,
         category_id: int,
+        name: str,
         type: int,
         status: int,
         price: int,
@@ -179,6 +180,7 @@ class ProductService:
             return ProductRepo.update(
                 product_id,
                 category,
+                name,
                 type,
                 status,
                 price,

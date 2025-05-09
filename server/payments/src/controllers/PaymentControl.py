@@ -13,10 +13,14 @@ class PaymentControl:
             raise HttpError(400, "Invalid payment method id")
         if not CheckInfos.is_positive_int(data.amount):
             raise HttpError(400, "Invalid amount")
-        if not CheckInfos.is_positive_int(data.orderId):
-            raise HttpError(400, "Invalid order id")
-        if not CheckInfos.is_positive_int(data.subscriptionId):
-            raise HttpError(400, "Invalid subscription id")
+
+        if data.orderId != None:
+            if not CheckInfos.is_positive_int(data.orderId):
+                raise HttpError(400, "Invalid order id")
+
+        if data.subscriptionId != None:
+            if not CheckInfos.is_positive_int(data.subscriptionId):
+                raise HttpError(400, "Invalid subscription id")
 
         payment = PaymentService.add(
             data.paymentMethodId,

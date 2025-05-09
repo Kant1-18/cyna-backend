@@ -208,6 +208,7 @@ class ProductControl:
 
             product = ProductService.update_product(
                 data.id,
+                data.categoryId,
                 data.name,
                 data.type,
                 data.status,

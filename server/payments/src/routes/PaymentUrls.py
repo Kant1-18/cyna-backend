@@ -17,8 +17,8 @@ class AddPaymentSchema(Schema):
     paymentMethodId: int
     amount: int
     status: int
-    orderId: int
-    subscriptionId: int
+    orderId: int | None
+    subscriptionId: int | None
 
 
 class UpdateStatusSchema(Schema):
@@ -28,7 +28,7 @@ class UpdateStatusSchema(Schema):
 
 @router.post("", auth=JWTAuth())
 def add(request, data: AddPaymentSchema) -> Payment | HttpError:
-    return PaymentControl.add(request, data)
+    return PaymentControl.add(data)
 
 
 @router.get("", auth=JWTAuth())
@@ -51,7 +51,7 @@ def get(request, id: int) -> Payment | HttpError:
     return PaymentControl.get(request, id)
 
 
-@router.patch("/status", auth=JWTAuth())
+@router.put("/status", auth=JWTAuth())
 def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
     return PaymentControl.update_status(request, data)
 

@@ -81,6 +81,7 @@ class ProductRepo:
     def update(
         id: int,
         category: Category,
+        name: str,
         type: int,
         status: int,
         price: int,
@@ -91,6 +92,7 @@ class ProductRepo:
             product = Product.objects.get(id=id)
             if product:
                 product.category = category
+                product.name = name
                 product.type = type
                 product.status = status
                 product.price = price
