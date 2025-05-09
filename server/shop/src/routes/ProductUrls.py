@@ -136,27 +136,27 @@ def update(request, data: ProductUpdateSchema) -> Product | HttpError:
     return ProductControl.update(request, data)
 
 
-@router.patch("/update/image1", auth=JWTAuth())
+@router.post("/update/image1", auth=JWTAuth())
 def update_image1(
-    request, productId: int, image: UploadedFile = File(...)
+    request, productId: int = Form(...), image: UploadedFile = File(...)
 ) -> bool | HttpError:
     return ProductControl.update_image1(
         request, {"productId": productId, "image": image}
     )
 
 
-@router.patch("/update/image2", auth=JWTAuth())
+@router.post("/update/image2", auth=JWTAuth())
 def update_image2(
-    request, productId: int, image: UploadedFile = File(...)
+    request, productId: int = Form(...), image: UploadedFile = File(...)
 ) -> bool | HttpError:
     return ProductControl.update_image2(
         request, {"productId": productId, "image": image}
     )
 
 
-@router.patch("/update/image3", auth=JWTAuth())
+@router.post("/update/image3", auth=JWTAuth())
 def update_image3(
-    request, productId: int, image: UploadedFile = File(...)
+    request, productId: int = Form(...), image: UploadedFile = File(...)
 ) -> bool | HttpError:
     return ProductControl.update_image3(
         request, {"productId": productId, "image": image}

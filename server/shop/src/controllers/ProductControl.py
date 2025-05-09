@@ -224,45 +224,48 @@ class ProductControl:
             raise HttpError(403, "Unauthorized")
 
     @staticmethod
-    def update_image1(request, data) -> bool | HttpError:
+    def update_image1(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data["id"]):
+            if not CheckInfos.is_positive_int(data["productId"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
 
-            if ProductService.update_image(data["id"], data["image"]):
-                return True
+            product = ProductService.update_image1(data["productId"], data["image"])
+            if product:
+                return product.to_json_all()
             else:
                 raise HttpError(500, "Error when updating product image")
         else:
             raise HttpError(403, "Unauthorized")
 
     @staticmethod
-    def update_image2(request, data) -> bool | HttpError:
+    def update_image2(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data["id"]):
+            if not CheckInfos.is_positive_int(data["productId"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
 
-            if ProductService.update_image2(data["id"], data["image"]):
-                return True
+            product = ProductService.update_image2(data["productId"], data["image"])
+            if product:
+                return product.to_json_all()
             else:
                 raise HttpError(500, "Error when updating product image")
         else:
             raise HttpError(403, "Unauthorized")
 
     @staticmethod
-    def update_image3(request, data) -> bool | HttpError:
+    def update_image3(request, data) -> Product | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data["id"]):
+            if not CheckInfos.is_positive_int(data["productId"]):
                 raise HttpError(400, "Invalid id")
             if not CheckInfos.is_valid_image_format(data["image"]):
                 raise HttpError(400, "Unsupported image format")
 
-            if ProductService.update_image3(data["id"], data["image"]):
-                return True
+            product = ProductService.update_image3(data["productId"], data["image"])
+            if product:
+                return product.to_json_all()
             else:
                 raise HttpError(500, "Error when updating product image")
         else:

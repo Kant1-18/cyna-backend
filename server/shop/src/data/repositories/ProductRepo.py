@@ -106,43 +106,40 @@ class ProductRepo:
         return None
 
     @staticmethod
-    def update_image1(id: int, image_url: str) -> bool:
+    def update_image1(id: int, image_url: str) -> Product | None:
         try:
             product = Product.objects.get(id=id)
             if product:
                 product.image1 = image_url
                 product.save()
-                return True
+                return product
         except Exception as e:
             print(e)
-
-        return False
+            return None
 
     @staticmethod
-    def update_image2(id: int, image_url: str) -> bool:
+    def update_image2(id: int, image_url: str) -> Product | None:
         try:
             product = Product.objects.get(id=id)
             if product:
                 product.image2 = image_url
                 product.save()
-                return True
+                return product
         except Exception as e:
             print(e)
-
-        return False
+            return None
 
     @staticmethod
-    def update_image3(id: int, image_url: str) -> bool:
+    def update_image3(id: int, image_url: str) -> Product | None:
         try:
             product = Product.objects.get(id=id)
             if product:
                 product.image3 = image_url
                 product.save()
-                return True
+                return product
         except Exception as e:
             print(e)
-
-        return False
+            return None
 
     @staticmethod
     def delete(id: int) -> bool:

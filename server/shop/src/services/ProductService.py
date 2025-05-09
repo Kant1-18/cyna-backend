@@ -215,7 +215,7 @@ class ProductService:
             return None
 
     @staticmethod
-    def update_image1(id: int, image) -> bool:
+    def update_image1(id: int, image) -> Product | None:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image1(id, image_url)
@@ -224,7 +224,7 @@ class ProductService:
             return False
 
     @staticmethod
-    def update_image2(id: int, image) -> bool:
+    def update_image2(id: int, image) -> Product | None:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image2(id, image_url)
@@ -233,7 +233,7 @@ class ProductService:
             return False
 
     @staticmethod
-    def update_image3(id: int, image) -> bool:
+    def update_image3(id: int, image) -> Product | None:
         try:
             image_url = ImageUploader.product(image)
             return ProductRepo.update_image3(id, image_url)
