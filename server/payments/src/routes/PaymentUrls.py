@@ -48,12 +48,12 @@ def get_by_subscription(request, subscription_id: int) -> Payment | HttpError:
 
 @router.get("/order/{order_id}", auth=JWTAuth())
 def get_by_order(request, order_id: int) -> Payment | HttpError:
-    return PaymentControl.get_by_order(request, order_id)
+    return PaymentControl.get_by_order(order_id)
 
 
 @router.get("/{id}", auth=JWTAuth())
 def get(request, id: int) -> Payment | HttpError:
-    return PaymentControl.get(request, id)
+    return PaymentControl.get(id)
 
 
 @router.delete("/{id}", auth=JWTAuth())
