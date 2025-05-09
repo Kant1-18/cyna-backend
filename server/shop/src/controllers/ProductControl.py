@@ -59,7 +59,7 @@ class ProductControl:
                 data["image3"],
             )
             if product:
-                return product.to_json_admin()
+                return product.to_json_all()
             else:
                 raise HttpError(500, "Error when adding product")
         else:
@@ -111,6 +111,17 @@ class ProductControl:
     ###########################################################################
     # GET
     ###########################################################################
+
+    @staticmethod
+    def get_by_id(id: int) -> Product | HttpError:
+        if not CheckInfos.is_positive_int(id):
+            raise HttpError(400, "Invalid id")
+
+        product = ProductService.get(id)
+        if product:
+            return product.to_json_all()
+        else:
+            raise HttpError(404, "Product not found")
 
     @staticmethod
     def get_by_id_and_locale(id: int, locale: str) -> Product | HttpError:
