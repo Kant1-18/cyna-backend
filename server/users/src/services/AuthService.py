@@ -26,6 +26,7 @@ class AuthService:
             print(user_id)
             return UserService.get(user_id)
         except Exception as e:
+            print(e)
             return None
 
     @staticmethod
