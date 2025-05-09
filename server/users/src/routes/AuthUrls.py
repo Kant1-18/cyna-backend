@@ -18,10 +18,6 @@ class LoginSchema(Schema):
     password: str
 
 
-class TokenShema(Schema):
-    token: str
-
-
 @router.post("/register")
 def register(request, data: RegisterSchema):
     return AuthControl.register(data)
@@ -33,10 +29,15 @@ def login(request, data: LoginSchema):
 
 
 @router.post("/refresh")
-def refresh(request, data: TokenShema):
-    return AuthControl.refresh(data)
+def refresh(request):
+    return AuthControl.refresh(request)
 
 
 @router.get("/me", auth=JWTAuth())
 def me(request):
     return AuthControl.me(request)
+
+
+@router.post("/logout")
+def logout(request):
+    return AuthControl.logout(request)

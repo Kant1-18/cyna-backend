@@ -64,7 +64,7 @@ class AuthControl:
         try:
             token = request.COOKIES.get("refresh_token")
 
-            if not token:
+            if not token or token.strip() == "":
                 raise HttpError(401, "Refresh token missing")
 
             user = AuthService.get_user_by_refresh_token(token)
