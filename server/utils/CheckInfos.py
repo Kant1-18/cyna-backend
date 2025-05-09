@@ -30,7 +30,7 @@ class CheckInfos:
 
     @staticmethod
     def is_valid_string(string: str) -> bool:
-        if len(string) > 0 and len(string) < 100:
+        if len(string) > 0 and len(string) < 500:
             return True
         else:
             return False
