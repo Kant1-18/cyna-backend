@@ -100,7 +100,7 @@ class CategoryControl:
     @staticmethod
     def update_locale(request, data) -> Category | HttpError:
         if AuthService.isAdmin(request):
-            if not CheckInfos.is_positive_int(data.locale_id):
+            if not CheckInfos.is_positive_int(data.localeId):
                 raise HttpError(400, "Invalid id")
 
             if not CheckInfos.is_valid_string(data.name):
@@ -110,7 +110,7 @@ class CategoryControl:
                 raise HttpError(400, "Invalid locale")
 
             category_locale = CategoryService.update_locale(
-                data.id, data.locale, data.name
+                data.localeId, data.locale, data.name
             )
             if category_locale:
                 return category_locale.to_json()
