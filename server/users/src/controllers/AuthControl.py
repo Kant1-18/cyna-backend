@@ -2,6 +2,8 @@ from users.src.services.UserService import UserService
 from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
+from ninja.responses import Response
+from django.http import JsonResponse
 
 
 class AuthControl:
@@ -36,26 +38,53 @@ class AuthControl:
         user = UserService.get_by_email(data.email)
         if user and UserService.check_password(user.id, data.password):
             tokens = AuthService.tokens_for_user(user)
-            return {
-                "access": tokens["access"],
-                "refresh": tokens["refresh"],
-                "user": user.to_json(),
-            }
+
+            response = JsonResponse(
+                {
+                    "access": tokens["access"],
+                    "user": user.to_json(),
+                }
+            )
+
+            # Ajout du refresh token dans un cookie HttpOnly sécurisé
+            response.set_cookie(
+                key="refresh_token",
+                value=tokens["refresh"],
+                httponly=True,
+                secure=True,
+                samesite="Strict",  # ou 'Lax' selon les besoins
+                max_age=7 * 24 * 3600,  # 1 semaine
+            )
+            return response
+
         raise HttpError(401, "email or password invalid")
 
     @staticmethod
-    def refresh(data):
+    def refresh(request):
         try:
-            user = AuthService.get_user_by_refresh_token(data.token)
+            token = request.COOKIES.get("refresh_token")
+
+            if not token:
+                raise HttpError(401, "Refresh token missing")
+
+            user = AuthService.get_user_by_refresh_token(token)
 
             if not user:
                 raise HttpError(404, "User not found")
 
             new_tokens = AuthService.tokens_for_user(user)
-            return {
-                "access": new_tokens["access"],
-                "refresh": new_tokens["refresh"],
-            }
+            response = JsonResponse({"access": new_tokens["access"]})
+
+            # Réémet le refresh token
+            response.set_cookie(
+                key="refresh_token",
+                value=new_tokens["refresh"],
+                httponly=True,
+                secure=True,
+                samesite="Strict",
+                max_age=7 * 24 * 3600,
+            )
+            return response
 
         except Exception as e:
             print(f"Token refresh error: {e}")
@@ -75,3 +104,9 @@ class AuthControl:
         except Exception as e:
             print(f"Token refresh error: {e}")
             raise HttpError(401, "Invalid or expired refresh token")
+
+    @staticmethod
+    def logout(request):
+        response = JsonResponse({"detail": "Logged out"})
+        response.delete_cookie("refresh_token")
+        return response

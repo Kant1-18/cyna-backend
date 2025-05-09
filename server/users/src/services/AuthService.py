@@ -34,6 +34,11 @@ class AuthService:
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
     @staticmethod
+    def new_access_token(user):
+        access = AccessToken.for_user(user)
+        return str(access)
+
+    @staticmethod
     def isAdmin(request):
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
