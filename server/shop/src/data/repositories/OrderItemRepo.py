@@ -16,7 +16,7 @@ class OrderItemRepo:
     @staticmethod
     def get_by_id(id: int) -> OrderItem | None:
         try:
-            item = OrderItem.get(id=id)
+            item = OrderItem.objects.get(id=id)
             if item:
                 return item
         except Exception as e:
@@ -59,7 +59,7 @@ class OrderItemRepo:
     @staticmethod
     def delete(order_item_id: int) -> OrderItem | None:
         try:
-            order_item_id = OrderItem.get(id=order_item_id)
+            order_item_id = OrderItem.objects.get(id=order_item_id)
             if order_item_id:
                 order_item_id.delete()
                 return True

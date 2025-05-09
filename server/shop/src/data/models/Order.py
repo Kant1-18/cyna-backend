@@ -17,7 +17,11 @@ class Order(models.Model):
         return {
             "id": self.id,
             "status": self.status,
-            "shippingAddress": self.shipping_address.to_json(),
-            "billingAddress": self.billing_address.to_json(),
+            "shippingAddress": (
+                self.shipping_address.to_json() if self.shipping_address else None
+            ),
+            "billingAddress": (
+                self.billing_address.to_json() if self.billing_address else None
+            ),
             "items": [item.to_json() for item in self.items.all()],
         }

@@ -3,31 +3,36 @@ from shop.src.data.repositories.OrderRepo import OrderRepo
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 from shop.src.services.ProductService import ProductService
 from users.src.data.repositories.UserRepo import UserRepo
+from users.models import User
 
 
 class OrderService:
 
     @staticmethod
-    def is_cart_exist(user_id: int) -> bool:
+    def is_cart_exist(user: User) -> bool:
         try:
-            order = OrderRepo.get_by_user_and_status(user_id, 0)
+            order = OrderRepo.get_by_user_and_status(user, 0)
             if order:
                 return True
+            else:
+                return False
         except Exception as e:
             print(e)
-
-        return False
+            return None
 
     @staticmethod
     def add_product(user_id: int, product_id: int, quantity: int) -> Order | None:
         try:
-            if not OrderService.is_cart_exist(user_id):
-                user = UserRepo.get(user_id)
-                order = OrderRepo.add(user)
-            product = ProductService.get(product_id)
-            OrderItemRepo.add(order, product, quantity)
+            user = UserRepo.get(user_id)
+            if user:
+                if not OrderService.is_cart_exist(user):
+                    order = OrderRepo.add(user)
+                else:
+                    order = OrderRepo.get_by_user_and_status(user, 0)
+                product = ProductService.get(product_id)
+                OrderItemRepo.add(order, product, quantity)
 
-            return order
+                return order
         except Exception as e:
             print(e)
 
@@ -51,11 +56,12 @@ class OrderService:
         try:
             order = OrderRepo.get_by_user_and_status(user_id, 0)
             if order:
-                product = ProductService.get_product_by_id(product_id)
-                if not product:
-                    return None
-                OrderItemRepo.update(order, product_id, quantity)
-                return order
+                product = ProductService.get(product_id)
+                if product:
+                    order_item = OrderItemRepo.get_by_order_and_product(order, product)
+                    if order_item:
+                        OrderItemRepo.update(order_item, quantity)
+                        return order
         except Exception as e:
             print(e)
 
@@ -66,7 +72,7 @@ class OrderService:
         try:
             order = OrderRepo.get_by_user_and_status(user_id, 0)
             if order:
-                product = ProductService.get_product_by_id(product_id)
+                product = ProductService.get(product_id)
                 if not product:
                     return None
                 order_item = OrderItemRepo.get_by_order_and_product(order, product)

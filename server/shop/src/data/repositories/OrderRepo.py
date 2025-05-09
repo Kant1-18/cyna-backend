@@ -24,7 +24,7 @@ class OrderRepo:
     @staticmethod
     def get_by_id(id: int) -> Order | None:
         try:
-            order = Order.get(id=id)
+            order = Order.objects.get(id=id)
             if order:
                 return order
         except Exception as e:
