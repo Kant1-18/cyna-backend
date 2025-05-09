@@ -36,6 +36,11 @@ def get_all(request) -> list[Payment] | HttpError:
     return PaymentControl.get_all(request)
 
 
+@router.patch("/status", auth=JWTAuth())
+def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
+    return PaymentControl.update_status(data)
+
+
 @router.get("/subscription/{subscription_id}", auth=JWTAuth())
 def get_by_subscription(request, subscription_id: int) -> Payment | HttpError:
     return PaymentControl.get_by_subscription(request, subscription_id)
@@ -43,17 +48,12 @@ def get_by_subscription(request, subscription_id: int) -> Payment | HttpError:
 
 @router.get("/order/{order_id}", auth=JWTAuth())
 def get_by_order(request, order_id: int) -> Payment | HttpError:
-    return PaymentControl.get_by_order(request, order_id)
+    return PaymentControl.get_by_order(order_id)
 
 
 @router.get("/{id}", auth=JWTAuth())
 def get(request, id: int) -> Payment | HttpError:
-    return PaymentControl.get(request, id)
-
-
-@router.put("/status", auth=JWTAuth())
-def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
-    return PaymentControl.update_status(request, data)
+    return PaymentControl.get(id)
 
 
 @router.delete("/{id}", auth=JWTAuth())

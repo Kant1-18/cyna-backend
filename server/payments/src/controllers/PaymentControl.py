@@ -48,9 +48,9 @@ class PaymentControl:
     def get_by_order(order_id: int) -> Payment | None:
         if not CheckInfos.is_positive_int(order_id):
             raise HttpError(400, "Invalid order id")
-        payment = PaymentService.get_by_order(order_id)
-        if payment:
-            return payment.to_json()
+        payments = PaymentService.get_by_order(order_id)
+        if payments:
+            return [payment.to_json() for payment in payments]
         else:
             raise HttpError(404, "Payment not found")
 

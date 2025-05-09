@@ -51,7 +51,7 @@ class PaymentService:
     @staticmethod
     def get_by_order(order_id: int) -> list[Payment] | None:
         try:
-            order = OrderService.get(order_id)
+            order = OrderService.get_order_by_id(order_id)
             payment = PaymentRepo.get_by_order(order)
             if payment:
                 return payment
