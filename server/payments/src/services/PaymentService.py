@@ -4,7 +4,7 @@ from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.services import SubscriptionService
-import utils.sendInvoice as sendInvoice
+import utils.emails as sendInvoice
 
 
 class PaymentService:
