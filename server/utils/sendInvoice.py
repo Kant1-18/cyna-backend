@@ -8,7 +8,7 @@ from payments.models import Subscription
 def send_order_invoice(user_email: str, order: Order):
     try:
         items = order.items.all()
-        total = sum(item.product.price * item.quantity for item in items)
+        total = sum(item.product.price * item.quantity for item in items) / 100
         print("coucou")
         html = render_to_string(
             "invoice.html",
@@ -18,7 +18,7 @@ def send_order_invoice(user_email: str, order: Order):
                     {
                         "product": item.product,
                         "quantity": item.quantity,
-                        "total": item.quantity * item.product.price,
+                        "total": (item.quantity * item.product.price) / 100,
                     }
                     for item in items
                 ],
@@ -43,7 +43,7 @@ def send_order_invoice(user_email: str, order: Order):
 def send_subscription_invoice(user_email: str, subscription: Subscription):
     try:
         items = subscription.items.all()
-        total = sum(item.product.price * item.quantity for item in items)
+        total = sum(item.product.price * item.quantity for item in items) / 100
         html = render_to_string(
             "invoice.html",
             {
@@ -52,7 +52,7 @@ def send_subscription_invoice(user_email: str, subscription: Subscription):
                     {
                         "product": item.product,
                         "quantity": item.quantity,
-                        "total": item.quantity * item.product.price,
+                        "total": (item.quantity * item.product.price) / 100,
                     }
                     for item in items
                 ],
