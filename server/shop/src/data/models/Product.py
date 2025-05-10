@@ -29,17 +29,11 @@ class Product(models.Model):
                 self.image2,
                 self.image3,
             ],
-            "description": {
-                "title": details.description_title,
-                "text": details.description_text,
-            },
-            "benefits": json.loads(details.benefits),
-            "functionalities": json.loads(details.functionalities),
-            "specifications": json.loads(details.specifications),
             "price": self.price * (1 - self.discount_percentage / 100),
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
+            "details": details.to_json(),
         }
 
     def to_json_all(self):

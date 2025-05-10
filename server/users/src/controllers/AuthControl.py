@@ -46,14 +46,13 @@ class AuthControl:
                 }
             )
 
-            # Ajout du refresh token dans un cookie HttpOnly sécurisé
             response.set_cookie(
-                key="refresh_token",
+                key="cyna",
                 value=tokens["refresh"],
                 httponly=True,
                 secure=True,
-                samesite="None",  # ou 'Lax' selon les besoins
-                max_age=7 * 24 * 3600,  # 1 semaine
+                samesite="Strict",
+                max_age=604800,
             )
             return response
 
@@ -62,7 +61,7 @@ class AuthControl:
     @staticmethod
     def refresh(request):
         try:
-            token = request.COOKIES.get("refresh_token")
+            token = request.COOKIES.get("cyna")
 
             if not token or token.strip() == "":
                 raise HttpError(401, "Refresh token missing")
@@ -75,14 +74,13 @@ class AuthControl:
             new_tokens = AuthService.tokens_for_user(user)
             response = JsonResponse({"access": new_tokens["access"]})
 
-            # Réémet le refresh token
             response.set_cookie(
-                key="refresh_token",
+                key="cyna",
                 value=new_tokens["refresh"],
                 httponly=True,
                 secure=True,
-                samesite="None",
-                max_age=7 * 24 * 3600,
+                samesite="Strict",
+                max_age=604800,
             )
             return response
 
@@ -108,5 +106,5 @@ class AuthControl:
     @staticmethod
     def logout(request):
         response = JsonResponse({"detail": "Logged out"})
-        response.delete_cookie("refresh_token")
+        response.delete_cookie("cyna")
         return response

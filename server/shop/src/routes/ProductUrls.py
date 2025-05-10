@@ -91,7 +91,7 @@ def add_details(request, data: DetailsAddSchema) -> Details | HttpError:
 ###########################################################################
 
 
-@router.get("/get/{id}/{locale}", auth=JWTAuth())
+@router.get("/get/{id}/{locale}")
 def get_by_id_and_locale(request, id: int, locale: str) -> Product | HttpError:
     return ProductControl.get_by_id_and_locale(id, locale)
 
@@ -101,19 +101,19 @@ def get_all(request) -> list[Product] | HttpError:
     return ProductControl.get_all()
 
 
-@router.get("/get-all/{locale}", auth=JWTAuth())
+@router.get("/get-all/{locale}")
 def get_all_by_locale(request, locale: str) -> list[Product] | HttpError:
     return ProductControl.get_all_by_locale(locale)
 
 
-@router.get("/get-all-by-category/{category_id}/{locale}", auth=JWTAuth())
+@router.get("/get-all-by-category/{category_id}/{locale}")
 def get_all_by_category_and_locale(
     request, category_id: int, locale: str
 ) -> list[Product] | HttpError:
     return ProductControl.get_all_by_category_and_locale(category_id, locale)
 
 
-@router.get("/get/{id}", auth=JWTAuth())
+@router.get("/get/{id}")
 def get_by_id(request, id: int) -> Product | HttpError:
     return ProductControl.get_by_id(id)
 

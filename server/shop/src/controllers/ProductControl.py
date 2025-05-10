@@ -133,7 +133,7 @@ class ProductControl:
 
         product, details = ProductService.get_by_locale(id, locale)
         if product and details:
-            return product.to_json(details)
+            return product.to_json_single(details)
         else:
             raise HttpError(404, "Product not found")
 
@@ -151,8 +151,13 @@ class ProductControl:
             raise HttpError(400, "Invalid locale")
 
         products, details = ProductService.get_all_by_locale(locale)
-        if products:
-            return [product.to_json(details[product]) for product in products]
+        if products and details:
+            print(details)
+            return [
+                product.to_json_single(details[product])
+                for product in products
+                if details[product]
+            ]
         else:
             raise HttpError(404, "No products found")
 
@@ -168,8 +173,12 @@ class ProductControl:
         products, details = ProductService.get_all_by_category_and_locale(
             category_id, locale
         )
-        if products:
-            return [product.to_json(details[product]) for product in products]
+        if products and details:
+            return [
+                product.to_json_single(details[product])
+                for product in products
+                if details[product]
+            ]
         else:
             raise HttpError(404, "No products found")
 
