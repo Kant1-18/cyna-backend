@@ -64,26 +64,24 @@ class AddressControl:
     @staticmethod
     def get(id: int) -> Address | HttpError:
         address = AddressService.get(id)
-        return address.to_json() if address else HttpError(404, "Address not found")
+        if address:
+            return address.to_json()
+        else:
+            raise HttpError(404, "Address not found")
 
     @staticmethod
     def get_all_by_user(request) -> list[Address] | HttpError:
-        try:
-            token = AuthService.get_token(request)
-            user = AuthService.get_user_by_access_token(token)
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
 
-            if not user:
-                raise HttpError(404, "User not found")
+        if not user:
+            raise HttpError(404, "User not found")
 
-            addresses = AddressService.get_all_by_user(user)
-            return (
-                [address.to_json() for address in addresses]
-                if addresses
-                else HttpError(404, "Addresses not found")
-            )
-        except Exception as e:
-            print(f"Token refresh error: {e}")
-            raise HttpError(401, "Invalid or expired refresh token")
+        addresses = AddressService.get_all_by_user(user)
+        if addresses:
+            return [address.to_json() for address in addresses]
+        else:
+            raise HttpError(404, "Addresses not found")
 
     @staticmethod
     def update(data) -> Address | HttpError:
@@ -126,7 +124,10 @@ class AddressControl:
                 data.region,
                 data.country,
             )
-            return address.to_json() if address else HttpError(500, "An error occurred")
+            if address:
+                return address.to_json()
+            else:
+                raise HttpError(500, "An error occurred")
         except Exception as e:
             print(f"error: {e}")
             raise HttpError(500, "An error occurred")

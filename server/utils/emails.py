@@ -48,7 +48,7 @@ def send_subscription_invoice(user_email: str, subscription: Subscription):
         html = render_to_string(
             "invoice.html",
             {
-                "order": subscription,  # même variable dans le template
+                "order": subscription,
                 "items": [
                     {
                         "product": item.product,
