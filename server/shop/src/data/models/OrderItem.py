@@ -11,6 +11,6 @@ class OrderItem(models.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "product": self.product.id,
+            "product": self.product.to_json_admin(),
             "quantity": self.quantity,
         }
