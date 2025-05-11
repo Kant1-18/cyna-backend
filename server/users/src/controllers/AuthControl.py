@@ -164,5 +164,5 @@ class AuthControl:
         if not CheckInfos.is_valid_password(data.newPassword):
             raise HttpError(400, "Password invalid")
 
-        UserService.set_password(user.id, data.newPassword)
+        UserService.update_password(user.id, data.newPassword)
         return {"detail": "Password successfully updated"}

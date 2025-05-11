@@ -95,7 +95,13 @@ def send_password_reset(user_email: str) -> None:
     token = generate_token(user_email, RESET_SALT)
     reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
 
-    html = render_to_string("reset_password.html", {"reset_url": reset_url})
+    html = render_to_string(
+        "reset_password.html",
+        {
+            "reset_url": reset_url,
+            "token": token,
+        },
+    )
 
     msg = EmailMultiAlternatives(
         "Réinitialisation de mot de passe",
