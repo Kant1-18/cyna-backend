@@ -22,15 +22,22 @@ class PaymentControl:
             if not CheckInfos.is_positive_int(data.subscriptionId):
                 raise HttpError(400, "Invalid subscription id")
 
-        payment = PaymentService.add(
+        payment, payment_intent = PaymentService.add(
             data.paymentMethodId,
             data.amount,
             data.status,
             data.orderId,
             data.subscriptionId,
         )
+
+        if payment.order != None and payment_intent is None:
+            raise HttpError(500, "An error occurred while creating the payment")
+
         if payment:
-            return payment.to_json()
+            return {
+                "payment": payment.to_json(),
+                "payment_intent": payment_intent,
+            }
         else:
             raise HttpError(500, "An error occurred while creating the payment")
 

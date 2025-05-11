@@ -4,6 +4,8 @@ from datetime import datetime
 from shop.models import Order
 from payments.models import Subscription
 from users.models import User
+from utils.emailTokens import generate_token, VERIFY_SALT, RESET_SALT
+from django.conf import settings
 
 
 def send_order_invoice(user_email: str, order: Order):
@@ -48,7 +50,7 @@ def send_subscription_invoice(user_email: str, subscription: Subscription):
         html = render_to_string(
             "invoice.html",
             {
-                "order": subscription,  # même variable dans le template
+                "order": subscription,
                 "items": [
                     {
                         "product": item.product,
@@ -74,43 +76,38 @@ def send_subscription_invoice(user_email: str, subscription: Subscription):
         print(e)
 
 
-def send_verification_email(user: User, token: str):
-    try:
-        verification_link = (
-            f"https://your-frontend-domain.com/verify-account?token={token}"
-        )
-        html_content = render_to_string(
-            "emails/verify_account.html",
-            {"user": user, "verification_link": verification_link},
-        )
+def send_verification(user_email: str) -> None:
+    token = generate_token(user_email, VERIFY_SALT)
+    verification_url = f"{settings.FRONTEND_URL}/verify-account?token={token}"
 
-        email = EmailMultiAlternatives(
-            subject="Verify Your Account",
-            body="Please verify your account.",
-            from_email="cyna.b3pe@gmail.com",
-            to=[user.email],
-        )
-        email.attach_alternative(html_content, "text/html")
-        email.send()
-    except Exception as e:
-        print(f"Verification email error: {e}")
+    html = render_to_string(
+        "verify_account.html", {"verification_url": verification_url}
+    )
+
+    msg = EmailMultiAlternatives(
+        "Vérifiez votre compte", "", settings.DEFAULT_FROM_EMAIL, [user_email]
+    )
+    msg.attach_alternative(html, "text/html")
+    msg.send()
 
 
-def send_password_reset_email(user: User, token: str):
-    try:
-        reset_link = f"https://your-frontend-domain.com/reset-password?token={token}"
-        html_content = render_to_string(
-            "emails/reset_password.html",
-            {"user": user, "reset_link": reset_link},
-        )
+def send_password_reset(user_email: str) -> None:
+    token = generate_token(user_email, RESET_SALT)
+    reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
 
-        email = EmailMultiAlternatives(
-            subject="Reset Your Password",
-            body="Follow the link to reset your password.",
-            from_email="cyna.b3pe@gmail.com",
-            to=[user.email],
-        )
-        email.attach_alternative(html_content, "text/html")
-        email.send()
-    except Exception as e:
-        print(f"Password reset email error: {e}")
+    html = render_to_string(
+        "reset_password.html",
+        {
+            "reset_url": reset_url,
+            "token": token,
+        },
+    )
+
+    msg = EmailMultiAlternatives(
+        "Réinitialisation de mot de passe",
+        "",
+        settings.DEFAULT_FROM_EMAIL,
+        [user_email],
+    )
+    msg.attach_alternative(html, "text/html")
+    msg.send()

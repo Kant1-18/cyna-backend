@@ -16,7 +16,9 @@ class StripeUtils:
     @staticmethod
     def add_monthly_price(stripe_product_id: str, price: int) -> stripe.Price | None:
         try:
-            prices = stripe.Price.list(product=stripe_product_id, active=True)
+            prices = stripe.Price.list(
+                product=stripe_product_id, active=True, recurring={"interval": "month"}
+            )
             for p in prices.auto_paging_iter():
                 stripe.Price.modify(p.id, active=False)
 
@@ -33,7 +35,9 @@ class StripeUtils:
     @staticmethod
     def add_yealy_price(product_id: str, price: int) -> stripe.Price | None:
         try:
-            prices = stripe.Price.list(product=product_id, active=True)
+            prices = stripe.Price.list(
+                product=product_id, active=True, recurring={"interval": "year"}
+            )
             for p in prices.auto_paging_iter():
                 stripe.Price.modify(p.id, active=False)
 
@@ -94,25 +98,37 @@ class StripeUtils:
             prices = []
             if recurrence == 0:
                 for item in order_items:
-                    for i in range(item.quantity):
-                        prices.append(item.product.stripe_monthly_price_id)
+                    prices.extend(
+                        [{"price": item.product.stripe_monthly_price_id}]
+                        * item.quantity
+                    )
             else:
                 for item in order_items:
-                    for i in range(item.quantity):
-                        prices.append(item.product.stripe_yearly_price_id)
+                    prices.extend(
+                        [{"price": item.product.stripe_yearly_price_id}] * item.quantity
+                    )
 
-            prices = [{"price": price} for price in prices]
             subscription = stripe.Subscription.create(
                 customer=customer_id,
                 items=prices,
                 payment_behavior="default_incomplete",
-                expand=["latest_invoice.payment_intent"],
+                expand=[
+                    "latest_invoice"
+                ],  # safer than expanding non-existent nested field
             )
-            return subscription
+
+            client_secret = None
+            latest_invoice = subscription.get("latest_invoice", {})
+            if latest_invoice and isinstance(latest_invoice, dict):
+                payment_intent = latest_invoice.get("payment_intent")
+                if payment_intent and isinstance(payment_intent, dict):
+                    client_secret = payment_intent.get("client_secret")
+
+            return subscription, client_secret
 
         except Exception as e:
             print(e)
-            return None
+            return None, None
 
     @staticmethod
     def create_payment_intent(

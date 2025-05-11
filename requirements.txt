@@ -24,6 +24,7 @@ filelock==3.17.0
 identify==2.6.9
 idna==3.10
 injector==0.22.0
+itsdangerous==2.2.0
 mypy-extensions==1.0.0
 mysqlclient==2.2.7
 nodeenv==1.9.1

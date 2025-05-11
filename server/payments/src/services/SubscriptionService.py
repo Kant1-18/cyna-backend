@@ -26,7 +26,7 @@ class SubscriptionService:
             address = AddressService.get(billing_address_id)
             payment_method = PaymentMethodRepo.get(payment_method_id)
 
-            order = OrderService.get(order_id)
+            order = OrderService.get_order_by_id(order_id)
             OrderService.update_order_status(order_id, 1)
 
             if SubscriptionRepo.have_active_subscription(user):
@@ -36,7 +36,7 @@ class SubscriptionService:
                     order,
                 )
 
-            stripe_subscription = StripeUtils.create_subscription(
+            stripe_subscription, client_secret = StripeUtils.create_subscription(
                 customer_id=user.stripe_id,
                 recurrence=recurrence,
                 order=order,
@@ -44,10 +44,10 @@ class SubscriptionService:
 
             if stripe_subscription:
                 subscription = SubscriptionRepo.add(
-                    user_id=user.id,
+                    user=user,
                     status=0,
-                    billing_address_id=address.id,
-                    payment_method_id=payment_method.id,
+                    billing_address=address,
+                    payment_method=payment_method,
                     stripe_id=stripe_subscription.id,
                     recurrence=recurrence,
                 )
@@ -55,18 +55,12 @@ class SubscriptionService:
                 if subscription:
                     for item in order.items.all():
                         subscription_item = SubscriptionItemRepo.add(
-                            subscription_id=subscription.id,
+                            subscription=subscription,
                             order_item=item,
                         )
                         if not subscription_item:
                             OrderService.update_order_status(order_id, 2)
                             return None
-
-                    client_secret = (
-                        stripe_subscription["latest_invoice"]
-                        .get("payment_intent", {})
-                        .get("client_secret")
-                    )
 
                     return subscription, client_secret
 
@@ -74,7 +68,7 @@ class SubscriptionService:
             OrderService.update_order_status(order_id, 2)
             print(e)
 
-        return None
+        return None, None
 
     @staticmethod
     def add_order_in_subscription(subscription: Subscription, order: Order) -> bool:

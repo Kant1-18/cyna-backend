@@ -5,6 +5,7 @@ from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.services import SubscriptionService
 import utils.emails as sendInvoice
+from utils.Stripe import StripeUtils
 
 
 class PaymentService:
@@ -25,13 +26,25 @@ class PaymentService:
                     if subscription_id
                     else None
                 )
-                return PaymentRepo.add(
+
+                payment = PaymentRepo.add(
                     payment_method=payment_method,
                     amount=amount,
                     status=status,
                     order=order,
                     subscription=subscription,
                 )
+
+                if order is not None:
+                    payment_intent = StripeUtils.create_payment_intent(
+                        amount=amount,
+                        user_stripe_id=order.user.stripe_id,
+                    )
+
+                    return payment, payment_intent
+                else:
+                    return payment, None
+
         except Exception as e:
             print(e)
 

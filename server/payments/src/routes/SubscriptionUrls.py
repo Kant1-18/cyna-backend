@@ -50,28 +50,28 @@ def get_by_user(request) -> Subscription | HttpError:
     return SubscriptionControl.get_my(request)
 
 
-@router.get("/{user_id}", auth=JWTAuth())
-def get_by_user_id(request, user_id: int) -> Subscription | HttpError:
-    return SubscriptionControl.get_by_user(request, user_id)
-
-
 @router.patch("/billing-address", auth=JWTAuth())
 def update_billing_address(
     request, data: UpdateSubscriptionAddressSchema
 ) -> Subscription | HttpError:
-    return SubscriptionControl.update_billing_address(request, data)
+    return SubscriptionControl.update_billing_address(data)
 
 
 @router.patch("/status", auth=JWTAuth())
 def update_status(
     request, data: UpdateSubscriptionStatusSchema
 ) -> Subscription | HttpError:
-    return SubscriptionControl.update_status(request, data)
+    return SubscriptionControl.update_status(data)
 
 
 @router.delete("/item", auth=JWTAuth())
 def delete_item(request, data: DeleteSubscriptionItemSchema) -> bool:
-    return SubscriptionControl.delete_item(request, data)
+    return SubscriptionControl.delete_item(data)
+
+
+@router.get("/{user_id}", auth=JWTAuth())
+def get_by_user_id(request, user_id: int) -> Subscription | HttpError:
+    return SubscriptionControl.get_by_user(request, user_id)
 
 
 @router.delete("/{id}", auth=JWTAuth())
