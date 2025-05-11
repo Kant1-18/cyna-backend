@@ -175,9 +175,9 @@ def update_details(request, data: ProductDetailsUpdateSchema) -> Details | HttpE
 
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete_by_id(request, id: int) -> Product | HttpError:
-    return ProductControl.delete_by_id(id)
+    return ProductControl.delete_by_id(request, id)
 
 
 @router.delete("/delete/details/{id}", auth=JWTAuth())
 def delete_by_id_details(request, id: int) -> Details | HttpError:
-    return ProductControl.delete_by_id_details(id)
+    return ProductControl.delete_by_id_details(request, id)

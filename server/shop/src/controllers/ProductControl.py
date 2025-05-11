@@ -316,7 +316,7 @@ class ProductControl:
         if AuthService.isAdmin(request):
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
-            if ProductService.delete(id):
+            if ProductService.delete_product(id):
                 return True
             else:
                 raise HttpError(500, "Error when deleting product")
