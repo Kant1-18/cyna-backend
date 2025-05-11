@@ -55,17 +55,12 @@ class OrderControl:
             )
 
     @staticmethod
-    def delete_product_from_cart(request, productId: int) -> Order | HttpError:
+    def delete_product_from_cart(request, item_id: int) -> bool | HttpError:
         try:
-            if not CheckInfos.is_positive_int(productId):
-                return HttpError(400, "Invalid productId")
+            if not CheckInfos.is_positive_int(item_id):
+                return HttpError(400, "Invalid item id")
 
-            token = AuthService.get_token(request)
-            user = AuthService.get_user_by_access_token(token)
-
-            order = OrderService.delete_product_from_cart(user.id, productId)
-            if order:
-                return order.to_json()
+            return OrderService.delete_product_from_cart(item_id)
         except Exception as e:
             print(e)
             raise HttpError(

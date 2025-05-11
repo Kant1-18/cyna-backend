@@ -57,7 +57,7 @@ class OrderItemRepo:
             return None
 
     @staticmethod
-    def delete(order_item_id: int) -> OrderItem | None:
+    def delete(order_item_id: int) -> bool | None:
         try:
             order_item_id = OrderItem.objects.get(id=order_item_id)
             if order_item_id:

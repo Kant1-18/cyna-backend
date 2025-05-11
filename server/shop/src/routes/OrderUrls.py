@@ -48,9 +48,9 @@ def update_product_in_cart(request, data: OrderRouteSchema) -> Order | HttpError
     return OrderControl.update_product_in_cart(request, data)
 
 
-@router.delete("/delete-cart-item/{product_id}", auth=JWTAuth())
-def delete_product_from_cart(request, product_id: int) -> Order | HttpError:
-    return OrderControl.delete_product_from_cart(request, product_id)
+@router.delete("/delete-cart-item/{item_id}", auth=JWTAuth())
+def delete_product_from_cart(request, item_id: int) -> Order | HttpError:
+    return OrderControl.delete_product_from_cart(request, item_id)
 
 
 @router.get("/get-cart", auth=JWTAuth())

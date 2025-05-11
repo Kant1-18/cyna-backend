@@ -68,16 +68,9 @@ class OrderService:
         return None
 
     @staticmethod
-    def delete_product_from_cart(user_id: int, product_id: int) -> Order | None:
+    def delete_product_from_cart(item_id: int) -> bool | None:
         try:
-            order = OrderRepo.get_by_user_and_status(user_id, 0)
-            if order:
-                product = ProductService.get(product_id)
-                if not product:
-                    return None
-                order_item = OrderItemRepo.get_by_order_and_product(order, product)
-                OrderItemRepo.delete(order_item.id)
-                return order
+            return OrderItemRepo.delete(item_id)
         except Exception as e:
             print(e)
 
