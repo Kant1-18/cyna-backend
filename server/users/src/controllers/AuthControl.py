@@ -62,6 +62,24 @@ class AuthControl:
         raise HttpError(401, "email or password invalid")
 
     @staticmethod
+    def login_mobile(data):
+        user = UserService.get_by_email(data.email)
+        if user and UserService.check_password(user.id, data.password):
+            tokens = AuthService.tokens_for_user(user)
+
+            response = JsonResponse(
+                {
+                    "access": tokens["access"],
+                    "refresh": tokens["refresh"],
+                    "user": user.to_json(),
+                }
+            )
+
+            return response
+
+        raise HttpError(401, "email or password invalid")
+
+    @staticmethod
     def refresh(request):
         try:
             token = request.COOKIES.get("cyna")
@@ -85,6 +103,28 @@ class AuthControl:
                 samesite="Strict",
                 max_age=604800,
             )
+            return response
+
+        except Exception as e:
+            print(f"Token refresh error: {e}")
+            raise HttpError(401, "Invalid or expired refresh token")
+
+    @staticmethod
+    def refresh_mobile(request, data):
+        try:
+            user = AuthService.get_user_by_refresh_token(data.refreshToken)
+
+            if not user:
+                raise HttpError(404, "User not found")
+
+            new_tokens = AuthService.tokens_for_user(user)
+            response = JsonResponse(
+                {
+                    "access": new_tokens["access"],
+                    "refresh": new_tokens["refresh"],
+                }
+            )
+
             return response
 
         except Exception as e:

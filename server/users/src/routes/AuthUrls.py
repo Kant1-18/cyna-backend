@@ -28,6 +28,10 @@ class ResetPasswordSchema(Schema):
     confirmNewPassword: str
 
 
+class TokenSchema(Schema):
+    refreshToken: str
+
+
 @router.post("/register")
 def register(request, data: RegisterSchema):
     return AuthControl.register(data)
@@ -38,9 +42,19 @@ def login(request, data: LoginSchema):
     return AuthControl.login(data)
 
 
+@router.post("/login/mobile")
+def login_mobile(request, data: LoginSchema):
+    return AuthControl.login_mobile(data)
+
+
 @router.post("/refresh")
 def refresh(request):
     return AuthControl.refresh(request)
+
+
+@router.post("/refresh/mobile")
+def refresh_mobile(request, data: TokenSchema):
+    return AuthControl.refresh_mobile(request, data)
 
 
 @router.get("/me", auth=JWTAuth())
