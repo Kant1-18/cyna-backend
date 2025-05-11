@@ -4,6 +4,9 @@ from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 from ninja.responses import Response
 from django.http import JsonResponse
+from utils.emailTokens import verify_token, VERIFY_SALT, RESET_SALT
+from utils.emails import send_verification, send_password_reset
+from users.models import User
 
 
 class AuthControl:
@@ -108,3 +111,58 @@ class AuthControl:
         response = JsonResponse({"detail": "Logged out"})
         response.delete_cookie("cyna")
         return response
+
+    @staticmethod
+    def send_verification(request, data):
+        user = User.objects.filter(email=data.email).first()
+        if not user:
+            raise HttpError(404, "User not found")
+        send_verification(user.email)
+        return {"success": True}
+
+    @staticmethod
+    def verify_account(request, data):
+        try:
+            email = verify_token(data.token, VERIFY_SALT)
+        except ValueError as e:
+            raise HttpError(400, str(e))
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise HttpError(404, "User not found")
+
+        user.is_active = True
+        user.save()
+        return {"verified": True}
+
+    @staticmethod
+    def send_password_reset(request, data):
+        try:
+            user = User.objects.filter(email=data.email).first()
+            if not user:
+                raise HttpError(404, "User not found")
+            send_password_reset(user.email)
+            return {"success": True}
+        except Exception as e:
+            print(e)
+            raise HttpError(500, "An error occurred")
+
+    @staticmethod
+    def reset_password(request, data):
+        try:
+            email = verify_token(data.token, RESET_SALT)
+        except ValueError as e:
+            raise HttpError(400, str(e))
+
+        user = UserService.get_by_email(email)
+        if not user:
+            raise HttpError(404, "User not found")
+
+        if data.newPassword != data.confirmNewPassword:
+            raise HttpError(400, "Passwords do not match")
+
+        if not CheckInfos.is_valid_password(data.newPassword):
+            raise HttpError(400, "Password invalid")
+
+        UserService.set_password(user.id, data.newPassword)
+        return {"detail": "Password successfully updated"}

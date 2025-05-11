@@ -18,6 +18,16 @@ class LoginSchema(Schema):
     password: str
 
 
+class EmailSchema(Schema):
+    email: str
+
+
+class ResetPasswordSchema(Schema):
+    token: str
+    newPassword: str
+    confirmNewPassword: str
+
+
 @router.post("/register")
 def register(request, data: RegisterSchema):
     return AuthControl.register(data)
@@ -41,3 +51,23 @@ def me(request):
 @router.post("/logout")
 def logout(request):
     return AuthControl.logout(request)
+
+
+@router.post("/send-verification")
+def send_verification(request, data: EmailSchema):
+    return AuthControl.send_verification(request, data)
+
+
+@router.post("/verify-account")
+def verify_account(request, data: ResetPasswordSchema):
+    return AuthControl.verify_account(request, data)
+
+
+@router.post("/send-reset")
+def send_password_reset(request, data: EmailSchema):
+    return AuthControl.send_password_reset(request, data)
+
+
+@router.post("/reset-password")
+def reset_password(request, data: ResetPasswordSchema):
+    return AuthControl.reset_password(request, data)
