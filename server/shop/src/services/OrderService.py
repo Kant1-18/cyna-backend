@@ -21,6 +21,18 @@ class OrderService:
             return None
 
     @staticmethod
+    def is_cart(order_id: int) -> bool:
+        try:
+            order = OrderRepo.get_by_id(order_id)
+            if order.status == 0:
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
     def add_product(user_id: int, product_id: int, quantity: int) -> Order | None:
         try:
             user = UserRepo.get(user_id)

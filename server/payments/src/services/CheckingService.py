@@ -13,7 +13,7 @@ class CheckingService:
     @staticmethod
     def checking(
         user: User, order_id: int, payment_method_id: str
-    ) -> tuple[Subscription | Payment, PaymentIntent] | tuple[None, None]:
+    ) -> tuple[Subscription | Payment, PaymentIntent, int] | tuple[None, None, None]:
         try:
             order = OrderService.get_order_by_id(order_id)
             if order.recurrence == 0:
@@ -24,7 +24,7 @@ class CheckingService:
                 )
         except Exception as e:
             print(e)
-            return None, None
+            return None, None, None
 
     @staticmethod
     def payment_checking(
@@ -42,11 +42,11 @@ class CheckingService:
             )
 
             if payment and payment_intent:
-                return payment, payment_intent
+                return payment, payment_intent, 0
 
         except Exception as e:
             print(e)
-            return None, None
+            return None, None, None
 
     @staticmethod
     def subscription_checking(
@@ -62,8 +62,19 @@ class CheckingService:
             )
 
             if subsciption and payment_intent:
-                return subsciption, payment_intent
+                return subsciption, payment_intent, 1
 
         except Exception as e:
             print(e)
-            return None, None
+            return None, None, None
+
+    @staticmethod
+    def cancel(result_id: int, result_type: int) -> bool:
+        try:
+            if result_type == 0:
+                return PaymentService.delete(result_id)
+            elif result_type == 1:
+                return SubscriptionService.delete_subscription(result_id)
+        except Exception as e:
+            print(e)
+            return None
