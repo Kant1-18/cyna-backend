@@ -31,7 +31,7 @@ class ProductUpdateSchema(Schema):
     name: str
     type: int
     status: int
-    price: int
+    basePrice: int
     discountOrder: int
     discountPercentage: int
 
@@ -57,7 +57,7 @@ def add_product(
     name: str = Form(...),
     type: int = Form(...),
     status: int = Form(...),
-    price: int = Form(...),
+    basePrice: int = Form(...),
     discountOrder: int = Form(...),
     discountPercentage: int = Form(...),
     image1: UploadedFile = File(...),
@@ -71,7 +71,7 @@ def add_product(
             "name": name,
             "type": type,
             "status": status,
-            "price": price,
+            "basePrice": basePrice,
             "discountOrder": discountOrder,
             "discountPercentage": discountPercentage,
             "image1": image1,

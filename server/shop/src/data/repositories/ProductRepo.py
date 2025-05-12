@@ -11,7 +11,7 @@ class ProductRepo:
         name: str,
         type: int,
         status: int,
-        price: int,
+        base_price: int,
         discount_order: int,
         discount_percentage: int,
         image1: str,
@@ -27,7 +27,8 @@ class ProductRepo:
                 name=name,
                 type=type,
                 status=status,
-                price=price,
+                base_price=base_price,
+                price=(base_price * (1 - discount_percentage / 100)),
                 discount_order=discount_order,
                 discount_percentage=discount_percentage,
                 image1=image1,
@@ -84,7 +85,7 @@ class ProductRepo:
         name: str,
         type: int,
         status: int,
-        price: int,
+        base_price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -95,7 +96,8 @@ class ProductRepo:
                 product.name = name
                 product.type = type
                 product.status = status
-                product.price = price
+                product.base_price = base_price
+                product.price = base_price * (1 - discount_percentage / 100)
                 product.discount_order = discount_order
                 product.discount_percentage = discount_percentage
                 product.save()

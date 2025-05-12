@@ -8,6 +8,7 @@ class Product(models.Model):
     name = models.TextField(null=True)
     type = models.IntegerField(default=0)
     status = models.IntegerField(default=0, blank=False, null=False)
+    base_price = models.IntegerField(default=0, blank=False, null=True)
     price = models.IntegerField(default=0, blank=False, null=True)
     discount_order = models.IntegerField(default=0, blank=False, null=False)
     discount_percentage = models.IntegerField(default=0, blank=False, null=False)
@@ -17,6 +18,8 @@ class Product(models.Model):
     stripe_id = models.TextField(default="")
     stripe_monthly_price_id = models.TextField(null=True)
     stripe_yearly_price_id = models.TextField(null=True)
+
+    # self.base_price * (1 - self.discount_percentage / 100)
 
     def to_json_single(self, details):
         return {
@@ -29,7 +32,8 @@ class Product(models.Model):
                 self.image2,
                 self.image3,
             ],
-            "price": self.price * (1 - self.discount_percentage / 100),
+            "basePrice": self.base_price,
+            "price": self.price,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
@@ -42,7 +46,8 @@ class Product(models.Model):
             "category": self.category.to_json(),
             "name": self.name,
             "type": self.type,
-            "price": self.price * (1 - self.discount_percentage / 100),
+            "basePrice": self.base_price,
+            "price": self.price,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,
@@ -60,7 +65,8 @@ class Product(models.Model):
             "category": self.category.to_json(),
             "name": self.name,
             "type": self.type,
-            "price": self.price * (1 - self.discount_percentage / 100),
+            "basePrice": self.base_price,
+            "price": self.price,
             "status": self.status,
             "discountOrder": self.discount_order,
             "discountPercentage": self.discount_percentage,

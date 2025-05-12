@@ -22,7 +22,7 @@ class ProductService:
         name: str,
         type: int,
         status: int,
-        price: int,
+        base_price: int,
         discount_order: int,
         discount_percentage: int,
         image1: UploadedFile,
@@ -38,26 +38,26 @@ class ProductService:
         try:
             stripe_product = StripeUtils.create_product(name)
             stripe_monthly_price = StripeUtils.add_monthly_price(
-                stripe_product.id, price
+                stripe_product.id, base_price
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, (price * 12)
+                stripe_product.id, (base_price * 12)
             )
 
             image1 = ImageUploader.product(image1)
             image2 = ImageUploader.product(image2)
             image3 = ImageUploader.product(image3)
             return ProductRepo.add(
-                category,
-                name,
-                type,
-                status,
-                price,
-                discount_order,
-                discount_percentage,
-                image1,
-                image2,
-                image3,
+                category=category,
+                name=name,
+                type=type,
+                status=status,
+                base_price=base_price,
+                discount_order=discount_order,
+                discount_percentage=discount_percentage,
+                image1=image1,
+                image2=image2,
+                image3=image3,
                 stripe_id=stripe_product.id,
                 stripe_monthly_price_id=stripe_monthly_price.id,
                 stripe_yearly_price_id=stripe_yearly_price.id,
@@ -168,7 +168,7 @@ class ProductService:
         name: str,
         type: int,
         status: int,
-        price: int,
+        base_price: int,
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
@@ -179,13 +179,13 @@ class ProductService:
         try:
             return ProductRepo.update(
                 product_id,
-                category,
-                name,
-                type,
-                status,
-                price,
-                discount_order,
-                discount_percentage,
+                category=category,
+                name=name,
+                type=type,
+                status=status,
+                base_price=base_price,
+                discount_order=discount_order,
+                discount_percentage=discount_percentage,
             )
         except Exception as e:
             print(e)
