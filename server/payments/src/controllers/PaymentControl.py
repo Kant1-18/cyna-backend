@@ -36,7 +36,7 @@ class PaymentControl:
         if payment:
             return {
                 "payment": payment.to_json(),
-                "payment_intent": payment_intent,
+                "paymentIntent": payment_intent,
             }
         else:
             raise HttpError(500, "An error occurred while creating the payment")

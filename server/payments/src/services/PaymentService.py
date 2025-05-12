@@ -6,6 +6,7 @@ from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.services import SubscriptionService
 import utils.emails as sendInvoice
 from utils.Stripe import StripeUtils
+from stripe import PaymentIntent
 
 
 class PaymentService:
@@ -16,7 +17,7 @@ class PaymentService:
         status: int = 0,
         order_id: int = None,
         subscription_id: int = None,
-    ) -> Payment | None:
+    ) -> tuple[Payment, PaymentIntent] | None:
         try:
             payment_method = PaymentMethodService.get(payment_method_id)
             if payment_method:

@@ -9,6 +9,7 @@ from users.src.services.AddressService import AddressService
 from utils.Stripe import StripeUtils
 from shop.src.services.OrderService import OrderService
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
+from stripe import PaymentIntent
 
 
 class SubscriptionService:
@@ -20,7 +21,7 @@ class SubscriptionService:
         payment_method_id: int,
         recurrence: int,
         order_id: int,
-    ):
+    ) -> tuple[Subscription, PaymentIntent] | None:
         try:
             user = UserService.get(user_id)
             address = AddressService.get(billing_address_id)
@@ -36,7 +37,7 @@ class SubscriptionService:
                     order,
                 )
 
-            stripe_subscription, client_secret = StripeUtils.create_subscription(
+            stripe_subscription, payment_intent = StripeUtils.create_subscription(
                 customer_id=user.stripe_id,
                 recurrence=recurrence,
                 order=order,
@@ -62,7 +63,7 @@ class SubscriptionService:
                             OrderService.update_order_status(order_id, 2)
                             return None
 
-                    return subscription, client_secret
+                    return subscription, payment_intent
 
         except Exception as e:
             OrderService.update_order_status(order_id, 2)

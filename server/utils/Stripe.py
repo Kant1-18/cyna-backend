@@ -117,14 +117,11 @@ class StripeUtils:
                 ],  # safer than expanding non-existent nested field
             )
 
-            client_secret = None
             latest_invoice = subscription.get("latest_invoice", {})
             if latest_invoice and isinstance(latest_invoice, dict):
                 payment_intent = latest_invoice.get("payment_intent")
-                if payment_intent and isinstance(payment_intent, dict):
-                    client_secret = payment_intent.get("client_secret")
 
-            return subscription, client_secret
+            return subscription, payment_intent
 
         except Exception as e:
             print(e)

@@ -21,7 +21,7 @@ class SubscriptionControl:
         if not CheckInfos.is_positive_int(data.recurrence):
             raise HttpError(400, "Invalid recurrence")
 
-        subscription, client_secret = SubscriptionService.add(
+        subscription, payment_intent = SubscriptionService.add(
             user.id,
             data.billingAddressId,
             data.paymentMethodId,
@@ -32,7 +32,7 @@ class SubscriptionControl:
         if subscription:
             return {
                 "subscription": subscription.to_json(),
-                "client_secret": client_secret,
+                "paymetIntent": payment_intent,
             }
         else:
             raise HttpError(500, "An error occurred while creating the subscription")
