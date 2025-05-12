@@ -30,6 +30,11 @@ class UpdateSubscriptionStatusSchema(Schema):
     status: int
 
 
+class UpdateSubscriptionRecurrenceSchema(Schema):
+    id: int
+    recurrence: int
+
+
 class DeleteSubscriptionItemSchema(Schema):
     id: int
     orderItemId: int
@@ -62,6 +67,13 @@ def update_status(
     request, data: UpdateSubscriptionStatusSchema
 ) -> Subscription | HttpError:
     return SubscriptionControl.update_status(data)
+
+
+@router.patch("/recurrence", auth=JWTAuth())
+def update_recurrence(
+    request, data: UpdateSubscriptionRecurrenceSchema
+) -> Subscription | HttpError:
+    return SubscriptionControl.update_recurrence(data)
 
 
 @router.delete("/item", auth=JWTAuth())

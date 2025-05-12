@@ -49,7 +49,7 @@ class SubscriptionService:
                     billing_address=address,
                     payment_method=payment_method,
                     stripe_id=stripe_subscription.id,
-                    recurrence=recurrence,
+                    recurrence=order.recurrence,
                 )
 
                 if subscription:
@@ -149,6 +149,16 @@ class SubscriptionService:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:
                 return SubscriptionRepo.update_status(subscription_id, status)
+        except Exception as e:
+            print(e)
+        return None
+
+    @staticmethod
+    def update_recurrence(subscription_id: int, recurrence: int) -> Subscription | None:
+        try:
+            subscription = SubscriptionRepo.get(subscription_id)
+            if subscription:
+                return SubscriptionRepo.update_recurrence(subscription_id, recurrence)
         except Exception as e:
             print(e)
         return None

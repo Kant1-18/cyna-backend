@@ -89,6 +89,18 @@ class SubscriptionRepo:
         return None
 
     @staticmethod
+    def update_recurrence(id: int, recurrence: int) -> Subscription | None:
+        try:
+            subscription = Subscription.objects.get(id=id)
+            if subscription:
+                subscription.recurrence = recurrence
+                subscription.save()
+                return subscription
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
     def delete(id: int) -> bool:
         try:
             subscription = Subscription.objects.get(id=id)

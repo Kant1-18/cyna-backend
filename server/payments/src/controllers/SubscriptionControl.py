@@ -110,6 +110,23 @@ class SubscriptionControl:
             raise HttpError(500, "An error occurred while updating the subscription")
 
     @staticmethod
+    def update_recurrence(data) -> Subscription | None:
+        if not CheckInfos.is_positive_int(data.id):
+            raise HttpError(400, "Invalid subscription id")
+        if not CheckInfos.is_positive_int(data.recurrence):
+            raise HttpError(400, "Invalid recurrence")
+
+        subscription = SubscriptionService.update_recurrence(
+            data.id,
+            data.recurrence,
+        )
+
+        if subscription:
+            return subscription.to_json()
+        else:
+            raise HttpError(500, "An error occurred while updating the subscription")
+
+    @staticmethod
     def delete_item(data) -> bool:
         if not CheckInfos.is_positive_int(data.id):
             raise HttpError(400, "Invalid subscription id")
