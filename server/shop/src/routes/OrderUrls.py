@@ -38,6 +38,11 @@ class SratusUpdateSchema(Schema):
     status: int
 
 
+class OrderUpdateRecurrenceSchema(Schema):
+    orderId: int
+    recurrence: int
+
+
 @router.post("/add-product", auth=JWTAuth())
 def add_product(request, data: OrderRouteSchema) -> Order | HttpError:
     return OrderControl.add_product(request, data)
@@ -76,6 +81,13 @@ def update_order(request, data: OrderUpdateSchema) -> Order | HttpError:
 @router.patch("/update-order-status", auth=JWTAuth())
 def update_order_status(request, data: SratusUpdateSchema) -> Order | HttpError:
     return OrderControl.update_order_status(request, data)
+
+
+@router.patch("/update-order-recurrence", auth=JWTAuth())
+def update_order_recurrence(
+    request, data: OrderUpdateRecurrenceSchema
+) -> Order | HttpError:
+    return OrderControl.update_order_recurrence(request, data)
 
 
 @router.delete("/delete-order/{order_id}", auth=JWTAuth())

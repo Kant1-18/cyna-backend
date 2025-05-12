@@ -139,6 +139,17 @@ class OrderService:
         return None
 
     @staticmethod
+    def update_order_recurrence(order_id: int, recurrence: int) -> Order | None:
+        try:
+            order = OrderRepo.update_recurrence(order_id, recurrence)
+            if order:
+                return order
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def delete_order(order_id: int) -> Order | None:
         try:
             return OrderRepo.delete(order_id)

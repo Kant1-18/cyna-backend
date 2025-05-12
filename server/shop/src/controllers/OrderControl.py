@@ -158,6 +158,26 @@ class OrderControl:
             raise HttpError(500, "An error occurred while updating the order status")
 
     @staticmethod
+    def update_order_recurrence(request, data):
+        try:
+            if not CheckInfos.is_positive_int(data.orderId):
+                return HttpError(400, "Invalid orderId")
+
+            if not CheckInfos.is_positive_int(data.recurrence):
+                return HttpError(400, "Invalid recurrence")
+
+            order = OrderService.update_order_recurrence(data.orderId, data.recurrence)
+            if order:
+                return order.to_json()
+            else:
+                raise HttpError(404, "Order not found")
+        except Exception as e:
+            print(e)
+            raise HttpError(
+                500, "An error occurred while updating the order recurrence"
+            )
+
+    @staticmethod
     def delete_order(request, id: int):
         try:
             if not CheckInfos.is_positive_int(id):

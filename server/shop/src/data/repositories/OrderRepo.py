@@ -12,6 +12,7 @@ class OrderRepo:
                 status=0,
                 shipping_address=None,
                 billing_address=None,
+                recurrence=0,
             )
             if order:
                 return order
@@ -74,6 +75,17 @@ class OrderRepo:
         try:
             order = Order.objects.get(id=order_id)
             order.status = status
+            order.save()
+            return order
+        except Exception as e:
+            print(e)
+            return None
+
+    @staticmethod
+    def update_recurrence(order_id: int, recurrence: int) -> Order | None:
+        try:
+            order = Order.objects.get(id=order_id)
+            order.recurrence = recurrence
             order.save()
             return order
         except Exception as e:
