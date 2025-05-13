@@ -10,7 +10,7 @@ class StripeUtils:
         try:
             return stripe.Product.create(name=name)
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return None
 
     @staticmethod
@@ -29,7 +29,7 @@ class StripeUtils:
                 product=stripe_product_id,
             )
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return None
 
     @staticmethod
@@ -48,7 +48,7 @@ class StripeUtils:
                 product=product_id,
             )
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return None
 
     @staticmethod
@@ -67,7 +67,7 @@ class StripeUtils:
             return True
 
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return False
 
     @staticmethod
@@ -76,7 +76,7 @@ class StripeUtils:
             customer = stripe.Customer.create(email=email, name=name)
             return customer
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return None
 
     @staticmethod
@@ -85,7 +85,7 @@ class StripeUtils:
             stripe.Customer.delete(customer_id)
             return True
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return False
 
     @staticmethod
@@ -96,18 +96,32 @@ class StripeUtils:
             order_items = OrderService.get_all_items(order)
 
             prices = []
-            if recurrence == 0:
+            if recurrence == 1:
                 for item in order_items:
+                    if item.product.price <= 0:
+                        raise ValueError("Stripe price cannot be 0 for subscription.")
                     prices.extend(
-                        [{"price": item.product.stripe_monthly_price_id}]
-                        * item.quantity
+                        [
+                            {
+                                "price": item.product.stripe_monthly_price_id,
+                                "quantity": item.quantity,
+                            }
+                        ]
                     )
             else:
                 for item in order_items:
+                    if item.product.price <= 0:
+                        raise ValueError("Stripe price cannot be 0 for subscription.")
                     prices.extend(
-                        [{"price": item.product.stripe_yearly_price_id}] * item.quantity
+                        [
+                            {
+                                "price": item.product.stripe_yearly_price_id,
+                                "quantity": item.quantity,
+                            }
+                        ]
                     )
 
+            print(prices)
             subscription = stripe.Subscription.create(
                 customer=customer_id,
                 items=prices,
@@ -115,15 +129,14 @@ class StripeUtils:
                 expand=["latest_invoice.payment_intent"],
             )
 
-            latest_invoice = subscription.get("latest_invoice", {})
-            if latest_invoice and isinstance(latest_invoice, dict):
-                payment_intent = latest_invoice.get("payment_intent")
+            payment_intent = subscription.latest_invoice["payment_intent"]
 
             print(subscription)
+            print(payment_intent)
             return subscription, payment_intent
 
         except Exception as e:
-            print(f"[Stripe ERROR] create_subscription failed: {e}")
+            print(f"[Stripe ERROR]: {e}")
             return None, None
 
     @staticmethod
@@ -139,7 +152,7 @@ class StripeUtils:
             )
             return payment_intent
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return None
 
     @staticmethod
@@ -148,7 +161,7 @@ class StripeUtils:
             stripe.Subscription.delete(subscription_id)
             return True
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return False
 
     @staticmethod
@@ -157,7 +170,7 @@ class StripeUtils:
             stripe.SubscriptionItem.delete(subscription_id, product_id)
             return True
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return False
 
     @staticmethod
@@ -168,5 +181,5 @@ class StripeUtils:
             )
             return True
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR]: {e}")
             return False
