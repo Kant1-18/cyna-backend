@@ -12,10 +12,9 @@ class CheckingService:
 
     @staticmethod
     def checking(
-        user: User, order_id: int, payment_method_id: str
+        user: User, order: Order, payment_method_id: str
     ) -> tuple[Subscription | Payment, PaymentIntent, int] | tuple[None, None, None]:
         try:
-            order = OrderService.get_order_by_id(order_id)
             if order.recurrence == 0:
                 return CheckingService.payment_checking(user, order, payment_method_id)
             else:

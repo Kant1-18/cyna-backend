@@ -73,10 +73,9 @@ class OrderControl:
             token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
             order = OrderService.get_cart(user.id)
-            if order:
+            if order is not None:
                 return order.to_json()
-            else:
-                raise HttpError(404, "Cart not found")
+            raise HttpError(404, "Cart not found")
         except Exception as e:
             print(e)
             raise HttpError(500, "An error occurred while getting the cart")

@@ -4,6 +4,7 @@ from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 from shop.src.services.ProductService import ProductService
 from users.src.data.repositories.UserRepo import UserRepo
 from users.models import User
+from users.src.data.repositories.AddressRepo import AddressRepo
 
 
 class OrderService:
@@ -125,10 +126,12 @@ class OrderService:
     def update_order(
         order_id: int,
         status: int,
-        shipping_address: str,
-        billing_address: str,
+        shipping_address_id: int,
+        billing_address_id: int,
     ) -> Order | None:
         try:
+            shipping_address = AddressRepo.get(shipping_address_id)
+            billing_address = AddressRepo.get(billing_address_id)
             order = OrderRepo.update(
                 order_id, status, shipping_address, billing_address
             )

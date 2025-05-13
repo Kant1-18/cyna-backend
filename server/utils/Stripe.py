@@ -112,19 +112,18 @@ class StripeUtils:
                 customer=customer_id,
                 items=prices,
                 payment_behavior="default_incomplete",
-                expand=[
-                    "latest_invoice"
-                ],  # safer than expanding non-existent nested field
+                expand=["latest_invoice.payment_intent"],
             )
 
             latest_invoice = subscription.get("latest_invoice", {})
             if latest_invoice and isinstance(latest_invoice, dict):
                 payment_intent = latest_invoice.get("payment_intent")
 
+            print(subscription)
             return subscription, payment_intent
 
         except Exception as e:
-            print(e)
+            print(f"[Stripe ERROR] create_subscription failed: {e}")
             return None, None
 
     @staticmethod
