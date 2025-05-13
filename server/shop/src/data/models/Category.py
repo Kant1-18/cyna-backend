@@ -20,3 +20,9 @@ class Category(models.Model):
             "globalName": self.global_name,
             "locales": [locale.to_json() for locale in self.locales.all()],
         }
+
+    def to_json_global(self):
+        return {
+            "id": self.id,
+            "globalName": self.global_name,
+        }

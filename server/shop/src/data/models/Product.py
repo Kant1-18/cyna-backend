@@ -43,7 +43,7 @@ class Product(models.Model):
     def to_json_all(self):
         return {
             "id": self.id,
-            "category": self.category.to_json(),
+            "category": self.category.to_json_global(),
             "name": self.name,
             "type": self.type,
             "basePrice": self.base_price,
