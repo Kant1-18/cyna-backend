@@ -109,6 +109,7 @@ class StripeUtils:
                         ]
                     )
             else:
+                # elif recurrence == 2:
                 for item in order_items:
                     if item.product.price <= 0:
                         raise ValueError("Stripe price cannot be 0 for subscription.")
