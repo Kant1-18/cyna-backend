@@ -202,7 +202,7 @@ class ProductControl:
                 raise HttpError(400, "Invalid type")
 
             if not CheckInfos.is_status_product(data.status):
-                raise HttpError(400, "Invalid string for description")
+                raise HttpError(400, "Invalid status")
 
             if not CheckInfos.is_positive_int(data.basePrice):
                 raise HttpError(400, "Invalid price")
