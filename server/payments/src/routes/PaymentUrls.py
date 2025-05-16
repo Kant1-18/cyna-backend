@@ -43,7 +43,7 @@ def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
 
 @router.get("/subscription/{subscription_id}", auth=JWTAuth())
 def get_by_subscription(request, subscription_id: int) -> Payment | HttpError:
-    return PaymentControl.get_by_subscription(request, subscription_id)
+    return PaymentControl.get_all_by_subscription(subscription_id)
 
 
 @router.get("/order/{order_id}", auth=JWTAuth())

@@ -46,16 +46,25 @@ def send_order_invoice(user_email: str, order: Order):
 def send_subscription_invoice(user_email: str, subscription: Subscription):
     try:
         items = subscription.items.all()
-        total = sum(item.product.price * item.quantity for item in items) / 100
+        total = (
+            sum(
+                item.order_item.product.price * item.order_item.quantity
+                for item in items
+            )
+            / 100
+        )
         html = render_to_string(
             "invoice.html",
             {
                 "order": subscription,
                 "items": [
                     {
-                        "product": item.product,
-                        "quantity": item.quantity,
-                        "total": (item.quantity * item.product.price) / 100,
+                        "product": item.order_item.product,
+                        "quantity": item.order_item.quantity,
+                        "total": (
+                            item.order_item.quantity * item.order_item.product.price
+                        )
+                        / 100,
                     }
                     for item in items
                 ],

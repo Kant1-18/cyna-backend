@@ -12,6 +12,6 @@ class SubscriptionItem(models.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "subscription_id": self.subscription.id,
-            "order_item": self.order_item.to_json(),
+            "subscriptionId": self.subscription.id,
+            "orderItem": self.order_item.to_json(),
         }
