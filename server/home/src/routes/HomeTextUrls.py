@@ -25,7 +25,7 @@ def add(request, data: HomeTextSchema) -> HomeText | HttpError:
 
 @router.get("", auth=JWTAuth())
 def get_all(request) -> list[HomeText] | HttpError:
-    return HomeTextControl.get_all(request)
+    return HomeTextControl.get_all()
 
 
 @router.get("/{locale}", auth=JWTAuth())

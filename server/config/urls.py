@@ -16,6 +16,7 @@ from payments.src.routes.SubscriptionUrls import router as subscription_router
 from payments.src.routes.PaymentUrls import router as payment_router
 from payments.src.routes.CheckingUrls import router as checking_router
 
+from home.src.routes.HomeTextUrls import router as home_text_router
 
 api = NinjaAPI()
 
@@ -34,6 +35,7 @@ api.add_router("checking", checking_router)
 api.add_router("subscriptions", subscription_router)
 api.add_router("payments", payment_router)
 
+api.add_router("home-texts", home_text_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
