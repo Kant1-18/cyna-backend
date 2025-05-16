@@ -27,21 +27,21 @@ class CheckingControl:
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
 
-        result, payment_intent, result_type = CheckingService.checking(
+        result, payment_infos, result_type = CheckingService.checking(
             user, order, data.paymentMethodId
         )
 
         if result:
-            if payment_intent:
+            if payment_infos:
                 if result_type == 0:
                     return {
                         "payment": result.to_json(),
-                        "paymentIntent": payment_intent,
+                        "paymentIntent": payment_infos,
                     }
                 elif result_type == 1:
                     return {
                         "subscription": result.to_json(),
-                        "paymentIntent": payment_intent,
+                        "clientSecret": payment_infos,
                     }
             else:
                 if CheckingService.cancel(result.id, result_type):

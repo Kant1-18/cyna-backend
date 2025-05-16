@@ -127,14 +127,16 @@ class StripeUtils:
                 customer=customer_id,
                 items=prices,
                 payment_behavior="default_incomplete",
-                expand=["latest_invoice.payment_intent"],
+                payment_settings={"save_default_payment_method": "on_subscription"},
+                expand=["latest_invoice.confirmation_secret"],
             )
 
-            payment_intent = subscription.latest_invoice["payment_intent"]
+            client_secret = (
+                subscription.latest_invoice.confirmation_secret.client_secret
+            )
 
-            print(subscription)
-            print(payment_intent)
-            return subscription, payment_intent
+            print(client_secret)
+            return subscription, client_secret
 
         except Exception as e:
             print(f"[Stripe ERROR]: {e}")

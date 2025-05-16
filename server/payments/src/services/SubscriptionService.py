@@ -37,7 +37,7 @@ class SubscriptionService:
                     order,
                 )
 
-            stripe_subscription, payment_intent = StripeUtils.create_subscription(
+            stripe_subscription, client_secret = StripeUtils.create_subscription(
                 customer_id=user.stripe_id,
                 recurrence=recurrence,
                 order=order,
@@ -63,7 +63,7 @@ class SubscriptionService:
                             OrderService.update_order_status(order_id, 2)
                             return None
 
-                    return subscription, payment_intent
+                    return subscription, client_secret
 
         except Exception as e:
             OrderService.update_order_status(order_id, 2)

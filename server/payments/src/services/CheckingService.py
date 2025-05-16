@@ -52,7 +52,7 @@ class CheckingService:
         user: User, order: Order, payment_method_id: int
     ) -> tuple[Subscription, PaymentIntent] | None:
         try:
-            subsciption, payment_intent = SubscriptionService.add(
+            subsciption, client_secret = SubscriptionService.add(
                 user_id=user.id,
                 billing_address_id=order.billing_address.id,
                 payment_method_id=payment_method_id,
@@ -60,8 +60,8 @@ class CheckingService:
                 order_id=order.id,
             )
 
-            if subsciption and payment_intent:
-                return subsciption, payment_intent, 1
+            if subsciption and client_secret:
+                return subsciption, client_secret, 1
 
         except Exception as e:
             print(e)
