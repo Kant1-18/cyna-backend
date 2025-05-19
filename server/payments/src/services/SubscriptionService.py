@@ -4,14 +4,12 @@ from shop.models import Order, OrderItem, Product
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.data.repositories.PaymentMethodRepo import PaymentMethodRepo
-from payments.src.services.PaymentService import PaymentService
 from users.src.services.UserService import UserService
 from users.src.services.AddressService import AddressService
 from utils.Stripe import StripeUtils
 from shop.src.services.OrderService import OrderService
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 from stripe import PaymentIntent
-from utils.emails import send_subscription_invoice
 
 
 class SubscriptionService:
@@ -151,23 +149,7 @@ class SubscriptionService:
         try:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:
-                if status == 1:
-                    subscription_items = subscription.items.all()
-                    amount = sum(
-                        [
-                            item.order_item.quantity * item.order_item.product.price
-                            for item in subscription_items
-                        ]
-                    )
-                    payment, tuple_result = PaymentService.add(
-                        payment_method_id=subscription.payment_method.id,
-                        amount=amount,
-                        status=5,
-                        subscription_id=subscription.id,
-                    )
-                    if payment:
-                        send_subscription_invoice(subscription.user.email, subscription)
-                        return SubscriptionRepo.update_status(subscription_id, status)
+                return SubscriptionRepo.update_status(subscription_id, status)
         except Exception as e:
             print(e)
         return None

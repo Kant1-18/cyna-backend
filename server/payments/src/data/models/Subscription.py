@@ -17,7 +17,6 @@ class Subscription(models.Model):
         return {
             "id": self.id,
             "user": self.user.to_json(),
-            "status": self.status,
             "billing_address": self.billing_address.to_json(),
             "payment_method": self.payment_method.to_json(),
             "recurrence": self.recurrence,

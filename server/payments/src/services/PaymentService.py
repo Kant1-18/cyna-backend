@@ -3,7 +3,7 @@ from shop.models import Order
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
-from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
+from payments.src.services import SubscriptionService
 import utils.emails as sendInvoice
 from utils.Stripe import StripeUtils
 from stripe import PaymentIntent
@@ -23,7 +23,9 @@ class PaymentService:
             if payment_method:
                 order = OrderService.get_order_by_id(order_id) if order_id else None
                 subscription = (
-                    SubscriptionRepo.get(subscription_id) if subscription_id else None
+                    SubscriptionService.get(subscription_id)
+                    if subscription_id
+                    else None
                 )
 
                 payment = PaymentRepo.add(
@@ -42,8 +44,6 @@ class PaymentService:
 
                     return payment, payment_intent
                 else:
-                    if subscription.status == 0:
-                        payment = PaymentRepo.update_status(payment, 5)
                     return payment, None
 
         except Exception as e:
@@ -88,7 +88,7 @@ class PaymentService:
     @staticmethod
     def get_all_by_subscription(subscription_id: int) -> list[Payment] | None:
         try:
-            subscription = SubscriptionRepo.get(subscription_id)
+            subscription = SubscriptionService.get(subscription_id)
             payments = PaymentRepo.get_all_by_subscription(subscription)
             if payments:
                 return payments
