@@ -40,6 +40,14 @@ class UserService:
         return UserRepo.get_by_email(email)
 
     @staticmethod
+    def get_all() -> list[User] | None:
+        return UserRepo.get_all()
+
+    @staticmethod
+    def get_all_by_role(role: int) -> list[User] | None:
+        return UserRepo.get_all_by_role(role)
+
+    @staticmethod
     def update(id: int, first_name: str, last_name: str, email: str) -> User | None:
         return UserRepo.update(id, first_name, last_name, email)
 

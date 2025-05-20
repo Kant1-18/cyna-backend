@@ -50,6 +50,21 @@ class UsersControl:
         return user.to_json() if user else HttpError(404, "User not found")
 
     @staticmethod
+    def get_all(request, role: int | None) -> list[User] | HttpError:
+        if AuthService.isAdmin(request):
+            if role is None:
+                users = UserService.get_all()
+            else:
+                users = UserService.get_all_by_role(role)
+
+            if users:
+                return [user.to_json() for user in users]
+            else:
+                raise HttpError(404, "Users not found")
+        else:
+            raise HttpError(403, "Forbidden")
+
+    @staticmethod
     def update(request, data) -> User | HttpError:
         if not CheckInfos.is_valid_string(data.firstName):
             raise HttpError(400, "Invalid firstName")

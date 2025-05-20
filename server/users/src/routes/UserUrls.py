@@ -61,3 +61,8 @@ def update_password(request, data: UpdatePasswordSchema) -> User | HttpError:
 @router.delete("/delete/{id}", auth=JWTAuth())
 def delete(request, id: int) -> bool:
     return UsersControl.delete(id)
+
+
+@router.get("", auth=JWTAuth())
+def get_all(request, role: int | None = None) -> list[User] | HttpError:
+    return UsersControl.get_all(request, role)

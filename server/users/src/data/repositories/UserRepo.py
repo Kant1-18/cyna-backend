@@ -61,6 +61,29 @@ class UserRepo:
         return None
 
     @staticmethod
+    def get_all() -> list[User] | None:
+        try:
+            users = User.objects.all()
+            if users:
+                return users
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
+    def get_all_by_role(role: int) -> list[User] | None:
+        try:
+            print("role =", role)
+            users = User.objects.filter(role=role)
+            if users:
+                return users
+        except Exception as e:
+            print(e)
+
+        return None
+
+    @staticmethod
     def update(id: int, first_name: str, last_name: str, email: str) -> User | None:
         try:
             user = User.objects.get(id=id)
