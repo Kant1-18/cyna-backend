@@ -23,12 +23,12 @@ def add(request, data: HomeTextSchema) -> HomeText | HttpError:
     return HomeTextControl.add(request, data)
 
 
-@router.get("", auth=JWTAuth())
+@router.get("")
 def get_all(request) -> list[HomeText] | HttpError:
     return HomeTextControl.get_all()
 
 
-@router.get("/{locale}", auth=JWTAuth())
+@router.get("/{locale}")
 def get(request, locale: str) -> HomeText | HttpError:
     return HomeTextControl.get(request, locale)
 
