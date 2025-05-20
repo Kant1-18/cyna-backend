@@ -26,7 +26,7 @@ class AddressControl:
             if not CheckInfos.is_valid_string(data.number):
                 raise HttpError(400, "Invalid number")
 
-            if data.complement:
+            if data.complement is not None or data.complement != "":
                 if not CheckInfos.is_valid_string(data.complement):
                     raise HttpError(400, "Invalid complement")
 
@@ -98,8 +98,9 @@ class AddressControl:
             if not CheckInfos.is_valid_string(data.number):
                 raise HttpError(400, "Invalid string")
 
-            if not CheckInfos.is_valid_string(data.complement):
-                raise HttpError(400, "Invalid string")
+            if data.complement is not None or data.complement != "":
+                if not CheckInfos.is_valid_string(data.complement):
+                    raise HttpError(400, "Invalid string")
 
             if not CheckInfos.is_valid_string(data.zipCode):
                 raise HttpError(400, "Invalid string")
