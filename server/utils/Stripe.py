@@ -1,6 +1,7 @@
 import stripe
-from shop.models import Order, OrderItem
+from shop.models import Order
 from shop.src.services.OrderService import OrderService
+from payments.src.services.PaymentMethodService import PaymentMethodService
 
 
 class StripeUtils:
@@ -93,6 +94,9 @@ class StripeUtils:
         customer_id: str, recurrence: int, order: Order
     ) -> stripe.Subscription | None:
         try:
+            payment_methods = [
+                method.stripe_code for method in PaymentMethodService.get_all()
+            ]
             order_items = OrderService.get_all_items(order)
 
             prices = []
@@ -124,6 +128,7 @@ class StripeUtils:
 
             subscription = stripe.Subscription.create(
                 customer=customer_id,
+                payment_method_types=payment_methods,
                 items=prices,
                 payment_behavior="default_incomplete",
                 payment_settings={"save_default_payment_method": "on_subscription"},
@@ -146,7 +151,11 @@ class StripeUtils:
         amount: int, user_stripe_id: str
     ) -> stripe.PaymentIntent | None:
         try:
+            payment_methods = [
+                method.stripe_code for method in PaymentMethodService.get_all()
+            ]
             payment_intent = stripe.PaymentIntent.create(
+                payment_method_types=payment_methods,
                 amount=amount,
                 currency="eur",
                 customer=user_stripe_id,
