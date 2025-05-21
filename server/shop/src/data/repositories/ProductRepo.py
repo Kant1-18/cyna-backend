@@ -80,7 +80,7 @@ class ProductRepo:
 
     @staticmethod
     def update(
-        id: int,
+        product: Product,
         category: Category,
         name: str,
         type: int,
@@ -90,7 +90,6 @@ class ProductRepo:
         discount_percentage: int,
     ) -> Product | None:
         try:
-            product = Product.objects.get(id=id)
             if product:
                 product.category = category
                 product.name = name

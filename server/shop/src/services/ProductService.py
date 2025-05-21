@@ -172,21 +172,38 @@ class ProductService:
         discount_order: int,
         discount_percentage: int,
     ) -> Product | None:
+        from utils.Stripe import StripeUtils
+
         category = CategoryRepo.get(category_id)
         if not category:
             return None
 
         try:
-            return ProductRepo.update(
-                product_id,
-                category=category,
-                name=name,
-                type=type,
-                status=status,
-                base_price=base_price,
-                discount_order=discount_order,
-                discount_percentage=discount_percentage,
-            )
+            product = ProductRepo.get(id=product_id)
+            if product:
+                if (
+                    discount_percentage != product.discount_percentage
+                    or base_price != product.base_price
+                ):
+                    update_price = True
+                else:
+                    update_price = False
+
+                ProductRepo.update(
+                    product=product,
+                    category=category,
+                    name=name,
+                    type=type,
+                    status=status,
+                    base_price=base_price,
+                    discount_order=discount_order,
+                    discount_percentage=discount_percentage,
+                )
+
+                if update_price:
+                    StripeUtils.add_monthly_price(product.stripe_id, product.price)
+                    StripeUtils.add_yealy_price(product.stripe_id, product.price * 12)
+                return product
         except Exception as e:
             print(e)
             return None
