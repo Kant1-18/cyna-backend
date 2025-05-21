@@ -15,13 +15,13 @@ class PaymentMethodSchema(ModelSchema):
 
 class AddPaymentMethodSchema(Schema):
     name: str
-    stripe_code: str
+    stripeCode: str
 
 
 class UpdatePaymentMethodSchema(Schema):
     id: int
     name: str
-    stripe_code: str
+    stripeCode: str
 
 
 @router.post("", auth=JWTAuth())

@@ -13,10 +13,10 @@ class PaymentMethodControl:
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
-            if not CheckInfos.is_valid_string(data.stripe_code):
+            if not CheckInfos.is_valid_string(data.stripeCode):
                 raise HttpError(400, "Invalid string for stripe code")
 
-            payment_method = PaymentMethodService.add(data.name, data.stripe_code)
+            payment_method = PaymentMethodService.add(data.name, data.stripeCode)
             if payment_method:
                 return payment_method.to_json()
             else:
@@ -60,11 +60,11 @@ class PaymentMethodControl:
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
-            if not CheckInfos.is_valid_string(data.stripe_code):
+            if not CheckInfos.is_valid_string(data.stripeCode):
                 raise HttpError(400, "Invalid string for stripe code")
 
             payment_method = PaymentMethodService.update(
-                data.id, data.name, data.stripe_code
+                data.id, data.name, data.stripeCode
             )
             if payment_method:
                 return payment_method.to_json()
