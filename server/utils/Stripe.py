@@ -122,7 +122,6 @@ class StripeUtils:
                         ]
                     )
 
-            print(prices)
             subscription = stripe.Subscription.create(
                 customer=customer_id,
                 items=prices,
@@ -135,7 +134,7 @@ class StripeUtils:
                 subscription.latest_invoice.confirmation_secret.client_secret
             )
 
-            print(client_secret)
+            print(subscription)
             return subscription, client_secret
 
         except Exception as e:
