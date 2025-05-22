@@ -15,7 +15,7 @@ class Payment(models.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "payment_method": (
+            "paymentMethod": (
                 self.payment_method.to_json() if self.payment_method else None
             ),
             "status": self.status,
