@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "tickets",
     "payments",
     "home",
+    "searchBar",
 ]
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
