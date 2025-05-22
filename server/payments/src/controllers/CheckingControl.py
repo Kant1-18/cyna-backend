@@ -24,6 +24,9 @@ class CheckingControl:
         if order.billing_address is None:
             raise HttpError(400, "Billing address is not set")
 
+        if order.recurrence == 0 or order.recurrence == 2:
+            raise HttpError(400, "Recurrence type not implemented yet")
+
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
 
