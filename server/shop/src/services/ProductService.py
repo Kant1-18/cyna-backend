@@ -41,7 +41,7 @@ class ProductService:
                 stripe_product.id, base_price
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, (base_price * 12)
+                stripe_product.id, int(base_price * 12)
             )
 
             image1 = ImageUploader.product(image1)
@@ -202,7 +202,9 @@ class ProductService:
 
                 if update_price:
                     StripeUtils.add_monthly_price(product.stripe_id, product.price)
-                    StripeUtils.add_yealy_price(product.stripe_id, product.price * 12)
+                    StripeUtils.add_yealy_price(
+                        product.stripe_id, int(product.price * 12)
+                    )
                 return product
         except Exception as e:
             print(e)
