@@ -14,8 +14,6 @@ class CheckingControl:
     def checking(request, data) -> tuple[Payment, PaymentIntent] | HttpError:
         if not CheckInfos.is_positive_int(data.orderId):
             raise HttpError(400, "Invalid order id")
-        if not CheckInfos.is_positive_int(data.paymentMethodId):
-            raise HttpError(400, "Invalid payment method id")
 
         if not OrderService.is_cart(data.orderId):
             raise HttpError(400, "Order is not a cart")
@@ -31,7 +29,8 @@ class CheckingControl:
         user = AuthService.get_user_by_access_token(token)
 
         result, payment_infos, result_type = CheckingService.checking(
-            user, order, data.paymentMethodId
+            user,
+            order,
         )
 
         if result:

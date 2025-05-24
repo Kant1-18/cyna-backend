@@ -8,7 +8,6 @@ router = Router()
 
 class CheckingSchema(Schema):
     orderId: int
-    paymentMethodId: int
 
 
 @router.post("", auth=JWTAuth())
