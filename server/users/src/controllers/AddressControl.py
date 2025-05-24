@@ -26,7 +26,7 @@ class AddressControl:
             if not CheckInfos.is_valid_string(data.number):
                 raise HttpError(400, "Invalid number")
 
-            if data.complement is not None or data.complement != "":
+            if data.complement:
                 if not CheckInfos.is_valid_string(data.complement):
                     raise HttpError(400, "Invalid complement")
 
@@ -93,26 +93,26 @@ class AddressControl:
                 raise HttpError(400, "Invalid type")
 
             if not CheckInfos.is_valid_string(data.street):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for street")
 
             if not CheckInfos.is_valid_string(data.number):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for number")
 
-            if data.complement is not None or data.complement != "":
+            if data.complement:
                 if not CheckInfos.is_valid_string(data.complement):
-                    raise HttpError(400, "Invalid string")
+                    raise HttpError(400, "Invalid string for complement")
 
             if not CheckInfos.is_valid_string(data.zipCode):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for zipCode")
 
             if not CheckInfos.is_valid_string(data.city):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for city")
 
             if not CheckInfos.is_valid_string(data.region):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for region")
 
             if not CheckInfos.is_valid_string(data.country):
-                raise HttpError(400, "Invalid string")
+                raise HttpError(400, "Invalid string for country")
 
             address = AddressService.update(
                 data.id,
