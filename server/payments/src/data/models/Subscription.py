@@ -13,12 +13,21 @@ class Subscription(models.Model):
     stripe_id = models.TextField(default="")
     recurrence = models.IntegerField(default=0)
 
+    # temp cause some don't have due to tests (billingAddress + paymentMethod)
     def to_json(self):
         return {
             "id": self.id,
             "user": self.user.to_json(),
-            "billingAddress": self.billing_address.to_json(),
-            "paymentMethod": self.payment_method.to_json(),
+            "billingAddress": (
+                self.billing_address.to_json()
+                if self.billing_address is not None
+                else None
+            ),
+            "paymentMethod": (
+                self.payment_method.to_json()
+                if self.payment_method is not None
+                else None
+            ),
             "recurrence": self.recurrence,
             "items": [item.to_json() for item in self.items.all()],
         }

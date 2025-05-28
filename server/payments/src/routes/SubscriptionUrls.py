@@ -49,9 +49,9 @@ def add(request, data: AddSubscriptionSchema) -> Subscription | HttpError:
 def get_all(request) -> list[Subscription] | HttpError:
     return SubscriptionControl.get_all(request)
 
-
+# quick fix : review code
 @router.get("/my", auth=JWTAuth())
-def get_by_user(request) -> Subscription | HttpError:
+def get_by_user(request) -> list[Subscription] | HttpError:
     return SubscriptionControl.get_my(request)
 
 

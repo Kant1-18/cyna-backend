@@ -7,6 +7,7 @@ from stripe import stripe
 from users.src.services.AuthService import AuthService
 from shop.src.services.OrderService import OrderService
 from config.settings import STRIPE_WEBHOOK_SECRET
+from payments.src.services.PaymentMethodService import PaymentMethodService
 
 router = Router()
 
@@ -14,6 +15,7 @@ router = Router()
 class CheckingSchema(Schema):
     orderId: int
     paymentMethodId: str
+    paymentMethodType: str
 
 class CreateSetupSchema(Schema):
     orderId: int
@@ -30,18 +32,23 @@ class CancelSetupSchema(Schema):
 def checking(request, data: CheckingSchema) -> tuple[dict, dict] | HttpError:
     return CheckingControl.checking(request, data)
 
+# WIP 
+# Review + split code
 @router.post("/create-setup-intent", auth=JWTAuth(), response=CreateSetupResponse)
 def create_setup_intent(request, data: CreateSetupSchema):
     token = AuthService.get_token(request)
     user = AuthService.get_user_by_access_token(token)
+
+    payment_methods = PaymentMethodService.get_all()
+    payment_method_types = []
+    if payment_methods:
+        payment_method_types = [payment_method.stripe_code for payment_method in payment_methods]
+    else:
+        payment_method_types = ["card", "link", "sepa_debit"]
     
     intent = stripe.SetupIntent.create(
         customer=user.stripe_id,
-        payment_method_types=[
-            "card",
-            "link",
-            "sepa_debit",
-        ],
+        payment_method_types=payment_method_types,
         metadata={"order_id": str(data.orderId)},
     )
     return CreateSetupResponse(
@@ -49,6 +56,8 @@ def create_setup_intent(request, data: CreateSetupSchema):
         clientSecret=intent.client_secret,
     )
 
+# WIP 
+# Review + split code
 @router.post("/cancel-setup-intent", auth=JWTAuth())
 def cancel_setup_intent(request, data: CancelSetupSchema):
     try:
@@ -58,6 +67,8 @@ def cancel_setup_intent(request, data: CancelSetupSchema):
         raise HttpError(400, f"Cancel failed: {e.user_message}")
     return {"canceled": True}
 
+# WIP 
+# Review + split code
 @router.post("/webhook")
 def stripe_webhook(request):
     payload = request.body

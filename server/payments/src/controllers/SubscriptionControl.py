@@ -51,15 +51,16 @@ class SubscriptionControl:
         else:
             raise HttpError(403, "Forbidden")
 
+    # quick fix : review code
     @staticmethod
     def get_my(request) -> Subscription | None:
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
 
-        subscription = SubscriptionService.get_subscription_by_user(user.id)
+        subscriptions = SubscriptionService.get_subscription_by_user(user.id)
 
-        if subscription:
-            return subscription.to_json()
+        if subscriptions:
+            return [subscription.to_json() for subscription in subscriptions]
         else:
             raise HttpError(404, "Subscription not found")
 

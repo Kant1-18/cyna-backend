@@ -1,5 +1,6 @@
 from payments.models import Subscription, PaymentMethod
 from users.models import User, Address
+from django.db.models import QuerySet
 
 
 class SubscriptionRepo:
@@ -40,12 +41,13 @@ class SubscriptionRepo:
 
         return None
 
+    # quick fix : review code
     @staticmethod
-    def get_by_user(user: User) -> Subscription | None:
+    def get_by_user(user: User) -> QuerySet[Subscription] | None:
         try:
-            subscription = Subscription.objects.get(user=user)
-            if subscription:
-                return subscription
+            subscriptions = Subscription.objects.filter(user=user)
+            if subscriptions:
+                return subscriptions
         except Exception as e:
             print(e)
 
