@@ -34,7 +34,7 @@ class OrderService:
             return None
 
     @staticmethod
-    def add_product(user_id: int, product_id: int, quantity: int) -> Order | None:
+    def add_product(user_id: int, product_id: int, quantity: int, recurring: int) -> Order | None:
         try:
             user = UserRepo.get(user_id)
             if user:
@@ -43,7 +43,7 @@ class OrderService:
                 else:
                     order = OrderRepo.get_by_user_and_status(user, 0)
                 product = ProductService.get(product_id)
-                OrderItemRepo.add(order, product, quantity)
+                OrderItemRepo.add(order, product, quantity, recurring)
 
                 return order
         except Exception as e:
@@ -64,7 +64,7 @@ class OrderService:
 
     @staticmethod
     def update_product_in_cart(
-        user_id: int, product_id: int, quantity: int
+        user_id: int, product_id: int, quantity: int, recurring: int
     ) -> Order | None:
         try:
             order = OrderRepo.get_by_user_and_status(user_id, 0)
@@ -73,7 +73,7 @@ class OrderService:
                 if product:
                     order_item = OrderItemRepo.get_by_order_and_product(order, product)
                     if order_item:
-                        OrderItemRepo.update(order_item, quantity)
+                        OrderItemRepo.update(order_item, quantity, recurring)
                         return order
         except Exception as e:
             print(e)
@@ -95,6 +95,11 @@ class OrderService:
             order = OrderRepo.get_by_user_and_status(user_id, 0)
             if order:
                 return order
+            else:
+                user = UserRepo.get(user_id)
+                order = OrderRepo.add(user)
+                if order:
+                    return order
         except Exception as e:
             print(e)
 

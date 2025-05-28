@@ -24,6 +24,7 @@ class OrderItemSchema(ModelSchema):
 class OrderRouteSchema(Schema):
     productId: int
     quantity: int
+    recurring: int
 
 
 class OrderUpdateSchema(Schema):

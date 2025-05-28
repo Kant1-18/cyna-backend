@@ -12,7 +12,6 @@ class OrderRepo:
                 status=0,
                 shipping_address=None,
                 billing_address=None,
-                recurrence=0,
             )
             if order:
                 return order

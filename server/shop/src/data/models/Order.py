@@ -12,7 +12,6 @@ class Order(models.Model):
     billing_address = models.ForeignKey(
         Address, on_delete=models.SET_NULL, null=True, related_name="billing_address"
     )
-    recurrence = models.IntegerField(default=0, blank=False, null=False)
 
     def to_json(self):
         return {
@@ -24,6 +23,5 @@ class Order(models.Model):
             "billingAddress": (
                 self.billing_address.to_json() if self.billing_address else None
             ),
-            "recurrence": self.recurrence,
             "items": [item.to_json() for item in self.items.all()],
         }

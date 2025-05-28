@@ -27,6 +27,9 @@ class ResetPasswordSchema(Schema):
     newPassword: str
     confirmNewPassword: str
 
+class VerifyAccountSchema(Schema):
+    token: str
+
 
 class TokenSchema(Schema):
     refreshToken: str
@@ -73,7 +76,7 @@ def send_verification(request, data: EmailSchema):
 
 
 @router.post("/verify-account")
-def verify_account(request, data: ResetPasswordSchema):
+def verify_account(request, data: VerifyAccountSchema):
     return AuthControl.verify_account(request, data)
 
 

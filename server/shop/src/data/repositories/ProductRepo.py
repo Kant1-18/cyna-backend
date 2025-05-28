@@ -88,6 +88,8 @@ class ProductRepo:
         base_price: int,
         discount_order: int,
         discount_percentage: int,
+        stripe_monthly_price_id: str,
+        stripe_yearly_price_id: str,
     ) -> Product | None:
         try:
             if product:
@@ -99,6 +101,8 @@ class ProductRepo:
                 product.price = base_price * (1 - discount_percentage / 100)
                 product.discount_order = discount_order
                 product.discount_percentage = discount_percentage
+                product.stripe_monthly_price_id = stripe_monthly_price_id
+                product.stripe_yearly_price_id = stripe_yearly_price_id
                 product.save()
                 return product
         except Exception as e:

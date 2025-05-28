@@ -189,6 +189,12 @@ class ProductService:
                 else:
                     update_price = False
 
+                if update_price:
+                    new_monthly_price = StripeUtils.add_monthly_price(product.stripe_id, int(round(base_price * (1 - discount_percentage / 100))))
+                    new_yearly_price = StripeUtils.add_yealy_price(
+                        product.stripe_id, int(round((base_price * (1 - discount_percentage / 100)) * 12))
+                    )
+
                 ProductRepo.update(
                     product=product,
                     category=category,
@@ -198,13 +204,11 @@ class ProductService:
                     base_price=base_price,
                     discount_order=discount_order,
                     discount_percentage=discount_percentage,
+                    stripe_monthly_price_id=new_monthly_price.id if update_price else product.stripe_monthly_price_id,
+                    stripe_yearly_price_id=new_yearly_price.id  if update_price else product.stripe_yearly_price_id,
                 )
 
-                if update_price:
-                    StripeUtils.add_monthly_price(product.stripe_id, product.price)
-                    StripeUtils.add_yealy_price(
-                        product.stripe_id, int(product.price * 12)
-                    )
+                
                 return product
         except Exception as e:
             print(e)

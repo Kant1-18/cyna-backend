@@ -24,7 +24,7 @@ class OrderControl:
             token = AuthService.get_token(request)
             user = AuthService.get_user_by_access_token(token)
 
-            order = OrderService.add_product(user.id, data.productId, data.quantity)
+            order = OrderService.add_product(user.id, data.productId, data.quantity, data.recurring)
             if order and order is not None:
                 return order.to_json()
         except Exception as e:
@@ -44,7 +44,7 @@ class OrderControl:
             user = AuthService.get_user_by_access_token(token)
 
             order = OrderService.update_product_in_cart(
-                user.id, data.productId, data.quantity
+                user.id, data.productId, data.quantity, data.recurring
             )
             if order:
                 return order.to_json()

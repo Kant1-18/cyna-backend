@@ -16,6 +16,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 stripe.api_key = os.getenv("STRIPE_API_SECRET")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -23,6 +24,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:4173",
     "http://localhost:8081",
 ]
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"]

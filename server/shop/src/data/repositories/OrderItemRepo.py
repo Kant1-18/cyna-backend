@@ -4,10 +4,10 @@ from shop.models import Product, Order, OrderItem
 class OrderItemRepo:
 
     @staticmethod
-    def add(order: Order, product: Product, quantity: int) -> OrderItem | None:
+    def add(order: Order, product: Product, quantity: int, recurring: int) -> OrderItem | None:
         try:
             return OrderItem.objects.create(
-                order=order, product=product, quantity=quantity
+                order=order, product=product, quantity=quantity, recurring=recurring
             )
         except Exception as e:
             print(e)
@@ -47,9 +47,10 @@ class OrderItemRepo:
         return None
 
     @staticmethod
-    def update(order_item: OrderItem, quantity: int) -> OrderItem | None:
+    def update(order_item: OrderItem, quantity: int, recurring: int) -> OrderItem | None:
         try:
             order_item.quantity = quantity
+            order_item.recurring = recurring
             order_item.save()
             return order_item
         except Exception as e:
