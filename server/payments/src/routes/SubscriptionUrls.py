@@ -54,6 +54,11 @@ def get_all(request) -> list[Subscription] | HttpError:
 def get_by_user(request) -> list[Subscription] | HttpError:
     return SubscriptionControl.get_my(request)
 
+# changed to fix delete route
+@router.get("/user/{user_id}", auth=JWTAuth())
+def get_by_user_id(request, user_id: int) -> Subscription | HttpError:
+    return SubscriptionControl.get_by_user(request, user_id)
+
 
 @router.patch("/billing-address", auth=JWTAuth())
 def update_billing_address(
@@ -79,11 +84,6 @@ def update_recurrence(
 @router.delete("/item", auth=JWTAuth())
 def delete_item(request, data: DeleteSubscriptionItemSchema) -> bool:
     return SubscriptionControl.delete_item(data)
-
-
-@router.get("/{user_id}", auth=JWTAuth())
-def get_by_user_id(request, user_id: int) -> Subscription | HttpError:
-    return SubscriptionControl.get_by_user(request, user_id)
 
 
 @router.delete("/{id}", auth=JWTAuth())

@@ -152,7 +152,7 @@ class SubscriptionControl:
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid subscription id")
 
-            result = SubscriptionService.delete(id)
+            result = SubscriptionService.delete_subscription(id)
 
             if result:
                 return True
