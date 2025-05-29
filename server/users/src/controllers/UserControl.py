@@ -3,6 +3,7 @@ from users.src.services.AuthService import AuthService
 from users.src.data.models.User import User
 from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
+import stripe
 
 
 class UsersControl:
@@ -76,6 +77,11 @@ class UsersControl:
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
         user = UserService.update(user.id, data.firstName, data.lastName, data.email)
+        if user.stripe_id:
+            try:
+                stripe.Customer.modify(id=user.stripe_id, email=data.email, name=f"{data.firstName} {data.lastName}")
+            except stripe.error.StripeError as e:
+                raise HttpError(400, f"An error occured while updating stripe customer: {e.user_message}")
         return user.to_json() if user else HttpError(500, "An error occurred")
 
     @staticmethod

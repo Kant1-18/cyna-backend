@@ -121,8 +121,8 @@ class SubscriptionService:
     @staticmethod
     def get_subscription_by_user(user_id: int) -> Subscription | None:
         try:
-            user = UserService.get(user_id)
-            subscriptions = SubscriptionRepo.get_by_user(user)
+            user = UserService.get(user_id) # ???????
+            subscriptions = SubscriptionRepo.get_by_user(user_id)
             if subscriptions:
                 return subscriptions
         except Exception as e:
