@@ -1,16 +1,17 @@
 from payments.models import SubscriptionItem, Subscription
 from shop.models import OrderItem
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class SubscriptionItemRepo:
 
     @staticmethod
     def add(
-        subscription: Subscription, order_item: OrderItem
+        subscription: Subscription, order_item: OrderItem, stripe_item_id: str
     ) -> SubscriptionItem | None:
         try:
             subscription_item = SubscriptionItem.objects.create(
-                subscription=subscription, order_item=order_item
+                subscription=subscription, order_item=order_item, stripe_item_id=stripe_item_id
             )
             if subscription_item:
                 return subscription_item
@@ -50,3 +51,26 @@ class SubscriptionItemRepo:
         except Exception as e:
             print(e)
         return False
+    
+    @staticmethod
+    def delete_by_stripe_item_id(stripe_item_id: str):
+        try:
+            item = SubscriptionItem.objects.get(stripe_item_id=stripe_item_id)
+            item.delete()
+            return True
+        except ObjectDoesNotExist:
+            return False
+        except Exception as e:
+            print(e)
+            return False
+        
+    @staticmethod
+    def delete_by_subscription_id(subscription_id: int) -> int:
+        try:
+            deleted, _ = SubscriptionItem.objects.filter(
+                subscription_id=subscription_id
+            ).delete()
+            return deleted
+        except Exception as e:
+            print(f"[SubscriptionItemRepo.delete_all_for_subscription] {e}")
+            return 0

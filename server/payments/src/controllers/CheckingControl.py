@@ -11,6 +11,7 @@ from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
+from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 
 
 class CheckingControl:
@@ -68,7 +69,7 @@ class CheckingControl:
             })
 
         if monthly:
-            monthly_items = [{"price": item.product.stripe_monthly_price_id, "quantity": item.quantity} for item in monthly]
+            monthly_items = [{"price": item.product.stripe_monthly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in monthly]
             try:
                 subscription = stripe.Subscription.create(
                     customer=customer_id,
@@ -98,18 +99,22 @@ class CheckingControl:
                 subscription=sub
             )
             if sub:
-                for item in monthly:
-                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=item)
+                stripe_items = subscription.get("items", {}).get("data", [])
+                for item in stripe_items:
+                    metadata_id = int(item.metadata.order_item_id)
+                    order_item = OrderItemRepo.get_by_id(metadata_id);
+                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=order_item, stripe_item_id=item.id)
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
             payments.append({
                 "type": "monthly",
-                "id": subscription.id,
+                "stripe_id": subscription.id,
+                "id": sub.id,
                 "clientSecret": client_secret,
             })
 
         if yearly:
-            yearly_items = [{"price": item.product.stripe_yearly_price_id, "quantity": item.quantity} for item in yearly]
+            yearly_items = [{"price": item.product.stripe_yearly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in yearly]
             try:
                 subscription = stripe.Subscription.create(
                     customer=customer_id,
@@ -139,13 +144,17 @@ class CheckingControl:
                 subscription=sub
             )
             if sub:
-                for item in yearly:
-                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=item)
+                stripe_items = subscription.get("items", {}).get("data", [])
+                for item in stripe_items:
+                    metadata_id = int(item.metadata.order_item_id)
+                    order_item = OrderItemRepo.get_by_id(metadata_id);
+                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=order_item, stripe_item_id=item.id)
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
             payments.append({
                 "type": "yearly",
-                "id": subscription.id,
+                "stripe_id": subscription.id,
+                "id": sub.id,
                 "clientSecret": client_secret,
             })
 

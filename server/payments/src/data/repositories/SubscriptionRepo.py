@@ -43,9 +43,10 @@ class SubscriptionRepo:
 
     # quick fix : review code
     @staticmethod
-    def get_by_user(user_id: int) -> QuerySet[Subscription] | None:
+    def get_by_user(user_id: int, status: int | None) -> QuerySet[Subscription] | None:
         try:
-            subscriptions = Subscription.objects.filter(user=user_id)
+            subscriptions = Subscription.objects.filter(user=user_id, **({} if status is None else {"status": status}))
+
             if subscriptions:
                 return subscriptions
         except Exception as e:

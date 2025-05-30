@@ -36,6 +36,23 @@ class SubscriptionControl:
             }
         else:
             raise HttpError(500, "An error occurred while creating the subscription")
+        
+    @staticmethod
+    def cancel_subsciption(request, data):
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+
+        if not CheckInfos.is_positive_int(data.subscriptionId):
+            raise HttpError(400, "Invalid subscription id")
+        if not CheckInfos.is_valid_string(data.subscriptionItemStripeId):
+            raise HttpError(400, "Invalid Stripe subscription item id")
+        subscription = SubscriptionService.get_subscription_by_id(data.subscriptionId)
+        if not subscription  or subscription.user.id != user.id:
+            raise HttpError(404, "Subscription not found")
+
+        subscriptions = SubscriptionService.cancel_subscription(subscription, data.subscriptionItemStripeId, user)
+
+        return subscriptions
 
     @staticmethod
     def get_by_user(request, user_id: int) -> Subscription | None:
@@ -53,14 +70,14 @@ class SubscriptionControl:
 
     # quick fix : review code
     @staticmethod
-    def get_my(request) -> Subscription | None:
+    def get_my(request, status) -> Subscription | None:
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
 
-        subscriptions = SubscriptionService.get_subscription_by_user(user.id)
+        subscriptions = SubscriptionService.get_subscription_by_user(user, status)
 
         if subscriptions:
-            return [subscription.to_json() for subscription in subscriptions]
+            return subscriptions
         else:
             raise HttpError(404, "Subscription not found")
 
@@ -94,19 +111,23 @@ class SubscriptionControl:
             raise HttpError(500, "An error occurred while updating the subscription")
 
     @staticmethod
-    def update_status(data) -> Subscription | None:
+    def update_status(request, data) -> Subscription | None:
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+
         if not CheckInfos.is_positive_int(data.id):
             raise HttpError(400, "Invalid subscription id")
         if not CheckInfos.is_positive_int(data.status):
             raise HttpError(400, "Invalid status")
 
-        subscription = SubscriptionService.update_status(
+        subscriptions = SubscriptionService.update_status(
             data.id,
             data.status,
+            user
         )
 
-        if subscription:
-            return subscription.to_json()
+        if subscriptions:
+            return subscriptions
         else:
             raise HttpError(500, "An error occurred while updating the subscription")
 

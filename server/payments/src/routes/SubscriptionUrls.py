@@ -1,8 +1,9 @@
 from ninja.errors import HttpError
-from ninja import Router, ModelSchema, Schema
+from ninja import Router, ModelSchema, Schema, Query
 from payments.models import Subscription
 from payments.src.controllers.SubscriptionControl import SubscriptionControl
 from ninja_jwt.authentication import JWTAuth
+from typing import Optional, List
 
 router = Router()
 
@@ -11,7 +12,6 @@ class SubscriptionSchema(ModelSchema):
     class Meta:
         model = Subscription
         fields = "__all__"
-
 
 class AddSubscriptionSchema(Schema):
     billingAddressId: int
@@ -39,10 +39,18 @@ class DeleteSubscriptionItemSchema(Schema):
     id: int
     orderItemId: int
 
+class CancelSubscriptionSchema(Schema):
+    subscriptionItemStripeId: str
+    subscriptionId: int
+
 
 @router.post("", auth=JWTAuth())
 def add(request, data: AddSubscriptionSchema) -> Subscription | HttpError:
     return SubscriptionControl.add(request, data)
+
+@router.post("/cancel", auth=JWTAuth())
+def cancel_subscription(request, data: CancelSubscriptionSchema):
+    return SubscriptionControl.cancel_subsciption(request, data)
 
 
 @router.get("", auth=JWTAuth())
@@ -51,8 +59,8 @@ def get_all(request) -> list[Subscription] | HttpError:
 
 # quick fix : review code
 @router.get("/my", auth=JWTAuth())
-def get_by_user(request) -> list[Subscription] | HttpError:
-    return SubscriptionControl.get_my(request)
+def get_by_user(request,  status: str = Query("active")) -> list[Subscription] | HttpError:
+    return SubscriptionControl.get_my(request, status)
 
 # changed to fix delete route
 @router.get("/user/{user_id}", auth=JWTAuth())
@@ -71,7 +79,7 @@ def update_billing_address(
 def update_status(
     request, data: UpdateSubscriptionStatusSchema
 ) -> Subscription | HttpError:
-    return SubscriptionControl.update_status(data)
+    return SubscriptionControl.update_status(request, data)
 
 
 @router.patch("/recurrence", auth=JWTAuth())

@@ -18,6 +18,7 @@ class Subscription(models.Model):
         return {
             "id": self.id,
             "user": self.user.to_json(),
+            "status": self.status,
             "billingAddress": (
                 self.billing_address.to_json()
                 if self.billing_address is not None
@@ -30,4 +31,5 @@ class Subscription(models.Model):
             ),
             "recurrence": self.recurrence,
             "items": [item.to_json() for item in self.items.all()],
+            "stripe_id": self.stripe_id
         }
