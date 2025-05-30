@@ -9,8 +9,6 @@ class PaymentControl:
 
     @staticmethod
     def add(data) -> Payment | None:
-        if not CheckInfos.is_positive_int(data.paymentMethodId):
-            raise HttpError(400, "Invalid payment method id")
         if not CheckInfos.is_positive_int(data.amount):
             raise HttpError(400, "Invalid amount")
 
@@ -23,7 +21,6 @@ class PaymentControl:
                 raise HttpError(400, "Invalid subscription id")
 
         payment, payment_intent = PaymentService.add(
-            data.paymentMethodId,
             data.amount,
             data.status,
             data.orderId,

@@ -1,6 +1,5 @@
 from payments.models import Subscription, PaymentMethod, Payment
 from payments.src.services.SubscriptionService import SubscriptionService
-from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.services.PaymentService import PaymentService
 from shop.models import Order, OrderItem, Product
 from shop.src.services.OrderService import OrderService
@@ -12,29 +11,26 @@ class CheckingService:
 
     @staticmethod
     def checking(
-        user: User, order: Order, payment_method_id: str
+        user: User, order: Order
     ) -> tuple[Subscription | Payment, PaymentIntent, int] | tuple[None, None, None]:
         try:
             if order.recurrence == 0:
-                return CheckingService.payment_checking(user, order, payment_method_id)
+                return CheckingService.payment_checking(user, order)
             else:
-                return CheckingService.subscription_checking(
-                    user, order, payment_method_id
-                )
+                return CheckingService.subscription_checking(user, order)
         except Exception as e:
             print(e)
             return None, None, None
 
     @staticmethod
     def payment_checking(
-        user: User, order: Order, payment_method_id: int
+        user: User, order: Order
     ) -> tuple[Payment, PaymentIntent] | None:
         try:
             order_items = OrderService.get_all_items(order)
             amount = sum([item.quantity * item.product.price for item in order_items])
 
             payment, payment_intent = PaymentService.add(
-                payment_method_id=payment_method_id,
                 amount=amount,
                 status=0,
                 order_id=order.id,
@@ -49,13 +45,12 @@ class CheckingService:
 
     @staticmethod
     def subscription_checking(
-        user: User, order: Order, payment_method_id: int
+        user: User, order: Order
     ) -> tuple[Subscription, PaymentIntent] | None:
         try:
             subsciption, client_secret = SubscriptionService.add(
                 user_id=user.id,
                 billing_address_id=order.billing_address.id,
-                payment_method_id=payment_method_id,
                 recurrence=order.recurrence,
                 order_id=order.id,
             )

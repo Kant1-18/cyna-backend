@@ -14,7 +14,6 @@ class PaymentSchema(ModelSchema):
 
 
 class AddPaymentSchema(Schema):
-    paymentMethodId: int
     amount: int
     status: int
     orderId: int | None

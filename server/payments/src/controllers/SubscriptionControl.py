@@ -14,8 +14,6 @@ class SubscriptionControl:
 
         if not CheckInfos.is_positive_int(data.billingAddressId):
             raise HttpError(400, "Invalid billing address id")
-        if not CheckInfos.is_positive_int(data.paymentMethodId):
-            raise HttpError(400, "Invalid payment method id")
         if not CheckInfos.is_positive_int(data.orderId):
             raise HttpError(400, "Invalid order id")
         if not CheckInfos.is_positive_int(data.recurrence):
@@ -24,7 +22,6 @@ class SubscriptionControl:
         subscription, client_secret = SubscriptionService.add(
             user.id,
             data.billingAddressId,
-            data.paymentMethodId,
             data.recurrence,
             data.orderId,
         )
