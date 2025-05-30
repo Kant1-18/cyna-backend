@@ -6,7 +6,7 @@ from searchBar.src.controllers.SearchControl import SearchControl
 router = Router()
 
 
-@router.get("{locale}")
+@router.get("")
 def search_products(
     request,
     locale: str = "en",
