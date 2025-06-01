@@ -14,6 +14,9 @@ class ProductSchema(ModelSchema):
         model = Product
         fields = "__all__"
 
+class BestSellerSchema(Schema):
+    product: Product
+    totalSold: int
 
 class DetailsAddSchema(Schema):
     productId: int
@@ -100,11 +103,13 @@ def get_by_id_and_locale(request, id: int, locale: str) -> Product | HttpError:
 def get_all(request) -> list[Product] | HttpError:
     return ProductControl.get_all()
 
+@router.get("/best-seller")
+def get_best_seller(request, locale: str) -> BestSellerSchema | HttpError:
+    return ProductControl.get_best_seller(locale)
 
 @router.get("/get-all/{locale}")
 def get_all_by_locale(request, locale: str) -> list[Product] | HttpError:
     return ProductControl.get_all_by_locale(locale)
-
 
 @router.get("/get-all-by-category/{category_id}/{locale}")
 def get_all_by_category_and_locale(
@@ -116,7 +121,6 @@ def get_all_by_category_and_locale(
 @router.get("/get/{id}")
 def get_by_id(request, id: int) -> Product | HttpError:
     return ProductControl.get_by_id(id)
-
 
 # @router.get("details/{productId}/{locale}", auth=JWTAuth())
 # def get_details(request, productId: int, locale: str) -> Details | HttpError:

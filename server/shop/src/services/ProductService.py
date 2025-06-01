@@ -124,6 +124,16 @@ class ProductService:
         except Exception as e:
             print(e)
             return None
+        
+    @staticmethod
+    def get_best_seller() -> Product | None:
+        try:
+            best = ProductRepo.get_best_seller()
+            if best:
+                return best
+        except Exception as e:
+            print(f"Error getting best seller: {e}")
+            return None
 
     @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | None:

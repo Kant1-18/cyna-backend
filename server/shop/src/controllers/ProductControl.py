@@ -144,6 +144,21 @@ class ProductControl:
             return [product.to_json_all() for product in products]
         else:
             raise HttpError(404, "No products found")
+        
+    @staticmethod
+    def get_best_seller(locale) -> Product | HttpError:
+        best = ProductService.get_best_seller()
+        if best is None:
+            raise HttpError(404, "No best-seller product found")
+        
+        product_id = best["product_id"]
+        total_sold = best["total_sold"]
+
+        product = ProductControl.get_by_id_and_locale(product_id, locale)
+        if not product:
+            raise HttpError(404, f"Product {product_id} not found in locale {locale}")
+        
+        return {"product": product, "totalSold": total_sold}
 
     @staticmethod
     def get_all_by_locale(locale: str) -> list[Product] | HttpError:

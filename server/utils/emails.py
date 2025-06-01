@@ -11,7 +11,7 @@ from django.conf import settings
 def send_receipt(user_email: str, subscription: Subscription):
     try:
         items = subscription.items.all()
-        total_cents = sum(item.order_item.product.price * item.quantity for item in items)
+        total_cents = sum(item.order_item.product.price * item.quantity * (12 if item.order_item.recurring == 2 else 1)  for item in items)
         total = total_cents / 100
 
         html = render_to_string(
@@ -30,7 +30,7 @@ def send_receipt(user_email: str, subscription: Subscription):
                     {
                         "product": item.order_item.product,
                         "quantity": item.quantity,
-                        "total": (item.quantity * item.order_item.product.price) / 100,
+                        "total": (item.quantity * item.order_item.product.price) * (12 if item.order_item.recurring == 2 else 1) / 100,
                     }
                     for item in items
                 ],

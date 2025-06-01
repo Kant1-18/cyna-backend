@@ -1,6 +1,8 @@
 from shop.src.data.repositories.CategoryRepo import CategoryRepo
 from shop.src.data.models.Product import Product
 from shop.src.data.models.Category import Category
+from shop.src.data.models.OrderItem import OrderItem
+from django.db.models import Sum
 
 
 class ProductRepo:
@@ -66,6 +68,21 @@ class ProductRepo:
             print(e)
 
         return None
+    
+    @staticmethod
+    def get_best_seller() -> Product | None:
+        try:
+            quantity_sold = OrderItem.objects.filter(order__status=5).values("product").annotate(total_sold=Sum("quantity")).order_by("-total_sold")
+            if not quantity_sold:
+                return None
+            
+            top = quantity_sold[0]
+            product_id = top["product"]
+            total_sold = top["total_sold"] or 0
+
+            return { "product_id": product_id, "total_sold": total_sold  }
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def get_all_by_category(category: Category) -> list[Product] | None:
