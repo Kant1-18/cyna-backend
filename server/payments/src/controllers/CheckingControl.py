@@ -1,3 +1,4 @@
+from datetime import datetime
 import stripe.error
 from payments.models import Payment, Subscription
 from payments.src.services.CheckingService import CheckingService
@@ -12,6 +13,7 @@ from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
+from django.utils import timezone
 
 
 class CheckingControl:
@@ -45,7 +47,7 @@ class CheckingControl:
         if one_time:
             amount = sum(item.product.price * item.quantity for item in one_time)
             try:
-                intent = stripe.PaymentIntent.create(
+                stripe_intent = stripe.PaymentIntent.create(
                     customer=customer_id,
                     amount=amount,
                     currency="eur",
@@ -64,14 +66,14 @@ class CheckingControl:
             )
             payments.append({
                 "type": "one_time",
-                "id": intent.id,
-                "clientSecret": intent.client_secret,
+                "id": stripe_intent.id,
+                "clientSecret": stripe_intent.client_secret,
             })
 
         if monthly:
             monthly_items = [{"price": item.product.stripe_monthly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in monthly]
             try:
-                subscription = stripe.Subscription.create(
+                stripe_subscription = stripe.Subscription.create(
                     customer=customer_id,
                     items=monthly_items,
                     default_payment_method=data.paymentMethodId,
@@ -82,41 +84,51 @@ class CheckingControl:
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Monthly subscription error: {e.user_message}")
-            client_secret = subscription.latest_invoice.confirmation_secret.client_secret
-            sub = SubscriptionRepo.add(
+            client_secret = stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            local_subscription = SubscriptionRepo.add(
                 user=user,
-                status=0,
+                stripe_subscription_id=stripe_subscription.id,
+                status=stripe_subscription.status,
+                order_id=int(stripe_subscription.metadata.get("order_id", 0)),
+                default_payment_method_id=stripe_subscription.default_payment_method,
+                recurrence=1,
                 billing_address=order.billing_address,
                 payment_method=payment_method,
-                stripe_id=subscription.id,
-                recurrence=1
             )
             payment = PaymentRepo.add(
                 payment_method=payment_method,
                 amount=sum(item.product.price * item.quantity for item in monthly),
                 status=0,
                 order=order,
-                subscription=sub
+                subscription=local_subscription
             )
-            if sub:
-                stripe_items = subscription.get("items", {}).get("data", [])
-                for item in stripe_items:
-                    metadata_id = int(item.metadata.order_item_id)
+            if local_subscription:
+                stripe_items = stripe_subscription.get("items", {}).get("data", [])
+                for stripe_item in stripe_items:
+                    metadata_id = int(stripe_item.metadata.order_item_id)
                     order_item = OrderItemRepo.get_by_id(metadata_id);
-                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=order_item, stripe_item_id=item.id)
+                    sub_item = SubscriptionItemRepo.add(
+                        subscription=local_subscription, 
+                        order_item=order_item, 
+                        stripe_item_id=stripe_item.id,
+                        current_period_start=timezone.datetime.fromtimestamp(stripe_item.current_period_start, tz=timezone.get_current_timezone()),
+                        current_period_end=timezone.datetime.fromtimestamp(stripe_item.current_period_end, tz=timezone.get_current_timezone()),
+                        price_id=stripe_item.price.id,
+                        quantity=stripe_item.quantity,
+                    )
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
             payments.append({
                 "type": "monthly",
-                "stripe_id": subscription.id,
-                "id": sub.id,
+                "stripe_id": stripe_subscription.id,
+                "id": local_subscription.id,
                 "clientSecret": client_secret,
             })
 
         if yearly:
             yearly_items = [{"price": item.product.stripe_yearly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in yearly]
             try:
-                subscription = stripe.Subscription.create(
+                stripe_subscription = stripe.Subscription.create(
                     customer=customer_id,
                     items=yearly_items,
                     default_payment_method=data.paymentMethodId,
@@ -127,34 +139,44 @@ class CheckingControl:
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Yearly subscription error: {e.user_message}")
-            client_secret = subscription.latest_invoice.confirmation_secret.client_secret
-            sub = SubscriptionRepo.add(
+            client_secret = stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            local_subscription = SubscriptionRepo.add(
                 user=user,
-                status=0,
+                stripe_subscription_id=stripe_subscription.id,
+                status=stripe_subscription.status,
+                order_id=int(stripe_subscription.metadata.get("order_id", 0)),
+                default_payment_method_id=stripe_subscription.default_payment_method,
+                recurrence=2,
                 billing_address=order.billing_address,
                 payment_method=payment_method,
-                stripe_id=subscription.id,
-                recurrence=2
             )
             payment = PaymentRepo.add(
                 payment_method=payment_method,
                 amount=sum(item.product.price * item.quantity for item in yearly),
                 status=0,
                 order=order,
-                subscription=sub
+                subscription=local_subscription
             )
-            if sub:
-                stripe_items = subscription.get("items", {}).get("data", [])
-                for item in stripe_items:
-                    metadata_id = int(item.metadata.order_item_id)
+            if local_subscription:
+                stripe_items = stripe_subscription.get("items", {}).get("data", [])
+                for stripe_item in stripe_items:
+                    metadata_id = int(stripe_item.metadata.order_item_id)
                     order_item = OrderItemRepo.get_by_id(metadata_id);
-                    sub_item = SubscriptionItemRepo.add(subscription=sub, order_item=order_item, stripe_item_id=item.id)
+                    sub_item = SubscriptionItemRepo.add(
+                        subscription=local_subscription, 
+                        order_item=order_item, 
+                        stripe_item_id=stripe_item.id,
+                        current_period_start=timezone.datetime.fromtimestamp(stripe_item.current_period_start, tz=timezone.get_current_timezone()),
+                        current_period_end=timezone.datetime.fromtimestamp(stripe_item.current_period_end, tz=timezone.get_current_timezone()),
+                        price_id=stripe_item.price.id,
+                        quantity=stripe_item.quantity,
+                    )
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
             payments.append({
                 "type": "yearly",
-                "stripe_id": subscription.id,
-                "id": sub.id,
+                "stripe_id": stripe_subscription.id,
+                "id": local_subscription.id,
                 "clientSecret": client_secret,
             })
 

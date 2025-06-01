@@ -8,6 +8,9 @@ from users.src.services.AuthService import AuthService
 from shop.src.services.OrderService import OrderService
 from config.settings import STRIPE_WEBHOOK_SECRET
 from payments.src.services.PaymentMethodService import PaymentMethodService
+from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
+from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
+from utils.emails import send_receipt
 
 router = Router()
 
@@ -99,9 +102,44 @@ def stripe_webhook(request):
         if event["type"] == "payment_intent.succeeded":
             print("succeeded")
             OrderService.update_order_status(order_id, status=5)
+
         elif event["type"] == "invoice.paid":
-            print("paid")
+            print("invoice.paid")
+            print("event", event)
+
+            invoice = event_object
+            stripe_subscription_id = invoice.get("parent", {}).get("subscription_details", {}).get("subscription", {})
+            hosted_invoice_url = invoice.get("hosted_invoice_url")
+
+            try:
+                stripe_subscription = stripe.Subscription.retrieve(stripe_subscription_id, expand=["latest_invoice"])
+            except Exception as e:
+                print(f"Could not retrieve subscription {stripe_subscription_id}: {e}")
+                return {"status": "ignored"}
+            
+            new_status = stripe_subscription["status"]
+
             OrderService.update_order_status(order_id, status=5)
+            subscription = SubscriptionRepo.update_by_stripe_id(
+                id=stripe_subscription_id, 
+                status=new_status, 
+                last_invoice_url=hosted_invoice_url, 
+            )
+
+            send_receipt(user_email=invoice.customer_email, subscription=subscription)
+
+            for line in invoice.get("lines", {}).get("data", {}):
+                subscription_item_id = line.get("parent", {}).get("subscription_item_details", {}).get("subscription_item")
+                new_start = line.get("period", {}).get("start", {})
+                new_end = line.get("period", {}).get("end", {})
+
+                SubscriptionItemRepo.update_periods_by_stripe_id(
+                    stripe_item_id=subscription_item_id, 
+                    new_start=new_start, 
+                    new_end=new_end
+                )
+                
+
         elif event["type"] in ("payment_intent.payment_failed", "invoice.payment_failed"):
             print("failed")
             OrderService.update_order_status(order_id, status=2)

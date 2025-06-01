@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt</title>
+  <style>
+    body,
+    table,
+    td,
+    a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table {
+      border-collapse: collapse !important;
+    }
+
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      color: #333333;
+    }
+
+    /* Container */
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #dddddd;
+    }
+
+    /* Header */
+    .email-header {
+      background-color: #180f3e;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .email-header img {
+      max-height: 40px;
+    }
+
+    .email-header h1 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Body */
+    .email-body {
+      padding: 20px;
+    }
+
+    .greeting {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .details {
+      margin-bottom: 30px;
+      font-size: 14px;
+      color: #555555;
+    }
+
+    /* Items Table */
+    .items-table {
+      width: 100%;
+      border: 1px solid #dddddd;
+      margin-bottom: 30px;
+    }
+
+    .items-table th,
+    .items-table td {
+      padding: 12px 15px;
+      border: 1px solid #dddddd;
+      text-align: left;
+    }
+
+    .items-table th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+
+    .items-table td {
+      background-color: #ffffff;
+    }
+
+    .items-total {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 15px;
+    }
+
+    /* Footer */
+    .email-footer {
+      background-color: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #777777;
+    }
+
+    .email-footer a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 620px) {
+      .email-container {
+        width: 100% !important;
+        border: none;
+      }
+
+      .email-body {
+        padding: 15px !important;
+      }
+
+      .items-table th,
+      .items-table td {
+        font-size: 13px !important;
+        padding: 10px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {% load custom_filters %}
+  <table role="presentation" class="email-container" width="100%">
+    <tr>
+      <td class="email-header">
+        <img src="https://i.imgur.com/JQWrGD6.png" alt="Cyna Logo" />
+        <h1>Receipt</h1>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="email-body">
+        <p class="greeting">
+          Hello {{customer_name}},
+        </p>
+
+        <div class="details">
+          <p><strong>Receipt</strong> #{{ order.id }}</p>
+          <p><strong>Date: </strong> {{ date }}</p>
+          <p><strong>Billing to:</strong><br />
+            {{billing_name}}<br />
+            {{billing_address_line1}} {{billing_address_line2}}<br />
+            {{billing_zipcode}} {{billing_city}}, {{billing_region}} <br />
+            {{billing_country}}</p>
+        </div>
+
+        <table role="presentation" class="items-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th align="right">Unit Price</th>
+              <th align="right">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.product.price|div100 }}</td>
+              <td>{{ item.total }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td colspan="3" class="items-total">Total:</td>
+              <td class="items-total">{{ total }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #555555;">
+          Thank you for your business! <br />
+          If you have any questions, feel free to <a href="mailto:">contact our support team</a>.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="email-footer">
+        <p>&copy; 2025 Cyna Inc. All rights reserved.</p>
+        <p>
+          123 rue de l’Innovation<br />
+          75001 Paris<br />
+          France
+        </p>
+        <p>
+          <a href="">Visit our website</a> |
+          <a href="mailto:">Support</a>
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

@@ -59,7 +59,7 @@ def get_all(request) -> list[Subscription] | HttpError:
 
 # quick fix : review code
 @router.get("/my", auth=JWTAuth())
-def get_by_user(request,  status: str = Query("active")) -> list[Subscription] | HttpError:
+def get_by_user(request,  status: str = Query("all")) -> list[Subscription] | HttpError:
     return SubscriptionControl.get_my(request, status)
 
 # changed to fix delete route

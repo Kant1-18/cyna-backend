@@ -1,6 +1,7 @@
 from payments.models import Subscription, PaymentMethod
 from users.models import User, Address
 from django.db.models import QuerySet
+from django.utils import timezone
 
 
 class SubscriptionRepo:
@@ -8,11 +9,13 @@ class SubscriptionRepo:
     @staticmethod
     def add(
         user: User,
-        status: int,
+        status: str,
         billing_address: Address,
-        stripe_id: str,
         payment_method: PaymentMethod,
+        stripe_subscription_id: str,
         recurrence: int,
+        default_payment_method_id: str,
+        order_id: int,
     ) -> Subscription | None:
         try:
             subscription = Subscription.objects.create(
@@ -20,8 +23,10 @@ class SubscriptionRepo:
                 status=status,
                 billing_address=billing_address,
                 payment_method=payment_method,
-                stripe_id=stripe_id,
+                stripe_subscription_id=stripe_subscription_id,
                 recurrence=recurrence,
+                default_payment_method_id=default_payment_method_id,
+                order_id=order_id,
             )
             if subscription:
                 return subscription
@@ -43,7 +48,7 @@ class SubscriptionRepo:
 
     # quick fix : review code
     @staticmethod
-    def get_by_user(user_id: int, status: int | None) -> QuerySet[Subscription] | None:
+    def get_by_user(user_id: int, status: str | None) -> QuerySet[Subscription] | None:
         try:
             subscriptions = Subscription.objects.filter(user=user_id, **({} if status is None else {"status": status}))
 
@@ -79,11 +84,30 @@ class SubscriptionRepo:
         return None
 
     @staticmethod
-    def update_status(id: int, status: int) -> Subscription | None:
+    def update_status(id: int, status: str, last_invoice_url: str = None) -> Subscription | None:
         try:
             subscription = Subscription.objects.get(id=id)
             if subscription:
                 subscription.status = status
+                subscription.updated_at = timezone.now()
+                if last_invoice_url is not None:
+                    subscription.last_invoice_url = last_invoice_url
+                subscription.save()
+                return subscription
+        except Exception as e:
+            print(e)
+
+        return None
+    
+    @staticmethod
+    def update_by_stripe_id(id: str, status: str, last_invoice_url: str = None) -> Subscription | None:
+        try:
+            subscription = Subscription.objects.filter(stripe_subscription_id=id).first()
+            if subscription:
+                subscription.status = status
+                subscription.updated_at = timezone.now()
+                if last_invoice_url is not None:
+                    subscription.last_invoice_url = last_invoice_url
                 subscription.save()
                 return subscription
         except Exception as e:
