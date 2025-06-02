@@ -40,5 +40,6 @@ class Subscription(models.Model):
             "recurrence": self.recurrence,    
             "defaultPaymentMethodId": self.default_payment_method_id,
             "items": [item.to_json() for item in self.items.all()],
+            "createdAt": self.created_at,
             "lastInvoiceUrl": self.last_invoice_url,
         }

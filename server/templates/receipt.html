@@ -174,13 +174,13 @@
             <tr>
               <td>{{ item.product.name }}</td>
               <td>{{ item.quantity }}</td>
-              <td>{{ item.product.price|div100 }}</td>
-              <td>{{ item.total }}</td>
+              <td>{{ item.product.price|div100 }} €</td>
+              <td>{{ item.total }} €</td>
             </tr>
             {% endfor %}
             <tr>
               <td colspan="3" class="items-total">Total:</td>
-              <td class="items-total">{{ total }}</td>
+              <td class="items-total">{{ total }} €</td>
             </tr>
           </tbody>
         </table>
