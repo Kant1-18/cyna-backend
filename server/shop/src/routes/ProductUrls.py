@@ -14,9 +14,9 @@ class ProductSchema(ModelSchema):
         model = Product
         fields = "__all__"
 
-class BestSellerSchema(Schema):
-    product: Product
-    totalSold: int
+# class BestSellerSchema(Schema):
+#     product: Product
+#     totalSold: int
 
 class DetailsAddSchema(Schema):
     productId: int
@@ -104,7 +104,7 @@ def get_all(request) -> list[Product] | HttpError:
     return ProductControl.get_all()
 
 @router.get("/best-seller")
-def get_best_seller(request, locale: str) -> BestSellerSchema | HttpError:
+def get_best_seller(request, locale: str):
     return ProductControl.get_best_seller(locale)
 
 @router.get("/get-all/{locale}")
