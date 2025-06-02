@@ -1,5 +1,9 @@
 from payments.models import Payment, PaymentMethod, Subscription
 from shop.models import Order
+from django.db.models.functions import TruncDate, TruncWeek
+from django.db.models import Sum, Count
+from django.utils import timezone
+
 
 
 class PaymentRepo:
@@ -25,6 +29,25 @@ class PaymentRepo:
             print(e)
 
         return None
+
+    @staticmethod
+    def get_sales_metrics(period: str, count: int):
+        end = timezone.now()
+
+        if period == "daily":
+            start = end - timezone.timedelta(days=count - 1)
+            trunc = TruncDate("created_at")
+        elif period == "weekly":
+            start = end - timezone.timedelta(weeks=count - 1)
+            trunc = TruncWeek("created_at")
+        else:
+            return []
+
+        query = (
+            Payment.objects.filter(status=5, created_at__date__gte=start.date()).annotate(period_start=trunc).values("period_start").annotate(total_amount=Sum("amount"), sale_count=Count("id")).order_by("period_start")
+        )
+
+        return [{ "period": entry["period_start"], "amount": entry["total_amount"] or 0, "count": entry["sale_count"], } for entry in query]
 
     @staticmethod
     def get(id: int) -> Payment | None:

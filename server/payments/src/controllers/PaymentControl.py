@@ -40,6 +40,23 @@ class PaymentControl:
             }
         else:
             raise HttpError(500, "An error occurred while creating the payment")
+        
+    @staticmethod
+    def get_sales_metrics(request, params):
+        if not CheckInfos.is_positive_int(params.count):
+            raise HttpError(400, "Invalid count")
+        if params.period not in ("daily", "weekly"):
+            raise HttpError(400, "Invalid period: must be 'weekly' or 'daily'")
+        
+        try:
+            metrics = PaymentService.sales_metrics(params.period, params.count)
+
+            if metrics:
+                return metrics
+            else:
+                raise HttpError(404, "Metrics not found")
+        except Exception as e:
+            raise HttpError(500, f"Something went wrong while gettings sales metrics: {e}")
 
     @staticmethod
     def get(id: int) -> Payment | None:

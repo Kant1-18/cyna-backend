@@ -1,5 +1,7 @@
+from datetime import datetime
+from typing import List
 from ninja.errors import HttpError
-from ninja import Router, ModelSchema, Schema
+from ninja import Query, Router, ModelSchema, Schema
 from payments.models import Payment
 from payments.src.controllers.PaymentControl import PaymentControl
 from ninja_jwt.authentication import JWTAuth
@@ -25,6 +27,14 @@ class UpdateStatusSchema(Schema):
     id: int
     status: int
 
+class SalesMetricPoint(Schema):
+    period: datetime
+    amount: int
+    count: int
+
+class SalesMetricsParams(Schema):
+    period: str = "daily"
+    count: int = 7
 
 @router.post("", auth=JWTAuth())
 def add(request, data: AddPaymentSchema) -> Payment | HttpError:
@@ -35,6 +45,9 @@ def add(request, data: AddPaymentSchema) -> Payment | HttpError:
 def get_all(request) -> list[Payment] | HttpError:
     return PaymentControl.get_all(request)
 
+@router.get("/metrics/sales", auth=JWTAuth(), response=List[SalesMetricPoint])
+def get_sales_metrics(request, params: Query[SalesMetricsParams]):
+    return PaymentControl.get_sales_metrics(request, params)
 
 @router.patch("/status", auth=JWTAuth())
 def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
