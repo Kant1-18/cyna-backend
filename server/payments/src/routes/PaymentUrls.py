@@ -53,6 +53,9 @@ def get_sales_metrics(request, params: Query[SalesMetricsParams]):
 def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:
     return PaymentControl.update_status(data)
 
+@router.get("/user", auth=JWTAuth())
+def get_all_from_user(request):
+    return PaymentControl.get_all_from_user(request)
 
 @router.get("/subscription/{subscription_id}", auth=JWTAuth())
 def get_by_subscription(request, subscription_id: int) -> Payment | HttpError:

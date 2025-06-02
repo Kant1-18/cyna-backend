@@ -38,10 +38,10 @@ class ProductService:
         try:
             stripe_product = StripeUtils.create_product(name)
             stripe_monthly_price = StripeUtils.add_monthly_price(
-                stripe_product.id, base_price
+                stripe_product.id, int(round(base_price * (1 - discount_percentage / 100)))
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, int(base_price * 12)
+                stripe_product.id, int(round((base_price * (1 - discount_percentage / 100)) * 12))
             )
 
             image1 = ImageUploader.product(image1)

@@ -1,3 +1,4 @@
+from typing import Dict, List
 from payments.models import Payment, PaymentMethod, Subscription
 from shop.models import Order
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
@@ -94,6 +95,17 @@ class PaymentService:
             print(e)
 
         return None
+    
+    @staticmethod
+    def get_all_from_user(user_id: int) -> List[Dict]:
+        try:
+            payments = PaymentRepo.get_all_from_user(user_id)
+            if payments:
+                return [payment.to_json() for payment in payments]
+        except Exception as e:
+            print(e)
+
+        return None
 
     @staticmethod
     def get_all_by_subscription(subscription_id: int) -> list[Payment] | None:
@@ -113,14 +125,15 @@ class PaymentService:
             payment = PaymentRepo.get(payment_id)
             if payment:
                 payment = PaymentRepo.update_status(payment, status)
-                if status == 5:
+                if status == 4:
                     if payment.order != None and payment.subscription == None:
                         sendInvoice.send_order_invoice(
                             payment.order.user.email,
                             payment.order,
                         )
-                    elif payment.subscription != None and payment.order == None:
-                        sendInvoice.send_subscription_invoice(
+                    elif payment.subscription != None and payment.order != None:
+                        payment.order
+                        sendInvoice.send_receipt(
                             payment.subscription.user.email,
                             payment.subscription,
                         )

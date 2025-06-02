@@ -72,6 +72,15 @@ class CheckingControl:
 
         if monthly:
             monthly_items = [{"price": item.product.stripe_monthly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in monthly]
+
+            payment = PaymentRepo.add(
+                payment_method=payment_method,
+                amount=sum(item.product.price * item.quantity for item in monthly),
+                status=0,
+                order=order,
+                subscription=None
+            )
+
             try:
                 stripe_subscription = stripe.Subscription.create(
                     customer=customer_id,
@@ -80,7 +89,7 @@ class CheckingControl:
                     payment_behavior="default_incomplete",
                     payment_settings={"save_default_payment_method": "on_subscription"},
                     expand=["latest_invoice.confirmation_secret"],
-                    metadata={"order_id": str(order.id)}
+                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)}
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Monthly subscription error: {e.user_message}")
@@ -95,14 +104,9 @@ class CheckingControl:
                 billing_address=order.billing_address,
                 payment_method=payment_method,
             )
-            payment = PaymentRepo.add(
-                payment_method=payment_method,
-                amount=sum(item.product.price * item.quantity for item in monthly),
-                status=0,
-                order=order,
-                subscription=local_subscription
-            )
+            
             if local_subscription:
+                PaymentRepo.update_subscription(payment, local_subscription)
                 stripe_items = stripe_subscription.get("items", {}).get("data", [])
                 for stripe_item in stripe_items:
                     metadata_id = int(stripe_item.metadata.order_item_id)
@@ -127,6 +131,15 @@ class CheckingControl:
 
         if yearly:
             yearly_items = [{"price": item.product.stripe_yearly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in yearly]
+
+            payment = PaymentRepo.add(
+                payment_method=payment_method,
+                amount=sum(item.product.price * item.quantity * 12 for item in yearly),
+                status=0,
+                order=order,
+                subscription=None
+            )
+
             try:
                 stripe_subscription = stripe.Subscription.create(
                     customer=customer_id,
@@ -135,7 +148,7 @@ class CheckingControl:
                     payment_behavior="default_incomplete",
                     payment_settings={"save_default_payment_method": "on_subscription"},
                     expand=["latest_invoice.confirmation_secret"],
-                    metadata={"order_id": str(order.id)}
+                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)}
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Yearly subscription error: {e.user_message}")
@@ -150,14 +163,9 @@ class CheckingControl:
                 billing_address=order.billing_address,
                 payment_method=payment_method,
             )
-            payment = PaymentRepo.add(
-                payment_method=payment_method,
-                amount=sum(item.product.price * item.quantity for item in yearly),
-                status=0,
-                order=order,
-                subscription=local_subscription
-            )
+            
             if local_subscription:
+                PaymentRepo.update_subscription(payment, local_subscription)
                 stripe_items = stripe_subscription.get("items", {}).get("data", [])
                 for stripe_item in stripe_items:
                     metadata_id = int(stripe_item.metadata.order_item_id)

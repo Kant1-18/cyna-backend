@@ -77,6 +77,17 @@ class PaymentControl:
             return [payment.to_json() for payment in payments]
         else:
             raise HttpError(404, "Payment not found")
+        
+    @staticmethod
+    def get_all_from_user(request):
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+
+        payments = PaymentService.get_all_from_user(user.id)
+        if payments:
+            return payments
+        else:
+            raise HttpError(404, f"Payments for user id '{user.id}' not found")
 
     @staticmethod
     def get_all(request) -> list[Payment] | None:

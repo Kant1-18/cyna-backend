@@ -10,6 +10,7 @@ from config.settings import STRIPE_WEBHOOK_SECRET
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
+from payments.src.services.PaymentService import PaymentService
 from utils.emails import send_receipt
 
 router = Router()
@@ -90,10 +91,14 @@ def stripe_webhook(request):
 
         if event_type.startswith("payment_intent"):
             order_id = event_object.get("metadata", {}).get("order_id")
+            payment_id = event_object.get("metadata", {}).get("payment_id")
         if event_type.startswith("invoice"):
             order_id = (event_object.get("metadata", {}).get("order_id"))
+            payment_id = (event_object.get("metadata", {}).get("payment_id"))
             if not order_id:
                 order_id = (event_object.get("parent", {}).get("subscription_details", {}).get("metadata", {}).get("order_id"))
+            if not payment_id:
+                payment_id = (event_object.get("parent", {}).get("subscription_details", {}).get("metadata", {}).get("payment_id"))
 
         if not order_id:
             print("ignored")
@@ -104,8 +109,6 @@ def stripe_webhook(request):
             OrderService.update_order_status(order_id, status=5)
 
         elif event["type"] == "invoice.paid":
-            print("invoice.paid")
-            print("event", event)
 
             invoice = event_object
             stripe_subscription_id = invoice.get("parent", {}).get("subscription_details", {}).get("subscription", {})
@@ -119,14 +122,16 @@ def stripe_webhook(request):
             
             new_status = stripe_subscription["status"]
 
-            OrderService.update_order_status(order_id, status=5)
+            OrderService.update_order_status(order_id, status=5)    
+            PaymentService.update_status(payment_id, 4)
+
             subscription = SubscriptionRepo.update_by_stripe_id(
                 id=stripe_subscription_id, 
                 status=new_status, 
                 last_invoice_url=hosted_invoice_url, 
             )
 
-            send_receipt(user_email=invoice.customer_email, subscription=subscription)
+            # send_receipt(user_email=invoice.customer_email, subscription=subscription)
 
             for line in invoice.get("lines", {}).get("data", {}):
                 subscription_item_id = line.get("parent", {}).get("subscription_item_details", {}).get("subscription_item")

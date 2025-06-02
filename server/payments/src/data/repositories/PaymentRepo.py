@@ -44,7 +44,7 @@ class PaymentRepo:
             return []
 
         query = (
-            Payment.objects.filter(status=5, created_at__date__gte=start.date()).annotate(period_start=trunc).values("period_start").annotate(total_amount=Sum("amount"), sale_count=Count("id")).order_by("period_start")
+            Payment.objects.filter(status=4, created_at__date__gte=start.date()).annotate(period_start=trunc).values("period_start").annotate(total_amount=Sum("amount"), sale_count=Count("id")).order_by("period_start")
         )
 
         return [{ "period": entry["period_start"], "amount": entry["total_amount"] or 0, "count": entry["sale_count"], } for entry in query]
@@ -81,6 +81,16 @@ class PaymentRepo:
             print(e)
 
         return None
+    
+    @staticmethod
+    def get_all_from_user(user_id: int):
+        try:
+            payments = Payment.objects.filter(order__user_id=user_id).select_related("payment_method", "order__shipping_address", "order__billing_address", "subscription")
+            if payments:
+                return payments
+        except Exception as e:
+            print(e)
+        return None
 
     @staticmethod
     def get_all_by_subscription(subscription: Subscription) -> list[Payment] | None:
@@ -97,6 +107,17 @@ class PaymentRepo:
     def update_status(payment: Payment, status: int) -> Payment | None:
         try:
             payment.status = status
+            payment.save()
+            return payment
+        except Exception as e:
+            print(e)
+
+        return None
+    
+    @staticmethod
+    def update_subscription(payment: Payment, subscription: Subscription) -> Payment | None:
+        try:
+            payment.subscription = subscription
             payment.save()
             return payment
         except Exception as e:
