@@ -13,39 +13,33 @@ from stripe import PaymentIntent
 class PaymentService:
     @staticmethod
     def add(
-        payment_method_id: int,
         amount: int,
         status: int = 0,
         order_id: int = None,
         subscription_id: int = None,
     ) -> tuple[Payment, PaymentIntent] | None:
         try:
-            payment_method = PaymentMethodService.get(payment_method_id)
-            if payment_method:
-                order = OrderService.get_order_by_id(order_id) if order_id else None
-                subscription = (
-                    SubscriptionService.get(subscription_id)
-                    if subscription_id
-                    else None
-                )
+            order = OrderService.get_order_by_id(order_id) if order_id else None
+            subscription = (
+                SubscriptionService.get(subscription_id) if subscription_id else None
+            )
 
-                payment = PaymentRepo.add(
-                    payment_method=payment_method,
+            payment = PaymentRepo.add(
+                amount=amount,
+                status=status,
+                order=order,
+                subscription=subscription,
+            )
+
+            if order is not None:
+                payment_intent = StripeUtils.create_payment_intent(
                     amount=amount,
-                    status=status,
-                    order=order,
-                    subscription=subscription,
+                    user_stripe_id=order.user.stripe_id,
                 )
 
-                if order is not None:
-                    payment_intent = StripeUtils.create_payment_intent(
-                        amount=amount,
-                        user_stripe_id=order.user.stripe_id,
-                    )
-
-                    return payment, payment_intent
-                else:
-                    return payment, None
+                return payment, payment_intent
+            else:
+                return payment, None
 
         except Exception as e:
             print(e)

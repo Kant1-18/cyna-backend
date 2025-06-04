@@ -1,6 +1,6 @@
-from shop.models import Product, Category
+from collections import defaultdict
+from shop.models import Product, ProductDetails
 from shop.src.services.ProductService import ProductService
-from shop.src.services.CategoryService import CategoryService
 
 
 class SearchService:
@@ -12,21 +12,44 @@ class SearchService:
         words: list[str] | None = None,
     ) -> list[Product] | None:
         try:
-            result = []
+            if not words:
+                return []
+
+            words = [w.lower() for w in words]
+            matched_products = defaultdict(int)
 
             if category_id:
                 products, details = ProductService.get_all_by_category_and_locale(
                     category_id, locale
                 )
-
-                if products and details:
-                    for word in words:
-                        for product in products:
-                            if word.lower() == product.name.lower():
-                                result.append(product)
-                                products.pop(product)
             else:
-                ...
+                products, details = ProductService.get_all_by_locale(locale)
+
+            for product in products:
+                if product.status != 1:
+                    continue
+
+                name = product.name.lower()
+                description = ""
+                for detail in details:
+                    if detail.product_id == product.id and detail.description:
+                        description = detail.description.lower()
+                        break
+
+                if any(word == name for word in words):
+                    matched_products[product] += 3
+                    continue
+
+                if any(word in name for word in words):
+                    matched_products[product] += 2
+
+                if any(word in description for word in words):
+                    matched_products[product] += 1
+
+            sorted_products = sorted(
+                matched_products.items(), key=lambda x: x[1], reverse=True
+            )
+            return [product for product, _ in sorted_products]
 
         except Exception as e:
             print(e)

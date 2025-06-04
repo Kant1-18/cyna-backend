@@ -15,7 +15,6 @@ class SubscriptionSchema(ModelSchema):
 
 class AddSubscriptionSchema(Schema):
     billingAddressId: int
-    paymentMethodId: int
     recurrence: int
     orderId: int
 

@@ -19,14 +19,12 @@ class SubscriptionService:
     def add(
         user_id: int,
         billing_address_id: int,
-        payment_method_id: int,
         recurrence: int,
         order_id: int,
     ) -> tuple[Subscription, PaymentIntent] | None:
         try:
             user = UserService.get(user_id)
             address = AddressService.get(billing_address_id)
-            payment_method = PaymentMethodRepo.get(payment_method_id)
 
             order = OrderService.get_order_by_id(order_id)
             OrderService.update_order_status(order_id, 1)
@@ -49,7 +47,6 @@ class SubscriptionService:
                     user=user,
                     status=0,
                     billing_address=address,
-                    payment_method=payment_method,
                     stripe_id=stripe_subscription.id,
                     recurrence=order.recurrence,
                 )
