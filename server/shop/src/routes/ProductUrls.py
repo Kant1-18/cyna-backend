@@ -14,10 +14,6 @@ class ProductSchema(ModelSchema):
         model = Product
         fields = "__all__"
 
-# class BestSellerSchema(Schema):
-#     product: Product
-#     totalSold: int
-
 class DetailsAddSchema(Schema):
     productId: int
     locale: str

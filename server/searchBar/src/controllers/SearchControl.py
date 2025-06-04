@@ -9,26 +9,30 @@ class SearchControl:
 
     @staticmethod
     def search_products(
-        request,
+        words: list[str] | None = None,
         locale: str = "en",
         category_id: int | None = None,
-        words: list[str] | None = None,
-    ) -> list[Product] | HttpError:
-        try:
-            if not CheckInfos.check_locale(locale):
-                raise HttpError(400, "Invalid locale")
-            if category_id is not None:
-                if not CheckInfos.check_category_id(category_id):
-                    raise HttpError(400, "Invalid category ID")
-                if not CategoryService.get_category_by_id(category_id):
-                    raise HttpError(404, "Category not found")
+    ) -> list[dict] | HttpError:
+        if not CheckInfos.is_valid_locale(locale):
+            raise HttpError(400, "Invalid locale")
 
-            products = SearchService.search_products(
-                request, locale, category_id, words
-            )
-            if products:
-                return [product.to_json_all() for product in products]
-            else:
-                raise HttpError(404, "No products found matching the search criteria")
+        if category_id is not None:
+            if not CheckInfos.is_positive_int(category_id):
+                raise HttpError(400, "Invalid category ID")
+            if not CategoryService.get(category_id):
+                raise HttpError(404, "Category not found")
+        
+        if not words:
+            return []
+
+        try:
+            products = SearchService.search_products(words, locale, category_id)
+        except HttpError:
+            raise
         except Exception as e:
-            raise HttpError(500, "An error occurred")
+            raise HttpError(500, f"Search failed: {str(e)}")
+
+        if not products:
+            return []
+
+        return [product.to_json_all() for product in products]

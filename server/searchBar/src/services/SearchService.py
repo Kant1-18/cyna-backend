@@ -7,50 +7,58 @@ class SearchService:
 
     @staticmethod
     def search_products(
+        words: list[str],
         locale: str = "en",
         category_id: int | None = None,
-        words: list[str] | None = None,
-    ) -> list[Product] | None:
-        try:
-            if not words:
-                return []
+    ) -> list[Product]:
+        words = [w.lower() for w in words]
+        matched_products: dict[Product, int] = defaultdict(int)
 
-            words = [w.lower() for w in words]
-            matched_products = defaultdict(int)
+        if category_id is not None:
+            result = ProductService.get_all_by_category_and_locale(category_id, locale)
+        else:
+            result = ProductService.get_all_by_locale(locale)
 
-            if category_id:
-                products, details = ProductService.get_all_by_category_and_locale(
-                    category_id, locale
-                )
-            else:
-                products, details = ProductService.get_all_by_locale(locale)
+        if not result:
+            return []
 
-            for product in products:
-                if product.status != 1:
-                    continue
+        products, details_map = result
 
-                name = product.name.lower()
-                description = ""
-                for detail in details:
-                    if detail.product_id == product.id and detail.description:
-                        description = detail.description.lower()
-                        break
+        for product in products:
+            name_lower = (product.name or "").lower()
 
-                if any(word == name for word in words):
-                    matched_products[product] += 3
-                    continue
+            product_details: ProductDetails | None = details_map.get(product)
 
-                if any(word in name for word in words):
-                    matched_products[product] += 2
+            description_lower = ""
+            if product_details:
+                parts = []
+                if product_details.description_title:
+                    parts.append(product_details.description_title)
+                if product_details.description_text:
+                    parts.append(product_details.description_text)
+                if product_details.benefits:
+                    parts.append(product_details.benefits)
+                if product_details.functionalities:
+                    parts.append(product_details.functionalities)
+                if product_details.specifications:
+                    parts.append(product_details.specifications)
 
-                if any(word in description for word in words):
-                    matched_products[product] += 1
+                description_lower = " ".join(parts).lower()
 
-            sorted_products = sorted(
-                matched_products.items(), key=lambda x: x[1], reverse=True
-            )
-            return [product for product, _ in sorted_products]
+            if any(word == name_lower for word in words):
+                matched_products[product] += 3
+                continue
 
-        except Exception as e:
-            print(e)
-            return None
+            if any(word in name_lower for word in words):
+                matched_products[product] += 2
+
+            if description_lower and any(word in description_lower for word in words):
+                matched_products[product] += 1
+
+        sorted_by_score = sorted(
+            matched_products.items(),
+            key=lambda pair: pair[1],
+            reverse=True
+        )
+
+        return [product_found for product_found, _score in sorted_by_score]
