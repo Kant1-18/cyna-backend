@@ -22,7 +22,7 @@ class SearchControl:
             if not CategoryService.get(category_id):
                 raise HttpError(404, "Category not found")
         
-        words_list = [word.strip() for word in words.split() if words.strip()]
+        words_list = [word.strip().lower() for word in words.split() if word.strip()]
         if not words_list:
             return []
 
