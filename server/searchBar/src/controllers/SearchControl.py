@@ -9,7 +9,7 @@ class SearchControl:
 
     @staticmethod
     def search_products(
-        words: list[str] | None = None,
+        words: str | None = None,
         locale: str = "en",
         category_id: int | None = None,
     ) -> list[dict] | HttpError:
@@ -22,11 +22,12 @@ class SearchControl:
             if not CategoryService.get(category_id):
                 raise HttpError(404, "Category not found")
         
-        if not words:
+        words_list = [word.strip() for word in words.split() if words.strip()]
+        if not words_list:
             return []
 
         try:
-            products = SearchService.search_products(words, locale, category_id)
+            products = SearchService.search_products(words_list, locale, category_id)
         except HttpError:
             raise
         except Exception as e:

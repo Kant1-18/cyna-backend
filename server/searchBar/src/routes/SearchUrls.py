@@ -9,11 +9,11 @@ router = Router()
 class SearchQuerySchema(Schema):
     locale: str = "en"
     category_id: int = None
+    q: str = None
 
-@router.post("")
+@router.get("")
 def search_products(
     request,
     params: Query[SearchQuerySchema],
-    words: list[str] | None = None,
 ) -> list[Product] | HttpError:
-    return SearchControl.search_products(words, params.locale, params.category_id)
+    return SearchControl.search_products(params.q, params.locale, params.category_id)

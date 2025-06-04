@@ -11,7 +11,6 @@ class SearchService:
         locale: str = "en",
         category_id: int | None = None,
     ) -> list[Product]:
-        words = [w.lower() for w in words]
         matched_products: dict[Product, int] = defaultdict(int)
 
         if category_id is not None:
