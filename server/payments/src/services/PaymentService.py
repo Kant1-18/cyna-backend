@@ -61,6 +61,16 @@ class PaymentService:
         except Exception as e:
             print(e)
         return None 
+    
+    @staticmethod
+    def sales_metrics_by_category(period: str, count: int, locale: str):
+        try:
+            metrics = PaymentRepo.get_sales_by_category(period, count, locale)
+            if metrics:
+                return metrics
+        except Exception as e:
+            print(e)
+        return None 
 
     @staticmethod
     def get(id: int) -> Payment | None:

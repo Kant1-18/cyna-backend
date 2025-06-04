@@ -168,6 +168,16 @@ class OrderService:
             print(e)
 
         return None
+    
+    @staticmethod
+    def update_price_at_sale_by_order_id(order_id: int):
+        try:
+            order = OrderRepo.get_by_id(id=order_id)
+            if order:
+                return OrderItemRepo.update_price_at_sale(order)
+        except Exception as e:
+            print(e)
+        return None
 
     @staticmethod
     def delete_order(order_id: int) -> Order | None:

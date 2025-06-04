@@ -32,9 +32,19 @@ class SalesMetricPoint(Schema):
     amount: int
     count: int
 
+class SalesMetricsByCategoryPoint(Schema):
+    category: str
+    amount: int
+    count: int
+
 class SalesMetricsParams(Schema):
     period: str = "daily"
     count: int = 7
+
+class SalesMetricsByCategoryParams(Schema):
+    period: str = "daily"
+    count: int = 7
+    locale: str
 
 @router.post("", auth=JWTAuth())
 def add(request, data: AddPaymentSchema) -> Payment | HttpError:
@@ -48,6 +58,10 @@ def get_all(request) -> list[Payment] | HttpError:
 @router.get("/metrics/sales", auth=JWTAuth(), response=List[SalesMetricPoint])
 def get_sales_metrics(request, params: Query[SalesMetricsParams]):
     return PaymentControl.get_sales_metrics(request, params)
+
+@router.get("/metrics/categories", auth=JWTAuth(), response=List[SalesMetricsByCategoryPoint])
+def get_sales_metrics_by_category(request, params: Query[SalesMetricsByCategoryParams]):
+    return PaymentControl.get_sales_metrics_by_category(request, params)
 
 @router.patch("/status", auth=JWTAuth())
 def update_status(request, data: UpdateStatusSchema) -> Payment | HttpError:

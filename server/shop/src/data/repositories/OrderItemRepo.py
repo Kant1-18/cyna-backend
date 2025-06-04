@@ -1,4 +1,5 @@
 from shop.models import Product, Order, OrderItem
+from django.db import transaction
 
 
 class OrderItemRepo:
@@ -56,6 +57,23 @@ class OrderItemRepo:
         except Exception as e:
             print(e)
             return None
+        
+    @staticmethod
+    def update_price_at_sale(order: Order):
+        if not order:
+            return
+        try:
+            with transaction.atomic():
+                for item in order.items.select_related("product").all():
+                    new_price = item.product.price
+
+                    if item.price_at_sale != new_price:
+                        item.price_at_sale = new_price
+                        item.save(update_fields=["price_at_sale"])
+        except Exception as e:
+            print(e)
+
+
 
     @staticmethod
     def delete(order_item_id: int) -> bool | None:

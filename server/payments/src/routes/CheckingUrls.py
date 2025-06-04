@@ -1,5 +1,4 @@
 from ninja import Router, Schema
-import stripe.error
 from payments.src.controllers.CheckingControl import CheckingControl
 from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
@@ -11,7 +10,6 @@ from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.services.PaymentService import PaymentService
-from utils.emails import send_receipt
 
 router = Router()
 
@@ -101,12 +99,12 @@ def stripe_webhook(request):
                 payment_id = (event_object.get("parent", {}).get("subscription_details", {}).get("metadata", {}).get("payment_id"))
 
         if not order_id:
-            print("ignored")
             return {"status": "ignored"}
     
         if event["type"] == "payment_intent.succeeded":
-            print("succeeded")
+            OrderService.update_price_at_sale_by_order_id(order_id)
             OrderService.update_order_status(order_id, status=5)
+            PaymentService.update_status(payment_id, 4)
 
         elif event["type"] == "invoice.paid":
 
@@ -122,6 +120,7 @@ def stripe_webhook(request):
             
             new_status = stripe_subscription["status"]
 
+            OrderService.update_price_at_sale_by_order_id(order_id)
             OrderService.update_order_status(order_id, status=5)    
             PaymentService.update_status(payment_id, 4)
 
@@ -130,8 +129,6 @@ def stripe_webhook(request):
                 status=new_status, 
                 last_invoice_url=hosted_invoice_url, 
             )
-
-            # send_receipt(user_email=invoice.customer_email, subscription=subscription)
 
             for line in invoice.get("lines", {}).get("data", {}):
                 subscription_item_id = line.get("parent", {}).get("subscription_item_details", {}).get("subscription_item")
@@ -146,11 +143,11 @@ def stripe_webhook(request):
                 
 
         elif event["type"] in ("payment_intent.payment_failed", "invoice.payment_failed"):
-            print("failed")
             OrderService.update_order_status(order_id, status=2)
+            PaymentService.update_status(payment_id, 1)
         elif event["type"] == "customer.subscription.deleted":
-            print("deleted")
             OrderService.update_order_status(order_id, status=3)
+            PaymentService.update_status(payment_id, 2)
     except Exception as e:
         print(f"Error processing webhook {event['type']}: {e}")
         raise HttpError(400, f"Webhook error : {str(e)}")

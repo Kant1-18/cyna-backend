@@ -1,10 +1,12 @@
 from payments.models import Payment, PaymentMethod, Subscription
 from shop.models import Order
-from django.db.models.functions import TruncDate, TruncWeek
-from django.db.models import Sum, Count
+from django.db.models.functions import TruncDate
+from django.db.models import Sum, Count, F, Q, IntegerField, Value, When, Case, OuterRef, Subquery
 from django.utils import timezone
-from datetime import timedelta, date
+from datetime import timedelta
 from collections import defaultdict
+from shop.models import Category, CategoryLocale
+from django.db.models.functions import Coalesce
 
 
 
@@ -68,6 +70,50 @@ class PaymentRepo:
             weekly_map[monday]["count"] += values["count"]
 
         return [{ "period": monday, "amount": weekly_map[monday]["amount"], "count": weekly_map[monday]["count"]} for monday in full_periods]
+    
+    @staticmethod
+    def get_sales_by_category(period: str, count: int, locale: str):
+        today = timezone.now().date()
+
+        if period == "daily":
+            start_date = today - timedelta(days=(count - 1))
+        elif period == "weekly":
+            this_monday = today - timedelta(days=today.weekday())
+            start_date = this_monday - timedelta(weeks=(count - 1))
+        else:
+            return None
+
+        locale_query = CategoryLocale.objects.filter(category=OuterRef("pk"), locale=locale).values("name")[:1]
+        payment_filter = Q(product__orderitem__order__payment__status=4, product__orderitem__order__payment__created_at__date__gte=start_date)
+
+        query = Category.objects.annotate(
+            locale_name=locale_query,
+            total_amount=Coalesce(
+                Sum(
+                    F("product__orderitem__quantity") * F("product__orderitem__price_at_sale") * Case(
+                        When(product__orderitem__recurring=2, then=Value(12)),
+                        default=Value(1),
+                        output_field=IntegerField(),
+                    ), output_field=IntegerField(), filter=payment_filter
+                ),
+                Value(0),
+            ),
+            total_quantity=Coalesce(
+                Sum("product__orderitem__quantity", filter=payment_filter),
+                Value(0),
+            ),
+        ).order_by("locale_name")
+
+        result = []
+        for entry in query:
+            result.append({
+                "category": entry.locale_name or entry.global_name,
+                "amount": entry.total_amount,
+                "count": entry.total_quantity,
+            })
+
+        return result
+
 
     @staticmethod
     def get(id: int) -> Payment | None:
