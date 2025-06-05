@@ -21,13 +21,16 @@ class SearchControl:
                 raise HttpError(400, "Invalid category ID")
             if not CategoryService.get(category_id):
                 raise HttpError(404, "Category not found")
+            
+        if words is None or not CheckInfos.is_valid_string(words):
+            return []
         
         words_list = [word.strip().lower() for word in words.split() if word.strip()]
         if not words_list:
             return []
 
         try:
-            products = SearchService.search_products(words_list, locale, category_id)
+            products, details_map = SearchService.search_products(words_list, locale, category_id)
         except HttpError:
             raise
         except Exception as e:
@@ -36,4 +39,4 @@ class SearchControl:
         if not products:
             return []
 
-        return [product.to_json_all() for product in products]
+        return [product.to_json_single(details_map[product]) for product in products]

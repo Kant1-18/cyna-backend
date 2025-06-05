@@ -19,7 +19,7 @@ class SearchService:
             result = ProductService.get_all_by_locale(locale)
 
         if not result:
-            return []
+            return [], {}
 
         products, details_map = result
 
@@ -27,20 +27,21 @@ class SearchService:
             name_lower = (product.name or "").lower()
 
             product_details: ProductDetails | None = details_map.get(product)
+            if not product_details:
+                continue
 
             description_lower = ""
-            if product_details:
-                parts = []
-                if product_details.description_title:
-                    parts.append(product_details.description_title)
-                if product_details.description_text:
-                    parts.append(product_details.description_text)
-                if product_details.benefits:
-                    parts.append(product_details.benefits)
-                if product_details.functionalities:
-                    parts.append(product_details.functionalities)
-                if product_details.specifications:
-                    parts.append(product_details.specifications)
+            parts = []
+            if product_details.description_title:
+                parts.append(product_details.description_title)
+            if product_details.description_text:
+                parts.append(product_details.description_text)
+            if product_details.benefits:
+                parts.append(product_details.benefits)
+            if product_details.functionalities:
+                parts.append(product_details.functionalities)
+            if product_details.specifications:
+                parts.append(product_details.specifications)
 
                 description_lower = " ".join(parts).lower()
 
@@ -60,4 +61,4 @@ class SearchService:
             reverse=True
         )
 
-        return [product_found for product_found, _score in sorted_by_score]
+        return [product_found for product_found, _score in sorted_by_score], details_map
