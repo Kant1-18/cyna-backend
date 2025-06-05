@@ -130,7 +130,7 @@ def stripe_webhook(request):
                 last_invoice_url=hosted_invoice_url, 
             )
     
-            pending = PaymentService.get_pending_subscription(subscription) # fix pas encore get_pending
+            pending = PaymentService.get_pending_subscription(subscription)
 
             if pending:
                 PaymentService.update_status(payment_id, 4)
