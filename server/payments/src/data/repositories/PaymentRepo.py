@@ -18,6 +18,7 @@ class PaymentRepo:
         status: int = 0,
         order: Order = None,
         subscription: Subscription = None,
+        invoice_url: str = None
     ) -> Payment | None:
         try:
             payment = Payment.objects.create(
@@ -26,6 +27,7 @@ class PaymentRepo:
                 status=status,
                 order=order,
                 subscription=subscription,
+                invoice_url=invoice_url
             )
             if payment:
                 return payment
@@ -125,6 +127,16 @@ class PaymentRepo:
             print(e)
 
         return None
+    
+    @staticmethod
+    def get_pending_subscription(subscription: Subscription) -> Payment | None:
+        try:
+            payment = Payment.objects.filter(status=0)
+            if payment:
+                return payment
+        except Exception as e:
+            print(e)
+        return None
 
     @staticmethod
     def get_by_order(order: Order) -> list[Payment] | None:
@@ -178,6 +190,17 @@ class PaymentRepo:
         except Exception as e:
             print(e)
 
+        return None
+
+    @staticmethod
+    def update_incoice(payment: Payment, invoice_url: str) -> Payment | None:
+        try:
+            payment.invoice_url = invoice_url
+            payment.save()
+            return payment
+        except Exception as e:
+            print(e)
+        
         return None
     
     @staticmethod

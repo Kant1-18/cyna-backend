@@ -11,6 +11,7 @@ class Payment(models.Model):
     amount = models.IntegerField(default=0)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True)
+    invoice_url = models.CharField(max_length=2000, null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def to_json(self):
@@ -23,5 +24,6 @@ class Payment(models.Model):
             "amount": self.amount,
             "order": self.order.to_json() if self.order else None,
             "subscription": self.subscription.to_json() if self.subscription else None,
-            "created_at": int(self.created_at.timestamp()),
+            "invoiceUrl": self.invoice_url,
+            "createdAt": int(self.created_at.timestamp()),
         }

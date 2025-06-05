@@ -76,6 +76,17 @@ class PaymentService:
             print(e)
 
         return None
+    
+    @staticmethod
+    def get_pending_subscription(subscription: Subscription) -> Payment | None:
+        try:
+            payment = PaymentRepo.get_pending_subscription(subscription)
+            if payment:
+                return payment
+        except Exception as e:
+            print(e)
+        
+        return None
 
     @staticmethod
     def get_by_order(order_id: int) -> list[Payment] | None:
@@ -145,6 +156,18 @@ class PaymentService:
         except Exception as e:
             print(e)
 
+        return None
+    
+    @staticmethod
+    def update_invoice(payment_id: int, invoice_url: str) -> Payment | None:
+        try:
+            payment = PaymentRepo.get(payment_id)
+            if payment:
+                updated_payment = PaymentRepo.update_incoice(payment, invoice_url)
+                if updated_payment:
+                    return updated_payment
+        except Exception as e:
+            print(e)
         return None
 
     @staticmethod

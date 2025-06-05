@@ -10,6 +10,8 @@ from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.services.PaymentService import PaymentService
+from payments.src.data.repositories.PaymentRepo import PaymentRepo
+from shop.src.data.repositories.OrderRepo import OrderRepo
 
 router = Router()
 
@@ -107,8 +109,8 @@ def stripe_webhook(request):
             PaymentService.update_status(payment_id, 4)
 
         elif event["type"] == "invoice.paid":
-
             invoice = event_object
+            amount_paid = invoice.get("amount_paid", {})
             stripe_subscription_id = invoice.get("parent", {}).get("subscription_details", {}).get("subscription", {})
             hosted_invoice_url = invoice.get("hosted_invoice_url")
 
@@ -118,17 +120,30 @@ def stripe_webhook(request):
                 print(f"Could not retrieve subscription {stripe_subscription_id}: {e}")
                 return {"status": "ignored"}
             
-            new_status = stripe_subscription["status"]
-
             OrderService.update_price_at_sale_by_order_id(order_id)
-            OrderService.update_order_status(order_id, status=5)    
-            PaymentService.update_status(payment_id, 4)
-
+            OrderService.update_order_status(order_id, status=5)
+            
+            new_status = stripe_subscription["status"]
             subscription = SubscriptionRepo.update_by_stripe_id(
                 id=stripe_subscription_id, 
                 status=new_status, 
                 last_invoice_url=hosted_invoice_url, 
             )
+    
+            pending = PaymentService.get_pending_subscription(subscription) # fix pas encore get_pending
+
+            if pending:
+                PaymentService.update_status(payment_id, 4)
+                PaymentService.update_invoice(payment_id, hosted_invoice_url)
+            else:
+                PaymentRepo.add(
+                    payment_method=PaymentService.get(payment_id).payment_method,
+                    amount=amount_paid,
+                    status=4,
+                    order=OrderService.get_order_by_id(order_id),
+                    subscription=subscription,
+                    invoice_url=hosted_invoice_url
+                )
 
             for line in invoice.get("lines", {}).get("data", {}):
                 subscription_item_id = line.get("parent", {}).get("subscription_item_details", {}).get("subscription_item")
@@ -140,7 +155,6 @@ def stripe_webhook(request):
                     new_start=new_start, 
                     new_end=new_end
                 )
-                
 
         elif event["type"] in ("payment_intent.payment_failed", "invoice.payment_failed"):
             OrderService.update_order_status(order_id, status=2)

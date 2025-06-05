@@ -62,7 +62,8 @@ class CheckingControl:
                 amount=amount,
                 status=0,
                 order=order,
-                subscription=None
+                subscription=None,
+                invoice_url=None
             )
             payments.append({
                 "type": "one_time",
@@ -78,7 +79,8 @@ class CheckingControl:
                 amount=sum(item.product.price * item.quantity for item in monthly),
                 status=0,
                 order=order,
-                subscription=None
+                subscription=None,
+                invoice_url=None
             )
 
             try:
@@ -137,7 +139,8 @@ class CheckingControl:
                 amount=sum(item.product.price * item.quantity * 12 for item in yearly),
                 status=0,
                 order=order,
-                subscription=None
+                subscription=None,
+                invoice_url=None
             )
 
             try:
