@@ -6,8 +6,7 @@ from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.services import SubscriptionService
 import utils.emails as sendInvoice
-from utils.Stripe import StripeUtils
-from stripe import PaymentIntent
+from utils.Stripe import PaymentIntent
 
 
 class PaymentService:
@@ -18,6 +17,8 @@ class PaymentService:
         order_id: int = None,
         subscription_id: int = None,
     ) -> tuple[Payment, PaymentIntent] | None:
+        from utils.Stripe import StripeUtils
+
         try:
             order = OrderService.get_order_by_id(order_id) if order_id else None
             subscription = (
@@ -54,8 +55,8 @@ class PaymentService:
                 return metrics
         except Exception as e:
             print(e)
-        return None 
-    
+        return None
+
     @staticmethod
     def sales_metrics_by_category(period: str, count: int, locale: str):
         try:
@@ -64,7 +65,7 @@ class PaymentService:
                 return metrics
         except Exception as e:
             print(e)
-        return None 
+        return None
 
     @staticmethod
     def get(id: int) -> Payment | None:
@@ -76,7 +77,7 @@ class PaymentService:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_pending_subscription(subscription: Subscription) -> Payment | None:
         try:
@@ -85,7 +86,7 @@ class PaymentService:
                 return payment
         except Exception as e:
             print(e)
-        
+
         return None
 
     @staticmethod
@@ -110,7 +111,7 @@ class PaymentService:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_all_from_user(user_id: int) -> List[Dict]:
         try:
@@ -157,7 +158,7 @@ class PaymentService:
             print(e)
 
         return None
-    
+
     @staticmethod
     def update_invoice(payment_id: int, invoice_url: str) -> Payment | None:
         try:

@@ -6,10 +6,9 @@ from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItem
 from payments.src.data.repositories.PaymentMethodRepo import PaymentMethodRepo
 from users.src.data.repositories.UserRepo import UserRepo
 from users.src.services.AddressService import AddressService
-from utils.Stripe import StripeUtils
+from utils.Stripe import stripe, PaymentIntent
 from shop.src.services.OrderService import OrderService
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
-from stripe import PaymentIntent, stripe
 from ninja.errors import HttpError
 
 
@@ -23,6 +22,8 @@ class SubscriptionService:
         order_id: int,
     ) -> tuple[Subscription, PaymentIntent] | None:
         try:
+            from utils.Stripe import StripeUtils
+
             user = UserRepo.get(user_id)
             address = AddressService.get(billing_address_id)
 
@@ -71,6 +72,8 @@ class SubscriptionService:
 
     @staticmethod
     def add_order_in_subscription(subscription: Subscription, order: Order) -> bool:
+        from utils.Stripe import StripeUtils
+
         try:
             OrderService.update_order_status(order.id, 1)
 
@@ -213,6 +216,8 @@ class SubscriptionService:
 
     @staticmethod
     def delete_item_subscription(subscription_id: int, order_item_id: int) -> bool:
+        from utils.Stripe import StripeUtils
+
         try:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:
@@ -237,6 +242,8 @@ class SubscriptionService:
 
     @staticmethod
     def delete_subscription(subscription_id: int) -> bool:
+        from utils.Stripe import StripeUtils
+
         try:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:

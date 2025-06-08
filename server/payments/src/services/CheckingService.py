@@ -8,7 +8,6 @@ from stripe import PaymentIntent
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
-from utils.Stripe import StripeUtils
 
 
 class CheckingService:
@@ -79,6 +78,8 @@ class CheckingService:
 
     @staticmethod
     def stripe_webhook_event(event):
+        from utils.Stripe import StripeUtils
+
         event_object = event["data"]["object"]
         event_type = event["type"]
         order_id = None

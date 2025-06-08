@@ -6,7 +6,7 @@ from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 from shop.src.services.OrderService import OrderService
-from utils.Stripe import StripeUtils, stripe, PaymentIntent
+from utils.Stripe import stripe, PaymentIntent
 from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
