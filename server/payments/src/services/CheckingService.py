@@ -1,7 +1,5 @@
-from payments.models import Subscription, PaymentMethod, Payment
-from payments.src.services.SubscriptionService import SubscriptionService
 from payments.src.services.PaymentService import PaymentService
-from shop.models import Order, OrderItem, Product
+from shop.models import Order
 from shop.src.services.OrderService import OrderService
 from users.models import User
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
@@ -274,16 +272,16 @@ class CheckingService:
     #         print(e)
     #         return None, None, None
 
-    @staticmethod
-    def cancel(result_id: int, result_type: int) -> bool:
-        try:
-            if result_type == 0:
-                return PaymentService.delete(result_id)
-            elif result_type == 1:
-                return SubscriptionService.delete_subscription(result_id)
-        except Exception as e:
-            print(e)
-            return None
+    # @staticmethod
+    # def cancel(result_id: int, result_type: int) -> bool:
+    #     try:
+    #         if result_type == 0:
+    #             return PaymentService.delete(result_id)
+    #         elif result_type == 1:
+    #             return SubscriptionService.delete_subscription(result_id)
+    #     except Exception as e:
+    #         print(e)
+    #         return None
 
     @staticmethod
     def stripe_webhook_event(event):
