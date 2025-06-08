@@ -4,12 +4,6 @@ from ninja_jwt.authentication import JWTAuth
 from ninja.errors import HttpError
 from stripe import stripe
 from users.src.services.AuthService import AuthService
-from payments.src.services.PaymentMethodService import PaymentMethodService
-from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
-from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
-from payments.src.services.PaymentService import PaymentService
-from payments.src.data.repositories.PaymentRepo import PaymentRepo
-from shop.src.services.OrderService import OrderService
 from utils.Stripe import StripeUtils
 
 router = Router()
