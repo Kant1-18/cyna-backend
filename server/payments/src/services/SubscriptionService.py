@@ -4,7 +4,7 @@ from shop.models import Order, OrderItem, Product
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.data.repositories.PaymentMethodRepo import PaymentMethodRepo
-from users.src.services.UserService import UserService
+from users.src.data.repositories.UserRepo import UserRepo
 from users.src.services.AddressService import AddressService
 from utils.Stripe import StripeUtils
 from shop.src.services.OrderService import OrderService
@@ -23,7 +23,7 @@ class SubscriptionService:
         order_id: int,
     ) -> tuple[Subscription, PaymentIntent] | None:
         try:
-            user = UserService.get(user_id)
+            user = UserRepo.get(user_id)
             address = AddressService.get(billing_address_id)
 
             order = OrderService.get_order_by_id(order_id)
@@ -106,29 +106,36 @@ class SubscriptionService:
         return None
 
     @staticmethod
-    def cancel_subscription(subscription: Subscription, stripe_subscription_item_id: str, user: User):
-        stripe_sub = stripe.Subscription.retrieve(subscription.stripe_subscription_id, expand=["items"])
+    def cancel_subscription(
+        subscription: Subscription, stripe_subscription_item_id: str, user: User
+    ):
+        stripe_sub = stripe.Subscription.retrieve(
+            subscription.stripe_subscription_id, expand=["items"]
+        )
         stripe_items = stripe_sub["items"]["data"]
 
         if len(stripe_items) > 1:
             try:
-                cancelled_item = stripe.SubscriptionItem.delete(stripe_subscription_item_id, proration_behavior="none")
+                cancelled_item = stripe.SubscriptionItem.delete(
+                    stripe_subscription_item_id, proration_behavior="none"
+                )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Stripe error: {e.user_message}")
-            
+
             SubscriptionItemRepo.delete_by_stripe_item_id(stripe_subscription_item_id)
-        
-        else :
-            try: 
-                cancelled_sub = stripe.Subscription.cancel(subscription.stripe_subscription_id, prorate=False)
+
+        else:
+            try:
+                cancelled_sub = stripe.Subscription.cancel(
+                    subscription.stripe_subscription_id, prorate=False
+                )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Stripe error: {e.user_message}")
-        
+
             SubscriptionItemRepo.delete_by_subscription_id(subscription.id)
             SubscriptionRepo.update_status(subscription.id, "canceled")
 
         return SubscriptionService.get_subscription_by_user(user, "all")
-
 
     @staticmethod
     def get_subscription_by_id(subscription_id: int) -> Subscription | None:
@@ -140,24 +147,26 @@ class SubscriptionService:
             print(e)
 
         return None
-    
+
     @staticmethod
     def get_subscription_by_user(user: User, status) -> Subscription | None:
         try:
             if status is None or status.lower() == "all":
                 local_subscriptions = SubscriptionRepo.get_by_user(user.id, status=None)
             else:
-                local_subscriptions = SubscriptionRepo.get_by_user(user.id, status=status.lower())
+                local_subscriptions = SubscriptionRepo.get_by_user(
+                    user.id, status=status.lower()
+                )
 
             if not local_subscriptions:
                 return []
-            
+
             result = []
             for local_subscription in local_subscriptions:
                 result.append(local_subscription.to_json())
-            
+
             return result
-            
+
         except Exception as e:
             print(f"[SubscriptionService.get_subscription_by_user] error: {e}")
             raise HttpError(500, "Failed to fetch subscriptions")
@@ -177,12 +186,16 @@ class SubscriptionService:
         return None
 
     @staticmethod
-    def update_status(subscription_id: int, status: int, user: User) -> Subscription | None:
+    def update_status(
+        subscription_id: int, status: int, user: User
+    ) -> Subscription | None:
         try:
             subscription = SubscriptionRepo.get(subscription_id)
             if subscription:
                 SubscriptionRepo.update_status(subscription_id, status)
-                updated_subscriptions = SubscriptionService.get_subscription_by_user(user, "active")
+                updated_subscriptions = SubscriptionService.get_subscription_by_user(
+                    user, "active"
+                )
                 return updated_subscriptions
         except Exception as e:
             print(e)

@@ -1,9 +1,7 @@
-import stripe
+from stripe import stripe, PaymentIntent
 from shop.models import Order
 from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
-from ninja.errors import HttpError
-from config.settings import STRIPE_WEBHOOK_SECRET
 from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.services.PaymentService import PaymentService
@@ -203,126 +201,6 @@ class StripeUtils:
             return False
 
     @staticmethod
-    def webhook(request):
-        payload = request.body
-        sig_header = request.headers.get("Stripe-Signature", "")
-        endpoint_secret = STRIPE_WEBHOOK_SECRET
-
-        try:
-            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
-        except (ValueError, stripe.error.SignatureVerificationError) as e:
-            raise HttpError(400, f"Webhook error : {str(e)}")
-
-        try:
-            event_object = event["data"]["object"]
-            event_type = event["type"]
-            order_id = None
-
-            if event_type.startswith("payment_intent"):
-                order_id = event_object.get("metadata", {}).get("order_id")
-                payment_id = event_object.get("metadata", {}).get("payment_id")
-            if event_type.startswith("invoice"):
-                order_id = event_object.get("metadata", {}).get("order_id")
-                payment_id = event_object.get("metadata", {}).get("payment_id")
-                if not order_id:
-                    order_id = (
-                        event_object.get("parent", {})
-                        .get("subscription_details", {})
-                        .get("metadata", {})
-                        .get("order_id")
-                    )
-                if not payment_id:
-                    payment_id = (
-                        event_object.get("parent", {})
-                        .get("subscription_details", {})
-                        .get("metadata", {})
-                        .get("payment_id")
-                    )
-
-            if not order_id:
-                return {"status": "ignored"}
-
-            if event["type"] == "payment_intent.succeeded":
-                OrderService.update_price_at_sale_by_order_id(order_id)
-                OrderService.update_order_status(order_id, status=5)
-                PaymentService.update_status(payment_id, 4)
-
-            elif event["type"] == "invoice.paid":
-                invoice = event_object
-                amount_paid = invoice.get("amount_paid", {})
-                stripe_subscription_id = (
-                    invoice.get("parent", {})
-                    .get("subscription_details", {})
-                    .get("subscription", {})
-                )
-                hosted_invoice_url = invoice.get("hosted_invoice_url")
-
-                try:
-                    stripe_subscription = stripe.Subscription.retrieve(
-                        stripe_subscription_id, expand=["latest_invoice"]
-                    )
-                except Exception as e:
-                    print(
-                        f"Could not retrieve subscription {stripe_subscription_id}: {e}"
-                    )
-                    return {"status": "ignored"}
-
-                OrderService.update_price_at_sale_by_order_id(order_id)
-                OrderService.update_order_status(order_id, status=5)
-
-                new_status = stripe_subscription["status"]
-                subscription = SubscriptionRepo.update_by_stripe_id(
-                    id=stripe_subscription_id,
-                    status=new_status,
-                    last_invoice_url=hosted_invoice_url,
-                )
-
-                pending = PaymentService.get_pending_subscription(subscription)
-
-                if pending:
-                    PaymentService.update_status(payment_id, 4)
-                    PaymentService.update_invoice(payment_id, hosted_invoice_url)
-                else:
-                    PaymentRepo.add(
-                        payment_method=PaymentService.get(payment_id).payment_method,
-                        amount=amount_paid,
-                        status=4,
-                        order=OrderService.get_order_by_id(order_id),
-                        subscription=subscription,
-                        invoice_url=hosted_invoice_url,
-                    )
-
-                for line in invoice.get("lines", {}).get("data", {}):
-                    subscription_item_id = (
-                        line.get("parent", {})
-                        .get("subscription_item_details", {})
-                        .get("subscription_item")
-                    )
-                    new_start = line.get("period", {}).get("start", {})
-                    new_end = line.get("period", {}).get("end", {})
-
-                    SubscriptionItemRepo.update_periods_by_stripe_id(
-                        stripe_item_id=subscription_item_id,
-                        new_start=new_start,
-                        new_end=new_end,
-                    )
-
-            elif event["type"] in (
-                "payment_intent.payment_failed",
-                "invoice.payment_failed",
-            ):
-                OrderService.update_order_status(order_id, status=2)
-                PaymentService.update_status(payment_id, 1)
-            elif event["type"] == "customer.subscription.deleted":
-                OrderService.update_order_status(order_id, status=3)
-                PaymentService.update_status(payment_id, 2)
-        except Exception as e:
-            print(f"Error processing webhook {event['type']}: {e}")
-            raise HttpError(400, f"Webhook error : {str(e)}")
-
-        return {"status": "success"}
-
-    @staticmethod
     def create_setup_intent(user: User, order_id: int) -> stripe.SetupIntent | None:
         try:
             payment_methods = PaymentMethodService.get_all()
@@ -342,3 +220,9 @@ class StripeUtils:
         except Exception as e:
             print(f"[Stripe ERROR]: {e}")
             return None
+
+    @staticmethod
+    def retrive_subscription(stripe_subscription_id: str) -> stripe.Subscription | None:
+        return stripe.Subscription.retrieve(
+            stripe_subscription_id, expand=["latest_invoice"]
+        )

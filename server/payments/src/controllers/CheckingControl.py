@@ -6,7 +6,7 @@ from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
 from shop.src.services.OrderService import OrderService
-from stripe import PaymentIntent, stripe
+from utils.Stripe import StripeUtils, stripe, PaymentIntent
 from shop.src.services.OrderService import OrderService
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
@@ -14,6 +14,8 @@ from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 from django.utils import timezone
+from payments.src.services.PaymentService import PaymentService
+from config.settings import STRIPE_WEBHOOK_SECRET
 
 
 class CheckingControl:
@@ -53,7 +55,7 @@ class CheckingControl:
                     currency="eur",
                     payment_method=data.paymentMethodId,
                     confirm=True,
-                    metadata={"order_id": str(order.id)}
+                    metadata={"order_id": str(order.id)},
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"One-time payment error: {e.user_message}")
@@ -63,16 +65,25 @@ class CheckingControl:
                 status=0,
                 order=order,
                 subscription=None,
-                invoice_url=None
+                invoice_url=None,
             )
-            payments.append({
-                "type": "one_time",
-                "id": stripe_intent.id,
-                "clientSecret": stripe_intent.client_secret,
-            })
+            payments.append(
+                {
+                    "type": "one_time",
+                    "id": stripe_intent.id,
+                    "clientSecret": stripe_intent.client_secret,
+                }
+            )
 
         if monthly:
-            monthly_items = [{"price": item.product.stripe_monthly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in monthly]
+            monthly_items = [
+                {
+                    "price": item.product.stripe_monthly_price_id,
+                    "quantity": item.quantity,
+                    "metadata": {"order_item_id": item.id},
+                }
+                for item in monthly
+            ]
 
             payment = PaymentRepo.add(
                 payment_method=payment_method,
@@ -80,7 +91,7 @@ class CheckingControl:
                 status=0,
                 order=order,
                 subscription=None,
-                invoice_url=None
+                invoice_url=None,
             )
 
             try:
@@ -91,11 +102,13 @@ class CheckingControl:
                     payment_behavior="default_incomplete",
                     payment_settings={"save_default_payment_method": "on_subscription"},
                     expand=["latest_invoice.confirmation_secret"],
-                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)}
+                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)},
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Monthly subscription error: {e.user_message}")
-            client_secret = stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            client_secret = (
+                stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            )
             local_subscription = SubscriptionRepo.add(
                 user=user,
                 stripe_subscription_id=stripe_subscription.id,
@@ -106,33 +119,48 @@ class CheckingControl:
                 billing_address=order.billing_address,
                 payment_method=payment_method,
             )
-            
+
             if local_subscription:
                 PaymentRepo.update_subscription(payment, local_subscription)
                 stripe_items = stripe_subscription.get("items", {}).get("data", [])
                 for stripe_item in stripe_items:
                     metadata_id = int(stripe_item.metadata.order_item_id)
-                    order_item = OrderItemRepo.get_by_id(metadata_id);
+                    order_item = OrderItemRepo.get_by_id(metadata_id)
                     sub_item = SubscriptionItemRepo.add(
-                        subscription=local_subscription, 
-                        order_item=order_item, 
+                        subscription=local_subscription,
+                        order_item=order_item,
                         stripe_item_id=stripe_item.id,
-                        current_period_start=timezone.datetime.fromtimestamp(stripe_item.current_period_start, tz=timezone.get_current_timezone()),
-                        current_period_end=timezone.datetime.fromtimestamp(stripe_item.current_period_end, tz=timezone.get_current_timezone()),
+                        current_period_start=timezone.datetime.fromtimestamp(
+                            stripe_item.current_period_start,
+                            tz=timezone.get_current_timezone(),
+                        ),
+                        current_period_end=timezone.datetime.fromtimestamp(
+                            stripe_item.current_period_end,
+                            tz=timezone.get_current_timezone(),
+                        ),
                         price_id=stripe_item.price.id,
                         quantity=stripe_item.quantity,
                     )
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
-            payments.append({
-                "type": "monthly",
-                "stripe_id": stripe_subscription.id,
-                "id": local_subscription.id,
-                "clientSecret": client_secret,
-            })
+            payments.append(
+                {
+                    "type": "monthly",
+                    "stripe_id": stripe_subscription.id,
+                    "id": local_subscription.id,
+                    "clientSecret": client_secret,
+                }
+            )
 
         if yearly:
-            yearly_items = [{"price": item.product.stripe_yearly_price_id, "quantity": item.quantity, "metadata": {"order_item_id": item.id}} for item in yearly]
+            yearly_items = [
+                {
+                    "price": item.product.stripe_yearly_price_id,
+                    "quantity": item.quantity,
+                    "metadata": {"order_item_id": item.id},
+                }
+                for item in yearly
+            ]
 
             payment = PaymentRepo.add(
                 payment_method=payment_method,
@@ -140,7 +168,7 @@ class CheckingControl:
                 status=0,
                 order=order,
                 subscription=None,
-                invoice_url=None
+                invoice_url=None,
             )
 
             try:
@@ -151,11 +179,13 @@ class CheckingControl:
                     payment_behavior="default_incomplete",
                     payment_settings={"save_default_payment_method": "on_subscription"},
                     expand=["latest_invoice.confirmation_secret"],
-                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)}
+                    metadata={"order_id": str(order.id), "payment_id": str(payment.id)},
                 )
             except stripe.error.StripeError as e:
                 raise HttpError(400, f"Yearly subscription error: {e.user_message}")
-            client_secret = stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            client_secret = (
+                stripe_subscription.latest_invoice.confirmation_secret.client_secret
+            )
             local_subscription = SubscriptionRepo.add(
                 user=user,
                 stripe_subscription_id=stripe_subscription.id,
@@ -166,36 +196,44 @@ class CheckingControl:
                 billing_address=order.billing_address,
                 payment_method=payment_method,
             )
-            
+
             if local_subscription:
                 PaymentRepo.update_subscription(payment, local_subscription)
                 stripe_items = stripe_subscription.get("items", {}).get("data", [])
                 for stripe_item in stripe_items:
                     metadata_id = int(stripe_item.metadata.order_item_id)
-                    order_item = OrderItemRepo.get_by_id(metadata_id);
+                    order_item = OrderItemRepo.get_by_id(metadata_id)
                     sub_item = SubscriptionItemRepo.add(
-                        subscription=local_subscription, 
-                        order_item=order_item, 
+                        subscription=local_subscription,
+                        order_item=order_item,
                         stripe_item_id=stripe_item.id,
-                        current_period_start=timezone.datetime.fromtimestamp(stripe_item.current_period_start, tz=timezone.get_current_timezone()),
-                        current_period_end=timezone.datetime.fromtimestamp(stripe_item.current_period_end, tz=timezone.get_current_timezone()),
+                        current_period_start=timezone.datetime.fromtimestamp(
+                            stripe_item.current_period_start,
+                            tz=timezone.get_current_timezone(),
+                        ),
+                        current_period_end=timezone.datetime.fromtimestamp(
+                            stripe_item.current_period_end,
+                            tz=timezone.get_current_timezone(),
+                        ),
                         price_id=stripe_item.price.id,
                         quantity=stripe_item.quantity,
                     )
                     if not sub_item:
                         OrderService.update_order_status(order.id, 2)
-            payments.append({
-                "type": "yearly",
-                "stripe_id": stripe_subscription.id,
-                "id": local_subscription.id,
-                "clientSecret": client_secret,
-            })
+            payments.append(
+                {
+                    "type": "yearly",
+                    "stripe_id": stripe_subscription.id,
+                    "id": local_subscription.id,
+                    "clientSecret": client_secret,
+                }
+            )
 
         if not payments:
             raise HttpError(400, "No payable items in this order")
 
         return {"payments": payments}
-    
+
     # Old method
     @staticmethod
     def _checking(request, data) -> tuple[Payment, PaymentIntent] | HttpError:
@@ -234,3 +272,22 @@ class CheckingControl:
                     raise HttpError(500, "Payment canceled")
 
         raise HttpError(500, "An error occurred while checking the payment")
+
+    @staticmethod
+    def stripe_webhook(request):
+        payload = request.body
+        sig_header = request.headers.get("Stripe-Signature", "")
+        endpoint_secret = STRIPE_WEBHOOK_SECRET
+
+        try:
+            event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        except (ValueError, stripe.error.SignatureVerificationError) as e:
+            raise HttpError(400, f"Webhook error : {str(e)}")
+
+        try:
+            CheckingService.stripe_webhook_event(event)
+        except Exception as e:
+            print(f"Error processing webhook {event['type']}: {e}")
+            raise HttpError(400, f"Webhook error : {str(e)}")
+
+        return {"status": "success"}

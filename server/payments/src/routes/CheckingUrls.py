@@ -9,7 +9,7 @@ from payments.src.data.repositories.SubscriptionRepo import SubscriptionRepo
 from payments.src.data.repositories.SubscriptionItemRepo import SubscriptionItemRepo
 from payments.src.services.PaymentService import PaymentService
 from payments.src.data.repositories.PaymentRepo import PaymentRepo
-from shop.src.data.repositories.OrderRepo import OrderRepo
+from shop.src.services.OrderService import OrderService
 from utils.Stripe import StripeUtils
 
 router = Router()
@@ -65,4 +65,4 @@ def cancel_setup_intent(request, data: CancelSetupSchema):
 
 @router.post("/webhook")
 def stripe_webhook(request):
-    return StripeUtils.webhook(request)
+    return CheckingControl.stripe_webhook(request)
