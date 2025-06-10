@@ -226,6 +226,3 @@ class StripeUtils:
         return stripe.Subscription.retrieve(
             stripe_subscription_id, expand=["latest_invoice"]
         )
-
-
-instance_stripe = StripeUtils()

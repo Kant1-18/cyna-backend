@@ -8,7 +8,7 @@ from payments.src.data.repositories.PaymentRepo import PaymentRepo
 from ninja.errors import HttpError
 from payments.src.services.PaymentMethodService import PaymentMethodService
 from django.utils import timezone
-from utils.Stripe import stripe
+from utils.Stripe import stripe, StripeUtils
 from shop.src.data.repositories.OrderItemRepo import OrderItemRepo
 import stripe.error
 
