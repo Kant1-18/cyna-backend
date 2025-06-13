@@ -96,11 +96,27 @@ class CheckingControl:
 
     @staticmethod
     def create_setup_intent(request, data):
-        token = AuthService.get_token(request)
-        user = AuthService.get_user_by_access_token(token)
-        if AuthService.is_admin(user):
+        if AuthService.is_admin(request):
             return HttpError(
                 403, "Impossible to create a setup intent for an admin user"
             )
 
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+
         return StripeUtils.create_setup_intent(user, data.orderId)
+
+    @staticmethod
+    def cancel_setup_intent(request, data):
+        try:
+            if StripeUtils.get_setup_intent(data.intentId) is not None:
+                if StripeUtils.cancel_setup_intent(data.intentId):
+                    return {"canceled": True}
+                else:
+                    raise HttpError(400, f"Cancel failed: {e.user_message}")
+            else:
+                raise HttpError(404, "Setup intent not found")
+        except stripe.error.StripeError as e:
+            raise HttpError(
+                500, f"Internal error when cancelling setup-intent: {e.user_message}"
+            )

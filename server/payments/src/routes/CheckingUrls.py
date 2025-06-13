@@ -43,16 +43,9 @@ def create_setup_intent(request, data: CreateSetupSchema):
     )
 
 
-# WIP
-# Review + split code
 @router.post("/cancel-setup-intent", auth=JWTAuth())
 def cancel_setup_intent(request, data: CancelSetupSchema):
-    try:
-        # add id verif
-        canceled = stripe.SetupIntent.cancel(data.intentId)
-    except stripe.error.StripeError as e:
-        raise HttpError(400, f"Cancel failed: {e.user_message}")
-    return {"canceled": True}
+    return CheckingControl.cancel_setup_intent(request, data)
 
 
 @router.post("/webhook")

@@ -226,3 +226,20 @@ class StripeUtils:
         return stripe.Subscription.retrieve(
             stripe_subscription_id, expand=["latest_invoice"]
         )
+
+    @staticmethod
+    def cancel_setup_intent(intent_id: str) -> bool:
+        try:
+            stripe.SetupIntent.cancel(intent_id)
+            return True
+        except Exception as e:
+            print(f"[Stripe ERROR]: {e}")
+            return False
+
+    @staticmethod
+    def get_setup_intent(intent_id: str) -> stripe.SetupIntent | None:
+        try:
+            return stripe.SetupIntent.retrieve(intent_id)
+        except Exception as e:
+            print(f"[Stripe ERROR]: {e}")
+            return None
