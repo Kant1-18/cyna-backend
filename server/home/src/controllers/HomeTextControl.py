@@ -9,7 +9,7 @@ class HomeTextControl:
 
     @staticmethod
     def add(request, data) -> HomeText | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
             if not CheckInfos.is_valid_string(data.text):
@@ -42,7 +42,7 @@ class HomeTextControl:
 
     @staticmethod
     def update(request, data) -> HomeText | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_valid_locale(data.locale):
                 raise HttpError(400, "Invalid locale")
             if not CheckInfos.is_valid_string(data.text):

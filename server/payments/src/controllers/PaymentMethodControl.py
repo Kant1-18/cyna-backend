@@ -9,7 +9,7 @@ class PaymentMethodControl:
 
     @staticmethod
     def add(request, data) -> PaymentMethod | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_valid_string(data.name):
                 raise HttpError(400, "Invalid string for name")
 
@@ -28,7 +28,7 @@ class PaymentMethodControl:
 
     @staticmethod
     def get(request, id: int) -> PaymentMethod | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
 
@@ -42,7 +42,7 @@ class PaymentMethodControl:
 
     @staticmethod
     def get_all(request) -> list[PaymentMethod] | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             payment_methods = PaymentMethodService.get_all()
             if payment_methods:
                 return [payment_method.to_json() for payment_method in payment_methods]
@@ -53,7 +53,7 @@ class PaymentMethodControl:
 
     @staticmethod
     def update(request, data) -> PaymentMethod | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
@@ -77,7 +77,7 @@ class PaymentMethodControl:
 
     @staticmethod
     def delete(request, id: int) -> bool:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
 

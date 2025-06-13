@@ -35,7 +35,7 @@ class AuthService:
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
     @staticmethod
-    def isAdmin(request):
+    def is_admin(request):
         token = AuthService.get_token(request)
         user = AuthService.get_user_by_access_token(token)
         if user.role == 1:

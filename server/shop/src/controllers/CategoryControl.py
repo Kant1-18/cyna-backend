@@ -9,7 +9,7 @@ class CategoryControl:
 
     @staticmethod
     def add(request, data) -> Category | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_valid_string(data.globalName):
                 raise HttpError(400, "Invalid string for name")
 
@@ -23,7 +23,7 @@ class CategoryControl:
 
     @staticmethod
     def add_locale(request, data) -> Category | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
@@ -82,7 +82,7 @@ class CategoryControl:
 
     @staticmethod
     def update(request, data) -> Category | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(data.id):
                 raise HttpError(400, "Invalid id")
 
@@ -99,7 +99,7 @@ class CategoryControl:
 
     @staticmethod
     def update_locale(request, data) -> Category | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(data.localeId):
                 raise HttpError(400, "Invalid id")
 
@@ -121,7 +121,7 @@ class CategoryControl:
 
     @staticmethod
     def delete(request, id: int) -> bool:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid id")
 
@@ -135,7 +135,7 @@ class CategoryControl:
 
     @staticmethod
     def delete_locale(request, locale_id: int) -> bool:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(locale_id):
                 raise HttpError(400, "Invalid locale id")
 

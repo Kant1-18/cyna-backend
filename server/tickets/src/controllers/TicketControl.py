@@ -55,7 +55,7 @@ class TicketControl:
     @staticmethod
     def get_all_by_user(request, id: int) -> list[Ticket] | HttpError:
         try:
-            if not AuthService.isAdmin(request):
+            if not AuthService.is_admin(request):
                 raise HttpError(403, "Not authorized")
 
             if not CheckInfos.is_positive_int(id):
@@ -73,7 +73,7 @@ class TicketControl:
     @staticmethod
     def update_status(request, data) -> Ticket | HttpError:
         try:
-            if not AuthService.isAdmin(request):
+            if not AuthService.is_admin(request):
                 raise HttpError(403, "Not authorized")
 
             if not CheckInfos.is_positive_int(data.ticketId):
@@ -94,7 +94,7 @@ class TicketControl:
     @staticmethod
     def delete(request, id: int) -> Ticket | HttpError:
         try:
-            if not AuthService.isAdmin(request):
+            if not AuthService.is_admin(request):
                 raise HttpError(403, "Not authorized")
 
             token = TicketService.delete_ticket(id)

@@ -1,5 +1,6 @@
 import stripe.error
 from payments.src.services.CheckingService import CheckingService
+from utils.Stripe import StripeUtils
 from utils.CheckInfos import CheckInfos
 from ninja.errors import HttpError
 from users.src.services.AuthService import AuthService
@@ -92,3 +93,14 @@ class CheckingControl:
             raise HttpError(400, f"Webhook error : {str(e)}")
 
         return {"status": "success"}
+
+    @staticmethod
+    def create_setup_intent(request, data):
+        token = AuthService.get_token(request)
+        user = AuthService.get_user_by_access_token(token)
+        if AuthService.is_admin(user):
+            return HttpError(
+                403, "Impossible to create a setup intent for an admin user"
+            )
+
+        return StripeUtils.create_setup_intent(user, data.orderId)

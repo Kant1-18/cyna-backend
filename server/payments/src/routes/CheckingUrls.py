@@ -35,10 +35,8 @@ def checking(request, data: CheckingSchema) -> tuple[dict, dict] | HttpError:
 
 @router.post("/create-setup-intent", auth=JWTAuth(), response=CreateSetupResponse)
 def create_setup_intent(request, data: CreateSetupSchema):
-    token = AuthService.get_token(request)
-    user = AuthService.get_user_by_access_token(token)
+    intent = CheckingControl.create_setup_intent(request, data)
 
-    intent = StripeUtils.create_setup_intent(user, data.orderId)
     return CreateSetupResponse(
         intentId=intent.id,
         clientSecret=intent.client_secret,

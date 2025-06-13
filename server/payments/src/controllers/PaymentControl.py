@@ -37,15 +37,15 @@ class PaymentControl:
             }
         else:
             raise HttpError(500, "An error occurred while creating the payment")
-        
+
     @staticmethod
     def get_sales_metrics(request, params):
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(params.count):
                 raise HttpError(400, "Invalid count")
             if params.period not in ("daily", "weekly"):
                 raise HttpError(400, "Invalid period: must be 'weekly' or 'daily'")
-        
+
             try:
                 metrics = PaymentService.sales_metrics(params.period, params.count)
 
@@ -54,29 +54,36 @@ class PaymentControl:
                 else:
                     raise HttpError(404, "Metrics not found")
             except Exception as e:
-                raise HttpError(500, f"Something went wrong while gettings sales metrics: {e}")
+                raise HttpError(
+                    500, f"Something went wrong while gettings sales metrics: {e}"
+                )
         else:
             raise HttpError(403, "Forbidden")
-        
+
     @staticmethod
     def get_sales_metrics_by_category(request, params):
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(params.count):
                 raise HttpError(400, "Invalid count")
             if params.period not in ("daily", "weekly"):
                 raise HttpError(400, "Invalid period: must be 'weekly' or 'daily'")
             if not CheckInfos.is_valid_locale(params.locale):
                 raise HttpError(400, "Invalid locale")
-        
+
             try:
-                metrics = PaymentService.sales_metrics_by_category(params.period, params.count, params.locale)
+                metrics = PaymentService.sales_metrics_by_category(
+                    params.period, params.count, params.locale
+                )
 
                 if metrics:
                     return metrics
                 else:
                     raise HttpError(404, "Metrics not found")
             except Exception as e:
-                raise HttpError(500, f"Something went wrong while gettings sales by category metrics: {e}")
+                raise HttpError(
+                    500,
+                    f"Something went wrong while gettings sales by category metrics: {e}",
+                )
         else:
             raise HttpError(403, "Forbidden")
 
@@ -99,7 +106,7 @@ class PaymentControl:
             return [payment.to_json() for payment in payments]
         else:
             raise HttpError(404, "Payment not found")
-        
+
     @staticmethod
     def get_all_from_user(request):
         token = AuthService.get_token(request)
@@ -113,7 +120,7 @@ class PaymentControl:
 
     @staticmethod
     def get_all(request) -> list[Payment] | None:
-        if not AuthService.isAdmin(request):
+        if not AuthService.is_admin(request):
             raise HttpError(403, "Forbidden")
         payments = PaymentService.get_all()
         if payments:
@@ -145,7 +152,7 @@ class PaymentControl:
 
     @staticmethod
     def delete(request, id: int) -> bool:
-        if not AuthService.isAdmin(request):
+        if not AuthService.is_admin(request):
             raise HttpError(403, "Forbidden")
         if not CheckInfos.is_positive_int(id):
             raise HttpError(400, "Invalid payment id")

@@ -11,7 +11,7 @@ class UsersControl:
     @staticmethod
     def add_admin(request, data) -> User | HttpError:
         try:
-            if not AuthService.isAdmin(request):
+            if not AuthService.is_admin(request):
                 raise HttpError(403, "Not authorized")
             if not CheckInfos.is_valid_string(data.firstName):
                 raise HttpError(400, "Invalid firstName")
@@ -52,7 +52,7 @@ class UsersControl:
 
     @staticmethod
     def get_all(request, role: int | None) -> list[User] | HttpError:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if role is None:
                 users = UserService.get_all()
             else:
@@ -79,9 +79,16 @@ class UsersControl:
         user = UserService.update(user.id, data.firstName, data.lastName, data.email)
         if user.stripe_id:
             try:
-                stripe.Customer.modify(id=user.stripe_id, email=data.email, name=f"{data.firstName} {data.lastName}")
+                stripe.Customer.modify(
+                    id=user.stripe_id,
+                    email=data.email,
+                    name=f"{data.firstName} {data.lastName}",
+                )
             except stripe.error.StripeError as e:
-                raise HttpError(400, f"An error occured while updating stripe customer: {e.user_message}")
+                raise HttpError(
+                    400,
+                    f"An error occured while updating stripe customer: {e.user_message}",
+                )
         return user.to_json() if user else HttpError(500, "An error occurred")
 
     @staticmethod

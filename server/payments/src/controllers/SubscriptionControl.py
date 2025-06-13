@@ -33,7 +33,7 @@ class SubscriptionControl:
             }
         else:
             raise HttpError(500, "An error occurred while creating the subscription")
-        
+
     @staticmethod
     def cancel_subsciption(request, data):
         token = AuthService.get_token(request)
@@ -44,16 +44,18 @@ class SubscriptionControl:
         if not CheckInfos.is_valid_string(data.subscriptionItemStripeId):
             raise HttpError(400, "Invalid Stripe subscription item id")
         subscription = SubscriptionService.get_subscription_by_id(data.subscriptionId)
-        if not subscription  or subscription.user.id != user.id:
+        if not subscription or subscription.user.id != user.id:
             raise HttpError(404, "Subscription not found")
 
-        subscriptions = SubscriptionService.cancel_subscription(subscription, data.subscriptionItemStripeId, user)
+        subscriptions = SubscriptionService.cancel_subscription(
+            subscription, data.subscriptionItemStripeId, user
+        )
 
         return subscriptions
 
     @staticmethod
     def get_by_user(request, user_id: int) -> Subscription | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(user_id):
                 raise HttpError(400, "Invalid user id")
 
@@ -80,7 +82,7 @@ class SubscriptionControl:
 
     @staticmethod
     def get_all(request) -> list[Subscription] | None:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             subscriptions = SubscriptionService.get_all()
 
             if subscriptions:
@@ -117,11 +119,7 @@ class SubscriptionControl:
         if not CheckInfos.is_positive_int(data.status):
             raise HttpError(400, "Invalid status")
 
-        subscriptions = SubscriptionService.update_status(
-            data.id,
-            data.status,
-            user
-        )
+        subscriptions = SubscriptionService.update_status(data.id, data.status, user)
 
         if subscriptions:
             return subscriptions
@@ -166,7 +164,7 @@ class SubscriptionControl:
 
     @staticmethod
     def delete(request, id: int) -> bool:
-        if AuthService.isAdmin(request):
+        if AuthService.is_admin(request):
             if not CheckInfos.is_positive_int(id):
                 raise HttpError(400, "Invalid subscription id")
 
