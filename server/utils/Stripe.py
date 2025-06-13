@@ -58,18 +58,18 @@ class StripeUtils:
             return None
 
     @staticmethod
-    def delete_product(stripe_product_id: str) -> bool:
+    def archive_product(stripe_product_id: str) -> bool:
         try:
             active_prices = stripe.Price.list(product=stripe_product_id, active=True)
             inactive_prices = stripe.Price.list(product=stripe_product_id, active=False)
 
             for price in active_prices.auto_paging_iter():
-                stripe.Price.delete(price.id)
+                stripe.Price.modify(price.id, active=False)
 
             for price in inactive_prices.auto_paging_iter():
-                stripe.Price.delete(price.id)
+                stripe.Price.modify(price.id, active=False)
 
-            stripe.Product.delete(stripe_product_id)
+            stripe.Product.modify(stripe_product_id, active=False)
             return True
 
         except Exception as e:

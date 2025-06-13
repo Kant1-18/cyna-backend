@@ -38,10 +38,12 @@ class ProductService:
         try:
             stripe_product = StripeUtils.create_product(name)
             stripe_monthly_price = StripeUtils.add_monthly_price(
-                stripe_product.id, int(round(base_price * (1 - discount_percentage / 100)))
+                stripe_product.id,
+                int(round(base_price * (1 - discount_percentage / 100))),
             )
             stripe_yearly_price = StripeUtils.add_yealy_price(
-                stripe_product.id, int(round((base_price * (1 - discount_percentage / 100)) * 12))
+                stripe_product.id,
+                int(round((base_price * (1 - discount_percentage / 100)) * 12)),
             )
 
             image1 = ImageUploader.product(image1)
@@ -124,7 +126,7 @@ class ProductService:
         except Exception as e:
             print(e)
             return None
-        
+
     @staticmethod
     def get_best_seller() -> Product | None:
         try:
@@ -200,9 +202,13 @@ class ProductService:
                     update_price = False
 
                 if update_price:
-                    new_monthly_price = StripeUtils.add_monthly_price(product.stripe_id, int(round(base_price * (1 - discount_percentage / 100))))
+                    new_monthly_price = StripeUtils.add_monthly_price(
+                        product.stripe_id,
+                        int(round(base_price * (1 - discount_percentage / 100))),
+                    )
                     new_yearly_price = StripeUtils.add_yealy_price(
-                        product.stripe_id, int(round((base_price * (1 - discount_percentage / 100)) * 12))
+                        product.stripe_id,
+                        int(round((base_price * (1 - discount_percentage / 100)) * 12)),
                     )
 
                 ProductRepo.update(
@@ -214,11 +220,18 @@ class ProductService:
                     base_price=base_price,
                     discount_order=discount_order,
                     discount_percentage=discount_percentage,
-                    stripe_monthly_price_id=new_monthly_price.id if update_price else product.stripe_monthly_price_id,
-                    stripe_yearly_price_id=new_yearly_price.id  if update_price else product.stripe_yearly_price_id,
+                    stripe_monthly_price_id=(
+                        new_monthly_price.id
+                        if update_price
+                        else product.stripe_monthly_price_id
+                    ),
+                    stripe_yearly_price_id=(
+                        new_yearly_price.id
+                        if update_price
+                        else product.stripe_yearly_price_id
+                    ),
                 )
 
-                
                 return product
         except Exception as e:
             print(e)
@@ -280,7 +293,11 @@ class ProductService:
 
     @staticmethod
     def delete_product(id: int) -> bool:
-        return ProductRepo.delete(id)
+        from utils.Stripe import StripeUtils
+
+        product = ProductRepo.get(id)
+        if StripeUtils.archive_product(product.stripe_id):
+            return ProductRepo.delete(id)
 
     @staticmethod
     def delete_details(id: int) -> bool:
