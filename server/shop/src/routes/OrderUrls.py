@@ -26,6 +26,11 @@ class OrderRouteSchema(Schema):
     quantity: int
     recurring: int
 
+class OrderItemRouteSchema(Schema):
+    id: int
+    productId: int
+    quantity: int
+    recurring: int
 
 class OrderUpdateSchema(Schema):
     orderId: int
@@ -50,7 +55,7 @@ def add_product(request, data: OrderRouteSchema) -> Order | HttpError:
 
 
 @router.put("/update-cart-item", auth=JWTAuth())
-def update_product_in_cart(request, data: OrderRouteSchema) -> Order | HttpError:
+def update_product_in_cart(request, data: OrderItemRouteSchema) -> Order | HttpError:
     return OrderControl.update_product_in_cart(request, data)
 
 

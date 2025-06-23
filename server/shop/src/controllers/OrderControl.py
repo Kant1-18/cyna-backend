@@ -44,7 +44,7 @@ class OrderControl:
             user = AuthService.get_user_by_access_token(token)
 
             order = OrderService.update_product_in_cart(
-                user.id, data.productId, data.quantity, data.recurring
+                user.id, data.productId, data.quantity, data.recurring, data.id
             )
             if order:
                 return order.to_json()

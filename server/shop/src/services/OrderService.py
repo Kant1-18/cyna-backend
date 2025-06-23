@@ -64,14 +64,14 @@ class OrderService:
 
     @staticmethod
     def update_product_in_cart(
-        user_id: int, product_id: int, quantity: int, recurring: int
+        user_id: int, product_id: int, quantity: int, recurring: int, item_id: int
     ) -> Order | None:
         try:
             order = OrderRepo.get_by_user_and_status(user_id, 0)
             if order:
                 product = ProductService.get(product_id)
                 if product:
-                    order_item = OrderItemRepo.get_by_order_and_product(order, product)
+                    order_item = OrderItemRepo.get_by_id(id=item_id)
                     if order_item:
                         OrderItemRepo.update(order_item, quantity, recurring)
                         return order
